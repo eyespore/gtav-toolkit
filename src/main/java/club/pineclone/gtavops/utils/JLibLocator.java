@@ -1,6 +1,5 @@
 package club.pineclone.gtavops.utils;
 
-import club.pineclone.gtavops.config.AppConfig;
 import com.github.kwhat.jnativehook.DefaultLibraryLocator;
 import com.github.kwhat.jnativehook.NativeLibraryLocator;
 
@@ -12,19 +11,19 @@ import java.util.List;
 
 public class JLibLocator implements NativeLibraryLocator {
 
-    private static final DefaultLibraryLocator defaultLocator = new DefaultLibraryLocator();
-
-    public static void setAsDefaultLocator() {
+    static {
         System.setProperty("jnativehook.lib.locator", JLibLocator.class.getCanonicalName());
     }
+
+    private static final DefaultLibraryLocator defaultLocator = new DefaultLibraryLocator();
 
     @Override
     public Iterator<File> getLibraries() {
         List<File> libs = new ArrayList<>(1);
 
-        String os = AppConfig.getOS();  // 操作系统
-        String arch = AppConfig.getArch();  // 系统架构
-        String jHome = AppConfig.getJHome();  // Java家目录
+        String os = PathUtils.getOS();  // 操作系统
+        String arch = PathUtils.getArch();  // 系统架构
+        String jHome = PathUtils.getJHome();  // Java家目录
         String libName = System.mapLibraryName("JNativeHook");
 
         // ./bin/native/window/x86/jnativehook.dll

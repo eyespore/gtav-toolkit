@@ -1,9 +1,19 @@
 package club.pineclone.gtavops;
 
-import club.pineclone.gtavops.config.AppConfig;
-import club.pineclone.gtavops.register.SceneRegistryHandler;
-import club.pineclone.gtavops.scene.SceneTemplate;
+import club.pineclone.gtavops.config.ConfigHolder;
+import club.pineclone.gtavops.gui.feature.MacroManager;
+import club.pineclone.gtavops.gui.forked.ForkedAlert;
+import club.pineclone.gtavops.gui.forked.ForkedDialog;
+import club.pineclone.gtavops.gui.forked.ForkedDialogButton;
+import club.pineclone.gtavops.gui.scene.SceneRegistry;
+import club.pineclone.gtavops.gui.scene.SceneTemplate;
+import club.pineclone.gtavops.i18n.ExtendedI18n;
+import club.pineclone.gtavops.i18n.I18nHolder;
+import club.pineclone.gtavops.macro.action.ActionTaskManager;
+import club.pineclone.gtavops.utils.ImageUtils;
+import club.pineclone.gtavops.utils.JLibLocator;
 import com.github.kwhat.jnativehook.GlobalScreen;
+import io.vproxy.base.util.LogType;
 import io.vproxy.vfx.control.globalscreen.GlobalScreenUtils;
 import io.vproxy.vfx.manager.task.TaskManager;
 import io.vproxy.vfx.theme.Theme;
@@ -14,15 +24,22 @@ import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.stage.VStage;
+import io.vproxy.vfx.ui.stage.VStageInitParams;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.image.Image;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,9 +48,47 @@ public class MainFX extends Application {
 
     private final List<SceneTemplate> mainScenes = new ArrayList<>();
     private VSceneGroup sceneGroup;
+    private Exception configLoadException = null;  /* 配置加载异常 */
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws ClassNotFoundException {
+        if (configLoadException != null) {
+            var dialog = new ForkedDialog<Integer>(new VStage(
+                    new VStageInitParams().setIconifyButton(false).setMaximizeAndResetButton(false)
+            ));
+            ExtendedI18n i18n = I18nHolder.get();
+
+            dialog.setText(MessageFormat.format(i18n.configFileLoadFailed, configLoadException.getMessage()));
+            dialog.setButtons(Arrays.asList(
+                    new ForkedDialogButton<>(i18n.confirm, 1),
+                    new ForkedDialogButton<>(i18n.cancel, 0)
+            ));
+
+            dialog.getvStage().getStage().initModality(Modality.APPLICATION_MODAL);
+            Optional<Integer> result = dialog.showAndWait();
+
+            if (result.isPresent() && result.get() == 1) {
+                /* 重载配置文件 */
+                try {
+                    ConfigHolder.overrideConfigToDefault();
+                } catch (IOException e2) {
+                    ForkedAlert.showAndWait(Alert.AlertType.WARNING,
+                            MessageFormat.format(i18n.configStillLoadFailed, e2.getMessage()));
+                    io.vproxy.base.util.Logger.info(LogType.ALERT, "However program throws another exception");
+                    System.exit(1);  /* 第二次抛出异常则退出程序 */
+                }
+            } else {
+                io.vproxy.base.util.Logger.info(LogType.ALERT, "user cancel config overriding");
+                System.exit(1);
+            }
+        }
+
+        Class.forName(ActionTaskManager.class.getName());  /* 任务调度 */
+        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());  /* 停止jnativehook日志记录 */
+        logger.setLevel(Level.OFF);
+        logger.setUseParentHandlers(false);
+        MacroManager.getInstance().enable();  /* 启用宏引擎 */
+
         VStage vStage = new VStage(primaryStage) {
             @Override
             public void close() {
@@ -43,9 +98,9 @@ public class MainFX extends Application {
             }
         };
         vStage.getInitialScene().enableAutoContentWidthHeight();
-        vStage.setTitle(AppConfig.APPLICATION_TITLE);
+        vStage.setTitle(ConfigHolder.APPLICATION_TITLE);
 
-        mainScenes.addAll(SceneRegistryHandler.getRegistry());  // 添加所有注册的场景
+        mainScenes.addAll(SceneRegistry.getInstance().getRegistry());  // 添加所有注册的场景
 
         // var initialScene = mainScenes.stream().filter(e -> e instanceof ).findAny().get();
         var initialScene = mainScenes.get(0);
@@ -168,7 +223,7 @@ public class MainFX extends Application {
         }
         menuVBox.getChildren().add(new VPadding(20));
 
-        var menuBtn = new FusionImageButton(new Image(getClass().getResource("/img/menu.png").toExternalForm())) {{
+        var menuBtn = new FusionImageButton(ImageUtils.loadImage("/img/menu.png")) {{
             setPrefWidth(40);
             setPrefHeight(VStage.TITLE_BAR_HEIGHT + 1);
             getImageView().setFitHeight(15);
@@ -178,24 +233,38 @@ public class MainFX extends Application {
         menuBtn.setOnAction(e -> vStage.getRootSceneGroup().show(menuScene, VSceneShowMethod.FROM_LEFT));
         vStage.getRoot().getContentPane().getChildren().add(menuBtn);
 
-        vStage.getStage().setWidth(1280);
-        vStage.getStage().setHeight(800);
-        vStage.getStage().getIcons().add(new Image(getClass().getResource("/img/favicon.png").toExternalForm()));
+        vStage.getStage().setWidth(1300);
+        vStage.getStage().setHeight(820);
+        vStage.getStage().getIcons().add(ImageUtils.loadImage("/img/favicon.png"));
         vStage.getStage().centerOnScreen();
         vStage.getStage().show();
     }
 
     @Override
     public void init() throws Exception {
-        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
-        logger.setLevel(Level.OFF);
-        logger.setUseParentHandlers(false);
-        GlobalScreen.registerNativeHook();
+        Class.forName(JLibLocator.class.getName());  /* 本地库 */
+
+        try {
+            I18nHolder.load();  /* 初始化本地化 */
+        } catch (IOException e) {
+            io.vproxy.base.util.Logger.error(LogType.SYS_ERROR, "i18n file load filed");
+            throw e;
+        }
+
+        try {
+            ConfigHolder.load();
+        } catch (IOException e) {
+            /* 配置初始化异常 */
+            configLoadException = e;
+            io.vproxy.base.util.Logger.error(LogType.SYS_ERROR, "config file load failed");
+        }
     }
 
     @Override
     public void stop() throws Exception {
-        GlobalScreen.unregisterNativeHook();
+        MacroManager.getInstance().disable();  /* 停止宏引擎 */
+        ActionTaskManager.shutdown();  /* 停止任务调度 */
+        ConfigHolder.save();  /* 保存配置 */
     }
 
 }

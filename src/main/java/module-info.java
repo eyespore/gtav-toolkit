@@ -7,12 +7,20 @@ module club.pineclone.gtavops {
     requires io.vproxy.vfx;
     requires com.github.kwhat.jnativehook;
     requires io.vproxy.base;
+    requires com.fasterxml.jackson.databind;
+    requires vjson;
+    requires static lombok;
 
     opens club.pineclone.gtavops;
     opens club.pineclone.gtavops.utils;
-    opens club.pineclone.gtavops.controller;
 
     exports club.pineclone.gtavops;
     exports club.pineclone.gtavops.utils;
-    exports club.pineclone.gtavops.controller;
+
+    /* for test */
+    exports club.pineclone.gtavops.macro;
+    exports club.pineclone.gtavops.macro.trigger;
+    exports club.pineclone.gtavops.macro.action;
+    exports club.pineclone.gtavops.config;
+    exports club.pineclone.gtavops.i18n;
 }
