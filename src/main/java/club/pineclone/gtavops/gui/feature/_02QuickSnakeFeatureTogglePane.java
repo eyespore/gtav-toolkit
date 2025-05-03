@@ -8,11 +8,11 @@ import club.pineclone.gtavops.gui.forked.ForkedKeyChooser;
 import club.pineclone.gtavops.gui.forked.ForkedSlider;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.i18n.I18nHolder;
-import club.pineclone.gtavops.macro.TriggerBindings;
-import club.pineclone.gtavops.macro.TriggerFactory;
-import club.pineclone.gtavops.macro.TriggerIdentity;
+import club.pineclone.gtavops.macro.SimpleMacro;
+import club.pineclone.gtavops.macro.trigger.TriggerFactory;
+import club.pineclone.gtavops.macro.trigger.TriggerIdentity;
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.quickSnake.QuickSnakeAction;
+import club.pineclone.gtavops.macro.action.quickSnake.QuickSnakeAction;
 import club.pineclone.gtavops.macro.trigger.Trigger;
 import club.pineclone.gtavops.macro.trigger.TriggerMode;
 import io.vproxy.vfx.entity.input.Key;
@@ -20,7 +20,7 @@ import io.vproxy.vfx.entity.input.Key;
 /* 回血增强 Tab按键 + 滚轮增强 */
 public class _02QuickSnakeFeatureTogglePane extends FeatureTogglePane {
 
-    private TriggerBindings bindings;  /* 宏执行器 */
+    private SimpleMacro bindings;  /* 宏执行器 */
 
     Configuration config;
     Configuration.QuickSnake rsConfig;
@@ -50,7 +50,7 @@ public class _02QuickSnakeFeatureTogglePane extends FeatureTogglePane {
         Trigger trigger = TriggerFactory.getTrigger(identity1, identity2);
 
         Action action = new QuickSnakeAction(triggerInterval, snakeKey);
-        bindings = new TriggerBindings(trigger, action);
+        bindings = new SimpleMacro(trigger, action);
         bindings.install();
     }
 

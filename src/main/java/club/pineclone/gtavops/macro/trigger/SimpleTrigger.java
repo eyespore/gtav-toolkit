@@ -1,5 +1,9 @@
 package club.pineclone.gtavops.macro.trigger;
 
+import club.pineclone.gtavops.macro.trigger.policy.ActivationPolicy;
+import club.pineclone.gtavops.macro.trigger.source.InputSource;
+import club.pineclone.gtavops.macro.trigger.source.InputSourceListener;
+
 /* 触发器 */
 public class SimpleTrigger extends Trigger implements InputSourceListener {
 
@@ -25,7 +29,7 @@ public class SimpleTrigger extends Trigger implements InputSourceListener {
     @Override
     public void onInputSourceEvent(boolean press) {
         int flag = policy.decide(press);
-        if (flag == 1) fireActivate();
-        else if (flag == -1) fireDeactivate();
+        if (flag == 1) activate();
+        else if (flag == -1) deactivate();
     }
 }

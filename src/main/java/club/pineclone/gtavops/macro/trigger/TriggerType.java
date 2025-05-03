@@ -1,6 +1,5 @@
 package club.pineclone.gtavops.macro.trigger;
 
-import club.pineclone.gtavops.macro.TriggerIdentity;
 import io.vproxy.vfx.entity.input.Key;
 
 public enum TriggerType {

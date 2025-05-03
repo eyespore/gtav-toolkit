@@ -19,7 +19,7 @@ public class ConfigHolder {
 
     private static Configuration configuration;  /* 配置 */
     public static final String APPLICATION_TITLE = "GTAV Ops";  /* 应用基础信息 */
-    public static final String APPLICATION_VERSION = "build00001-alpha4";
+    public static final String APPLICATION_VERSION = "build00001-alpha5";
 
     private ConfigHolder() {}
 

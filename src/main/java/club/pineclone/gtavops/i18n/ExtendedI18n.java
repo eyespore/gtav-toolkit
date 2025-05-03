@@ -17,12 +17,12 @@ public class ExtendedI18n implements InternalI18n {
     public SwapGlitch swapGlitch = new SwapGlitch();  /* 切枪偷速 */
     public QuickSnake quickSnake = new QuickSnake();  /* 回血增强 */
     public ADSwing adSwing = new ADSwing();  /* AD摇 */
+    public MeleeGlitch meleeGlitch = new MeleeGlitch();  /* 近战武器偷速 */
 
-    /* 主页 */
-    public String introSceneTitle = "Introduction";
-    public String introSceneHeader = "Coded By Pineclone";
-    public String versionLabel = "version: ";
-    public String acknowledgement = "UI design powered by wkgcass";
+    public FontPack fontPack = new FontPack();  /* 字体包管理 */
+    public Feature feature = new Feature();  /* 功能特性 */
+    public Intro intro = new Intro();  /* 主页 */
+    public Config config = new Config();  /* 应用配置 */
 
     /* UI组件 */
     public String keyMouseChooserDesc = "press a key or mouse button for applying";
@@ -35,13 +35,28 @@ public class ExtendedI18n implements InternalI18n {
     public String configFileLoadFailed = "config file load failed: {0}, do you want to OVERRIDE current config file?";
     public String configStillLoadFailed = "config file still load failed: {0}, you can try contact with PINECLONE, he's always glad to help :3";
 
-    /* 功能选项 */
-    public String featureSceneTitle = "Enhance/Feature";
-    public String featureSceneHeader = "Right Click one of enhance/feature for further configuration!";
+    /* 主页 */
+    @Data
+    public static class Intro {
+        public String title = "Introduction";
+        public String header = "Coded By Pineclone";
+        public String versionLabel = "version: ";
+        public String acknowledgement = "UI design powered by wkgcass";
+    }
 
-    /* 应用设置 */
-    public String settingSceneTitle = "Application Settings";
-    public String settingSceneHeader = "Application Configuration";
+    /* 功能选项 */
+    @Data
+    public static class Feature {
+        public String title = "Enhance/Feature";
+        public String header = "Right Click one of enhance/feature for further configuration!";
+    }
+
+    /* 字体包管理 */
+    @Data
+    public static class FontPack {
+        public String header = "Font Pack Management";
+        public String title = "Font Pack Manager";
+    }
 
     /* 切枪偷速 */
     @Data
@@ -52,13 +67,27 @@ public class ExtendedI18n implements InternalI18n {
         public String postSwapMeleeDelay = "delay after swapping melee";
         public String enableSwapRanged = "swap ranged weapon on deactivate";
         public String activateMethod = "activate method";
-        public String swapInterval = "swap interval(ms)";
+        public String triggerInterval = "trigger interval(ms)";
         public String preferredRangedKey = "preferred ranged weapon key";
 
         public String meleeKey = "melee weapon key";  /* 近战武器键 */
-        public String weaponWheelKey = "weapon wheel key";  /* 轮盘键 */
+        public String targetWeaponWheelKey = "target weapon wheel key";  /* 目标武器轮盘 */
+
+        public String enableSafetyWeaponWheel = "enable safety weapon wheel";  /* 启用安全武器轮盘 */
+        public String safetyWeaponWheelKey = "safety weapon wheel key";  /* 安全武器轮盘键 */
     }
 
+    /* 近战武器偷速 */
+    @Data
+    public static class MeleeGlitch {
+        public String title = "Melee Glitch";
+        public String activateKey = "activate key";
+        public String activateMethod = "activate method";  /* 激活方式 */
+        public String meleeSnakeScrollKey = "melee snake scroll key";  /* 近战零食滚轮键 */
+        public String triggerInterval = "trigger interval(ms)";
+    }
+
+    /* 快速零食 */
     @Data
     public static class QuickSnake {
         public String title = "quick snake";
@@ -68,6 +97,7 @@ public class ExtendedI18n implements InternalI18n {
         public String weaponWheelKey = "weapon wheel key";
     }
 
+    /* AD摇 */
     @Data
     public static class ADSwing {
         public String title = "AD swing";
@@ -76,6 +106,12 @@ public class ExtendedI18n implements InternalI18n {
         public String triggerInterval = "trigger interval(ms)";
         public String moveLeftKey = "move left key";
         public String moveRightKey = "move right key";
+    }
+
+    /* 应用配置 */
+    public static class Config {
+        public String title = "App Configuration";
+        public String header = "Configure GTAV OPS!";
     }
 
 //    @Data

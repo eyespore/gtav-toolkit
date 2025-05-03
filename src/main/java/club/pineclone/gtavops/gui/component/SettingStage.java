@@ -92,6 +92,15 @@ public abstract class SettingStage {
         return hBox;
     }
 
+    protected HBox createDivider(String intro) {
+        HBox hBox = getBaseConfigContent(new Insets(30, 7, 0, 20));
+        hBox.setPrefHeight(70);
+        Region spacer = getSpacer();
+        ThemeLabel label = new ThemeLabel(intro);
+        hBox.getChildren().addAll(label, spacer);
+        return hBox;
+    }
+
     protected HBox createSlider(String intro, ForkedSlider slider) {
         HBox hBox = getBaseConfigContent(new Insets(24, 7, 0, 20));
         hBox.setPrefHeight(70);
@@ -135,6 +144,11 @@ public abstract class SettingStage {
 
         public ContentBuilder slider(String intro, ForkedSlider slider) {
             items.add(createSlider(intro, slider));
+            return this;
+        }
+
+        public ContentBuilder divider(String intro) {
+            items.add(createDivider(intro));
             return this;
         }
 

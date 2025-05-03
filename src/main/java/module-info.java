@@ -23,5 +23,7 @@ module club.pineclone.gtavops {
     exports club.pineclone.gtavops.macro.action;
     exports club.pineclone.gtavops.config;
     exports club.pineclone.gtavops.i18n;
-    exports club.pineclone.gtavops.macro.robot;
+    exports club.pineclone.gtavops.macro.action.robot;
+    exports club.pineclone.gtavops.macro.trigger.source;
+    exports club.pineclone.gtavops.macro.trigger.policy;
 }

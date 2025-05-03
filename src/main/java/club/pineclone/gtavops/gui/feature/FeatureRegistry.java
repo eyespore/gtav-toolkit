@@ -12,6 +12,7 @@ public class FeatureRegistry extends AbstractRegistry<FeatureTogglePane> {
         instance.registry.add(new _01SwapGlitchFeatureTogglePane());
         instance.registry.add(new _02QuickSnakeFeatureTogglePane());
         instance.registry.add(new _03ADSwingFeatureTogglePane());
+        instance.registry.add(new _04MeleeGlitchFeatureTogglePane());
     }
 
     private FeatureRegistry() {}

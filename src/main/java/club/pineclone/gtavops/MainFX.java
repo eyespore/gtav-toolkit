@@ -1,7 +1,7 @@
 package club.pineclone.gtavops;
 
 import club.pineclone.gtavops.config.ConfigHolder;
-import club.pineclone.gtavops.gui.feature.MacroManager;
+import club.pineclone.gtavops.gui.feature.FeaturePaneInitializer;
 import club.pineclone.gtavops.gui.forked.ForkedAlert;
 import club.pineclone.gtavops.gui.forked.ForkedDialog;
 import club.pineclone.gtavops.gui.forked.ForkedDialogButton;
@@ -27,7 +27,6 @@ import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.ui.stage.VStageInitParams;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.*;
@@ -87,7 +86,7 @@ public class MainFX extends Application {
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());  /* 停止jnativehook日志记录 */
         logger.setLevel(Level.OFF);
         logger.setUseParentHandlers(false);
-        MacroManager.getInstance().enable();  /* 启用宏引擎 */
+        FeaturePaneInitializer.getInstance().enable();  /* 启用宏引擎 */
 
         VStage vStage = new VStage(primaryStage) {
             @Override
@@ -262,7 +261,7 @@ public class MainFX extends Application {
 
     @Override
     public void stop() throws Exception {
-        MacroManager.getInstance().disable();  /* 停止宏引擎 */
+        FeaturePaneInitializer.getInstance().disable();  /* 停止宏引擎 */
         ActionTaskManager.shutdown();  /* 停止任务调度 */
         ConfigHolder.save();  /* 保存配置 */
     }

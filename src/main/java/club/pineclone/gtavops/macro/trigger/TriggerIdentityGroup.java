@@ -1,7 +1,5 @@
 package club.pineclone.gtavops.macro.trigger;
 
-import club.pineclone.gtavops.macro.TriggerIdentity;
-
 import java.util.Objects;
 import java.util.Set;
 

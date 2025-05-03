@@ -17,22 +17,27 @@ import javafx.scene.text.FontWeight;
 
 public class _01IntroScene extends SceneTemplate {
 
+    ExtendedI18n i18n;
+    ExtendedI18n.Intro iI18n;
+
     public _01IntroScene() {
         super(VSceneRole.MAIN);
+        i18n = I18nHolder.get();
+        iI18n = i18n.intro;
+
         enableAutoContentWidthHeight();
         setBackgroundImage(ImageUtils.loadImage("/img/bg1.png"));
 
-        ExtendedI18n i18n = I18nHolder.get();
         var vBox = new VBox(
-                new ThemeLabel(i18n.introSceneHeader) {{
+                new ThemeLabel(iI18n.header) {{
                     FontManager.get().setFont(this, settings -> settings.setSize(40));
                 }},
                 new VPadding(10),
-                new ThemeLabel(i18n.versionLabel + ConfigHolder.APPLICATION_VERSION) {{
+                new ThemeLabel(iI18n.versionLabel + ConfigHolder.APPLICATION_VERSION) {{
                     FontManager.get().setFont(this, settings -> settings.setSize(28));
                 }},
                 new VPadding(10),
-                new ThemeLabel(i18n.acknowledgement) {{
+                new ThemeLabel(iI18n.acknowledgement) {{
                     FontManager.get().setFont(this, settings -> settings.setSize(30).setWeight(FontWeight.BOLD));
                 }}
         ) {{
@@ -46,6 +51,6 @@ public class _01IntroScene extends SceneTemplate {
 
     @Override
     public String getTitle() {
-        return I18nHolder.get().introSceneTitle;
+        return I18nHolder.get().intro.title;
     }
 }

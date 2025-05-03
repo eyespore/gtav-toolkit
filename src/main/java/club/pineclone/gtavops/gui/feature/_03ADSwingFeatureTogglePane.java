@@ -9,11 +9,11 @@ import club.pineclone.gtavops.gui.forked.ForkedKeyChooser;
 import club.pineclone.gtavops.gui.forked.ForkedSlider;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.i18n.I18nHolder;
-import club.pineclone.gtavops.macro.TriggerBindings;
-import club.pineclone.gtavops.macro.TriggerFactory;
-import club.pineclone.gtavops.macro.TriggerIdentity;
+import club.pineclone.gtavops.macro.SimpleMacro;
+import club.pineclone.gtavops.macro.trigger.TriggerFactory;
+import club.pineclone.gtavops.macro.trigger.TriggerIdentity;
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.adswing.ADSwingAction;
+import club.pineclone.gtavops.macro.action.adswing.ADSwingAction;
 import club.pineclone.gtavops.macro.trigger.Trigger;
 import club.pineclone.gtavops.macro.trigger.TriggerMode;
 import io.vproxy.vfx.entity.input.Key;
@@ -25,7 +25,7 @@ public class _03ADSwingFeatureTogglePane extends FeatureTogglePane {
     ExtendedI18n i18n;
     ExtendedI18n.ADSwing adwI18n;
 
-    private TriggerBindings bindings;
+    private SimpleMacro bindings;
 
     public _03ADSwingFeatureTogglePane() {
         this.config = ConfigHolder.get();
@@ -44,12 +44,12 @@ public class _03ADSwingFeatureTogglePane extends FeatureTogglePane {
     protected void activate() {
         Trigger trigger = buildTrigger();
         Action action = buildAction();
-        bindings = new TriggerBindings(trigger, action);
+        bindings = new SimpleMacro(trigger, action);
         bindings.install();
     }
 
     private Trigger buildTrigger() {
-        TriggerMode mode = adwConfig.activateMethod == 0 ? TriggerMode.TOGGLE : TriggerMode.HOLD;  /* 激活模式 切换执行 or 按住执行 */
+        TriggerMode mode = adwConfig.activateMethod == 0 ? TriggerMode.HOLD : TriggerMode.TOGGLE;  /* 激活模式 切换执行 or 按住执行 */
         Key activatekey = adwConfig.activatekey;  /* 激活热键 */
         return TriggerFactory.getTrigger(new TriggerIdentity(activatekey, mode));  /* 触发器 */
     }
@@ -87,8 +87,8 @@ public class _03ADSwingFeatureTogglePane extends FeatureTogglePane {
         private static final int FLAG_WITH_ALL = FLAG_WITH_KEY_AND_MOUSE | ForkedKeyChooser.FLAG_WITH_WHEEL_SCROLL;
 
         private final OptionalButton activateMethodBtn = new OptionalButton() {{
-            addOptionalItem(i18n.toggle);
             addOptionalItem(i18n.hold);
+            addOptionalItem(i18n.toggle);
         }};
         private final KeyChooseButton activateKeyBtn = new KeyChooseButton(FLAG_WITH_ALL);
         private final KeyChooseButton moveLeftKeyBtn = new KeyChooseButton();

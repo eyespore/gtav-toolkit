@@ -76,11 +76,11 @@ public abstract class FeatureTogglePane {
                 SettingStage settingStage = FeatureTogglePane.this.getSettingStage();
                 if (settingStage == null) return;
 
-                MacroManager.getInstance().disable();  // 禁用宏，启用设置
+                FeaturePaneInitializer.getInstance().disable();  // 禁用宏，启用设置
                 settingStage.init();  // 设置页面初始化
                 settingStage.showAndWait();  // 展示设置页面
                 settingStage.stop();
-                MacroManager.getInstance().enable();  // 重新启用宏
+                FeaturePaneInitializer.getInstance().enable();  // 重新启用宏
             }
         }
     }
@@ -108,14 +108,14 @@ public abstract class FeatureTogglePane {
     protected abstract void deactivate();
 
     /**
-     * 功能上下文初始化，{@link MacroManager}会在应用初始化阶段对{@link FeatureRegistry}
+     * 功能上下文初始化，{@link FeaturePaneInitializer}会在应用初始化阶段对{@link FeatureRegistry}
      * 注册表当中注册的所有宏功能类进行遍历，逐个调用此方法，进行初始化和激活
      *
      */
     public abstract void init();
 
     /**
-     * 功能上下文停止，{@link MacroManager}会在停止阶段对注册表当中注册的功能逐个调用此方法，以在用户进行功能设置、应用退出
+     * 功能上下文停止，{@link FeaturePaneInitializer}会在停止阶段对注册表当中注册的功能逐个调用此方法，以在用户进行功能设置、应用退出
      * 之前正确的关闭宏功能，避免一些问题出现
      */
     public abstract void stop();

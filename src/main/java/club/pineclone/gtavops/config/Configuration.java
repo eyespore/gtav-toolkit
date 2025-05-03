@@ -6,7 +6,6 @@ import io.vproxy.vfx.entity.input.MouseWheelScroll;
 import javafx.scene.input.MouseButton;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +14,7 @@ public class Configuration {
     public SwapGlitch swapGlitch = new SwapGlitch();
     public QuickSnake quickSnake = new QuickSnake();
     public ADSwing adSwing = new ADSwing();
+    public MeleeGlitch meleeGlitch = new MeleeGlitch();  /* 近战偷速 */
 
     /* 游戏热键 */
 //    @Data
@@ -26,16 +26,19 @@ public class Configuration {
     @Data
     public static class SwapGlitch {
         public boolean enable = false;  /* 是否启用 */
-        public double swapInterval = 50.0;  /* 切枪间隔 */
+        public double triggerInterval = 50.0;  /* 切枪间隔 */
         public Key activatekey = new Key(MouseButton.BACK);  /* 激活热键 */
         public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
         public boolean enableSwapMelee = false;  /* 进入偷速切换近战 */
         public double postSwapMeleeDelay = 120.0;  /* 切换近战武器后等待时间 */
         public boolean enableSwapRanged = false;  /* 解除偷速切换远程 */
 
-        public Key weaponWheelKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.DOWN));  /* 武器轮盘 */
+        public Key targetWeaponWheelKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.DOWN));  /* 武器轮盘 */
         public Key meleeWeaponKey = new Key(KeyCode.Q);  /* 近战武器 */
         public Key rangedWeaponKey = new Key(KeyCode.KEY_1);  /* 远程武器 */
+
+        public boolean enableSafetyWeaponWheel = false;
+        public Key safetyWeaponWheelKey = new Key(KeyCode.TAB);
     }
 
     /* 回血增强 */
@@ -57,6 +60,15 @@ public class Configuration {
         public Key activatekey = new Key(MouseButton.MIDDLE);
         public Key moveLeftKey = new Key(KeyCode.A);
         public Key moveRightKey = new Key(KeyCode.D);
+    }
+
+    @Data
+    public static class MeleeGlitch {
+        public boolean enable = false;
+        public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
+        public double triggerInterval = 20.0;
+        public Key meleeSnakeScrollKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.UP));
+        public Key activatekey = new Key(KeyCode.C);
     }
 
 }

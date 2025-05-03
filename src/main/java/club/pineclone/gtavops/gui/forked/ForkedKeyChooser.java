@@ -118,9 +118,12 @@ public class ForkedKeyChooser extends VDialog<Key> {
                     return; // ignore numpad
                 }
                 key = new Key(KeyCode.valueOf(e.getKeyCode()));
+                if (!key.isValid()) key = null;
             }
+
+            Key finalKey = key;
             Platform.runLater(() -> {
-                ForkedKeyChooser.this.returnValue = key;
+                ForkedKeyChooser.this.returnValue = finalKey;
                 ForkedKeyChooser.this.getStage().close();
             });
         }
