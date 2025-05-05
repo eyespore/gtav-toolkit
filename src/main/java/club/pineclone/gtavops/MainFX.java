@@ -7,16 +7,16 @@ import club.pineclone.gtavops.gui.forked.ForkedDialog;
 import club.pineclone.gtavops.gui.forked.ForkedDialogButton;
 import club.pineclone.gtavops.gui.scene.SceneRegistry;
 import club.pineclone.gtavops.gui.scene.SceneTemplate;
-import club.pineclone.gtavops.gui.theme.ExtendedFontUsages;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.i18n.I18nHolder;
 import club.pineclone.gtavops.macro.action.ActionTaskManager;
 import club.pineclone.gtavops.utils.ImageUtils;
 import club.pineclone.gtavops.utils.JLibLocator;
+import club.pineclone.gtavops.utils.PathUtils;
+import club.pineclone.gtavops.utils.SingletonLock;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import io.vproxy.base.util.LogType;
 import io.vproxy.vfx.control.globalscreen.GlobalScreenUtils;
-import io.vproxy.vfx.manager.font.FontManager;
 import io.vproxy.vfx.manager.task.TaskManager;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
@@ -28,6 +28,7 @@ import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.ui.stage.VStageInitParams;
 import io.vproxy.vfx.util.FXUtils;
+import io.vproxy.vpacket.dns.rdata.A;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -51,45 +52,68 @@ public class MainFX extends Application {
 
     private final List<SceneTemplate> mainScenes = new ArrayList<>();
     private VSceneGroup sceneGroup;
+
     private Exception configLoadException = null;  /* 配置加载异常 */
+    private Exception appHomeInitException = null;  /* 应用家目录初始化异常 */
+    private Exception i18nInitException = null;
+    private Exception duplicatedAppInstanceException = null;
+
     private FusionPane navigatePane;
     private List<FusionButton> navigatorButtons;
 
-    @Override
-    public void start(Stage primaryStage) throws ClassNotFoundException {
+    private void handleConfigLoadException() {
         ExtendedI18n i18n = I18nHolder.get();
-        ExtendedI18n.Intro iI18n = i18n.intro;
-
-
+        /* 存在配置文件加载错误 */
         if (configLoadException != null) {
-            var dialog = new ForkedDialog<Integer>(new VStage(
-                    new VStageInitParams().setIconifyButton(false).setMaximizeAndResetButton(false)
-            ));
-
-            dialog.setText(MessageFormat.format(i18n.configFileLoadFailed, configLoadException.getMessage()));
-            dialog.setButtons(Arrays.asList(
-                    new ForkedDialogButton<>(i18n.confirm, 1),
-                    new ForkedDialogButton<>(i18n.cancel, 0)
-            ));
-
-            dialog.getVStage().getStage().initModality(Modality.APPLICATION_MODAL);
+            ForkedDialog<Integer> dialog = ForkedDialog.stackTraceDialog(i18n.configFileLoadFailed, configLoadException);
             Optional<Integer> result = dialog.showAndWait();
-
-            if (result.isPresent() && result.get() == 1) {
-                /* 重载配置文件 */
-                try {
+            if (result.filter(i -> i == ForkedDialog.CONFIRM).isPresent()) {
+                try {  /* 尝试重载配置文件 */
                     ConfigHolder.overrideConfigToDefault();
                 } catch (IOException e2) {
-                    ForkedAlert.showAndWait(Alert.AlertType.WARNING,
-                            MessageFormat.format(i18n.configStillLoadFailed, e2.getMessage()));
-                    io.vproxy.base.util.Logger.info(LogType.ALERT, "However program throws another exception");
+                    ForkedDialog.stackTraceDialog(i18n.configStillLoadFailed, e2, ForkedDialog.CONFIRM).showAndWait();
                     System.exit(1);  /* 第二次抛出异常则退出程序 */
                 }
-            } else {
-                io.vproxy.base.util.Logger.info(LogType.ALERT, "user cancel config overriding");
+            } else {  /* 用户取消加载配置文件 */
                 System.exit(1);
             }
         }
+    }
+
+    private void handleI18nInitException() {
+        /* 存在配置文件加载错误 */
+        if (i18nInitException != null) {
+            ForkedDialog<Integer> dialog = ForkedDialog.stackTraceDialog(i18nInitException, ForkedDialog.CONFIRM);
+            dialog.showAndWait();
+            System.exit(1);  /* 本地化文件加载错误直接退出 */
+        }
+    }
+
+    private void handleAppHomeInitException() {
+        if (appHomeInitException != null) {
+            ForkedDialog<Integer> dialog = ForkedDialog.stackTraceDialog(appHomeInitException, ForkedDialog.CONFIRM);
+            dialog.showAndWait();
+            System.exit(1);  /* 家目录初始化失败直接退出 */
+        }
+    }
+
+    private void handleSingletonLockAcquireException() {
+        if (duplicatedAppInstanceException != null) {
+            ForkedDialog<Integer> dialog = ForkedDialog.stackTraceDialog(duplicatedAppInstanceException, ForkedDialog.CONFIRM);
+            dialog.showAndWait();
+            System.exit(1);  /* 家目录初始化失败直接退出 */
+        }
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws ClassNotFoundException {
+        handleI18nInitException();  /* 处理本地化加载失败 */
+        handleSingletonLockAcquireException();  /* 处理单例失败 */
+        handleAppHomeInitException();  /* 处理家目录初始化失败 */
+        handleConfigLoadException();  /* 处理配置文件错误 */
+
+        ExtendedI18n i18n = I18nHolder.get();
+        ExtendedI18n.Intro iI18n = i18n.intro;
 
         Class.forName(ActionTaskManager.class.getName());  /* 任务调度 */
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());  /* 停止jnativehook日志记录 */
@@ -212,8 +236,8 @@ public class MainFX extends Application {
         menuBtn.setOnAction(e -> vStage.getRootSceneGroup().show(menuScene, VSceneShowMethod.FROM_LEFT));
         vStage.getRoot().getContentPane().getChildren().add(menuBtn);
 
-        vStage.getStage().setWidth(1300);
-        vStage.getStage().setHeight(820);
+        vStage.getStage().setWidth(1200);
+        vStage.getStage().setHeight(700);
         vStage.getStage().getIcons().add(ImageUtils.loadImage("/img/favicon.png"));
         vStage.getStage().centerOnScreen();
         vStage.getStage().show();
@@ -243,7 +267,7 @@ public class MainFX extends Application {
                 SceneTemplate newScene = mainScenes.get(index);
                 sceneGroup.show(newScene, method);
 
-                PauseTransition pause = new PauseTransition(Duration.millis(500));
+                PauseTransition pause = new PauseTransition(Duration.millis(400));
                 pause.setOnFinished(e2 -> {
                     isSwitch = false;
                     for (int i = 0; i < navigatorButtons.size(); i++) {
@@ -255,24 +279,37 @@ public class MainFX extends Application {
         }};
     }
 
-
     @Override
     public void init() throws Exception {
-        Class.forName(JLibLocator.class.getName());  /* 本地库 */
-
         try {
             I18nHolder.load();  /* 初始化本地化 */
         } catch (IOException e) {
-            io.vproxy.base.util.Logger.error(LogType.SYS_ERROR, "i18n file load filed");
-            throw e;
+            i18nInitException = e;  /* i18n文件错误 */
+            return;
+        }
+
+        /* 获取单例锁 */
+        boolean flag = SingletonLock.lockInstance();
+        if (!flag) {
+            /* 程序已经在运行 */
+            duplicatedAppInstanceException = new RuntimeException(I18nHolder.get().duplicatedAppInstanceRunning);
+            return;
+        }
+
+        Class.forName(JLibLocator.class.getName());  /* 加载本地库 */
+
+        try {
+            PathUtils.initAppHome();
+        } catch (IOException e) {
+            appHomeInitException = e;  /* 应用家目录初始化异常 */
+            return;
         }
 
         try {
             ConfigHolder.load();
         } catch (IOException e) {
-            /* 配置初始化异常 */
-            configLoadException = e;
-            io.vproxy.base.util.Logger.error(LogType.SYS_ERROR, "config file load failed");
+            configLoadException = e;  /* 配置初始化异常 */
+            return;
         }
     }
 

@@ -47,19 +47,25 @@ public class TriggerFactory {
         switch (type) {
             case KEYBOARD -> {
                 return switch (mode) {
-                    case HOLD   -> new SimpleTrigger(new KeySource(key), ActivationPolicy.Hold());
-                    case TOGGLE -> new SimpleTrigger(new KeySource(key), ActivationPolicy.Toggle());
+                    case HOLD   -> new SimpleTrigger(new KeySource(key), ActivationPolicy.hold());
+                    case TOGGLE -> new SimpleTrigger(new KeySource(key), ActivationPolicy.toggle());
+                    case CLICK -> new SimpleTrigger(new KeySource(key), ActivationPolicy.click());
                 };
             }
             case MOUSE_BUTTON -> {
                 return switch (mode) {
-                    case HOLD   -> new SimpleTrigger(new MouseSource(key), ActivationPolicy.Hold());
-                    case TOGGLE -> new SimpleTrigger(new MouseSource(key), ActivationPolicy.Toggle());
+                    case HOLD   -> new SimpleTrigger(new MouseSource(key), ActivationPolicy.hold());
+                    case TOGGLE -> new SimpleTrigger(new MouseSource(key), ActivationPolicy.toggle());
+                    case CLICK -> new SimpleTrigger(new MouseSource(key), ActivationPolicy.click());
                 };
             }
             case SCROLL_WHEEL -> {
                 // 已在 TriggerIdentity 中保证只能与 TOGGLE 组合
-                return new SimpleTrigger(new ScrollSource(key), ActivationPolicy.Toggle());
+                return switch (mode) {
+                    case TOGGLE -> new SimpleTrigger(new ScrollSource(key), ActivationPolicy.toggle());
+                    case CLICK -> new SimpleTrigger(new ScrollSource(key), ActivationPolicy.click());
+                    default -> throw new IllegalStateException("Unexpected value: " + mode);
+                };
             }
             default -> throw new IllegalArgumentException("Unsupported TriggerType: " + type);
         }

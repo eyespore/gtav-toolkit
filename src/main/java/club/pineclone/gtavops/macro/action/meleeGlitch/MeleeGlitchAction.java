@@ -1,5 +1,6 @@
 package club.pineclone.gtavops.macro.action.meleeGlitch;
 
+import club.pineclone.gtavops.macro.action.ActionEvent;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
@@ -18,7 +19,7 @@ public class MeleeGlitchAction extends ScheduledAction {
     }
 
     @Override
-    public void schedule() throws Exception {
+    public void schedule(ActionEvent event) throws Exception {
         robot.simulate(meleeSnakeScrollKey);
     }
 }

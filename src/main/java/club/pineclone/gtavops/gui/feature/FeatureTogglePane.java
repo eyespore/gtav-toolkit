@@ -32,10 +32,10 @@ public abstract class FeatureTogglePane {
         HBox hBox = new HBox(0);
         hBox.setPadding(new Insets(12, 22, 0, 5));
         hBox.getChildren().addAll(intro, spacer, toggle.getNode());
-        hBox.setPrefWidth(300);
+        hBox.setPrefWidth(260);
 
         FusionPane pane = new FusionPane();
-        pane.getNode().setPrefWidth(300);
+        pane.getNode().setPrefWidth(260);
         pane.getNode().setPrefHeight(75);
         pane.getContentPane().getChildren().add(hBox);
 

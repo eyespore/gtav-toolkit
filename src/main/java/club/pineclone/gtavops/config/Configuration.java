@@ -15,6 +15,7 @@ public class Configuration {
     public QuickSnake quickSnake = new QuickSnake();
     public ADSwing adSwing = new ADSwing();
     public MeleeGlitch meleeGlitch = new MeleeGlitch();  /* 近战偷速 */
+    public BetterMMenu betterMMenu = new BetterMMenu();  /* 更好的M菜单 */
 
     /* 游戏热键 */
 //    @Data
@@ -41,6 +42,7 @@ public class Configuration {
 
         public boolean enableSafetyWeaponWheel = false;
         public Key safetyWeaponWheelKey = new Key(KeyCode.TAB);
+        public double safetyWeaponWheelDuration = 500.0;  /* 安全轮盘有效期 */
     }
 
     /* 回血增强 */
@@ -71,6 +73,15 @@ public class Configuration {
         public double triggerInterval = 20.0;
         public Key meleeSnakeScrollKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.UP));
         public Key activatekey = new Key(KeyCode.C);
+    }
+
+    @Data
+    public static class BetterMMenu {
+        public boolean enable = false;  /* 是否启用 */
+        public Key menuKey = new Key(KeyCode.M);
+        public double arrowKeyInterval = 20.0;
+        public double enterKeyInterval = 20.0;
+        public Key startEngineKey = new Key(MouseButton.FORWARD);
     }
 
 }

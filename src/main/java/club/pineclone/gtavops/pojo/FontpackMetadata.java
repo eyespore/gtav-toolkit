@@ -29,8 +29,8 @@ public class FontpackMetadata {
         ExtendedI18n i18n = I18nHolder.get();
         ExtendedI18n.FontPack fpI18n = i18n.fontPack;
         return switch (type) {
-            case 0 -> fpI18n.legacy;
-            case 1 -> fpI18n.enhanced;
+            case 0 -> i18n.legacy;
+            case 1 -> i18n.enhanced;
             default -> i18n.unknown;
         };
     }
@@ -44,6 +44,23 @@ public class FontpackMetadata {
     public String formatEnabled() {
         ExtendedI18n i18n = I18nHolder.get();
         return enabled ? i18n.enabled : i18n.disabled;
+    }
+
+    public String formatSize() {
+        return formatBytes(size);
+    }
+
+    private String formatBytes(long bytes) {
+        final String[] units = {"B", "KB", "MB", "GB", "TB"};
+        double size = bytes;
+        int unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return String.format("%.2f %s", size, units[unitIndex]);
     }
 
 }

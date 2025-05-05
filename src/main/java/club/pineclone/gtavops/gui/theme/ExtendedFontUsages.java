@@ -9,6 +9,4 @@ public class ExtendedFontUsages {
 
     public static FontUsage textField = new FontUsage() {};
 
-    public static FontUsage activeText = new FontUsage() {};
-
 }

@@ -89,19 +89,19 @@ public class _03FontPackScene extends SceneTemplate {
         }};
         pathLabelContent.getChildren().addAll(pathLabel, gameHomeChooseBtn);
         pathLabelContent.setAlignment(Pos.CENTER);
-        pathLabelContent.setLayoutY(40);
+        pathLabelContent.setLayoutY(10);
         FXUtils.observeWidthCenter(getContentPane(), pathLabelContent);
 
         /* CREATE TABLE */
         table = new VTableView<>();
         table.getNode().setPrefWidth(1000);
-        table.getNode().setPrefHeight(540);
+        table.getNode().setPrefHeight(480);
 
 //        var idCol = new ForkedTableColumn<FontPackMetadata, Object>("id", data -> data.id);
         var nameCol = new ForkedTableColumn<FontpackMetadata, FontpackMetadata>(fpI18n.name, Function.identity());
         var enabledCol = new ForkedTableColumn<FontpackMetadata, FontpackMetadata>(fpI18n.status, Function.identity());
         var typeCol = new ForkedTableColumn<>(fpI18n.type, FontpackMetadata::formatType);
-        var sizeCol = new ForkedTableColumn<>(fpI18n.size, FontpackMetadata::getSize);
+        var sizeCol = new ForkedTableColumn<>(fpI18n.size, FontpackMetadata::formatSize);
         var createTimeCol = new ForkedTableColumn<>(fpI18n.createAt, FontpackMetadata::formatCreatedAt);
 
 //        idCol.setMinWidth(300);
@@ -146,7 +146,7 @@ public class _03FontPackScene extends SceneTemplate {
         enabledCol.setNodeBuilder(data -> {
             var textField = new ThemeLabel(data.formatEnabled());
             if (data.getEnabled()) {
-                textField.setStyle("-fx-text-fill: #de23de");
+                textField.setStyle("-fx-text-fill: lightblue");
             }
             return textField;
         });
@@ -155,7 +155,7 @@ public class _03FontPackScene extends SceneTemplate {
         typeCol.setComparator(String::compareTo);
 
         sizeCol.setAlignment(Pos.CENTER);
-        sizeCol.setComparator(Long::compareTo);
+        sizeCol.setComparator(String::compareTo);
 
         createTimeCol.setMinWidth(250);
         createTimeCol.setAlignment(Pos.CENTER);
@@ -176,59 +176,54 @@ public class _03FontPackScene extends SceneTemplate {
 
                 if (config.gameHome == null || config.gameHome.isEmpty()) {
                     /* 目录不存在，提醒用户选择目录 */
+                    ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog(
+                            fpI18n.emptyGameHomeAlert, Modality.APPLICATION_MODAL
+                    );
+                    Optional<Integer> result = dialog.showAndWait();
+                    if (result.filter(i -> i == ForkedDialog.CANCEL).isPresent()) return;
+
                     boolean flag = selectGameHome();
                     if (!flag) return;  /* 选择路径失败 */
                 }
 
-                ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog();
-                dialog.getVStage().getStage().initModality(Modality.APPLICATION_MODAL);
-                dialog.setText(MessageFormat.format(fpI18n.confirmActivateFontpack, selected.getName()));
+                ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog(
+                        MessageFormat.format(fpI18n.confirmActivateFontpack, selected.getName()),
+                        Modality.APPLICATION_MODAL
+                );
 
-                /* 路径选择成功，尝试替换文件 */
-                Path source = PathUtils.getFontpacksBaseDirPath().resolve(selected.getId()).resolve("update.rpf");
-                Path target = Path.of(config.gameHome).resolve("update").resolve("update.rpf");
+                /* 询问用户是否激活字体包 */
+                Optional<Integer> result = dialog.showAndWait();
+                if (result.filter(i -> i == ForkedDialog.CONFIRM).isPresent()) {
 
-                try {
+                    /* 用户选择激活字体包，尝试激活字体包 */
+                    Path source = PathUtils.getFontpacksBaseDirPath().resolve(selected.getId()).resolve("update.rpf");
+                    Path target = Path.of(config.gameHome).resolve("update").resolve("update.rpf");
+
+                    try {
 //                    Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-                    asyncCopy(source, target, new Callback<>() {
-                        @Override
-                        protected void onSucceeded(Void unused) {
-                            FXUtils.runDelay(20, () ->
-                                    ForkedAlert.showAndWait(Alert.AlertType.INFORMATION, fpI18n.importSuccess));
+                        asyncCopy(source, target, new Callback<>() {
+                            @Override
+                            protected void onSucceeded(Void unused) {
+                                FXUtils.runDelay(20, () ->
+                                        ForkedAlert.showAndWait(Alert.AlertType.INFORMATION, fpI18n.importSuccess));
 
-                            /*拷贝成功 变更状态 */
-                            List<FontpackMetadata> result = fontpackService.listFontPacksByCondition(FontpackMetadata.builder().enabled(true).build());
-                            result.forEach(f -> {
-                                f.setEnabled(false);
-                                try {
-                                    fontpackService.updateFontPack(f);
-                                } catch (IOException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
-                            selected.setEnabled(true);
-                            try {
-                                fontpackService.updateFontPack(selected);  /* 改激活状态 */
-                                refreshTable();
-
-                            } catch (IOException ex) {
-                                StackTraceAlert.showAndWait(ex);
+                                /*拷贝成功 变更状态 */
+                                updateAsEnableFontpack(selected);
                             }
-                        }
 
-                        @Override
-                        protected void onFailed(LoadingFailure loadingFailure) {
-                            FXUtils.runDelay(20, () ->
-                                    ForkedAlert.showAndWait(Alert.AlertType.ERROR, loadingFailure.getMessage()));
-                            StackTraceAlert.showAndWait(loadingFailure.getCause());
-                        }
-                    }, () -> {});
+                            @Override
+                            protected void onFailed(LoadingFailure loadingFailure) {
+                                FXUtils.runDelay(20, () ->
+                                        ForkedAlert.showAndWait(Alert.AlertType.ERROR, loadingFailure.getMessage()));
+                                StackTraceAlert.showAndWait(loadingFailure.getCause());
+                            }
+                        }, () -> {});
 
-                } catch (IOException ex) {
-                    /* 拷贝失败 */
-                    StackTraceAlert.showAndWait(ex);
-                    Logger.error(LogType.FILE_ERROR, ex.getMessage());
+                    } catch (IOException ex) {
+                        /* 拷贝失败 */
+                        StackTraceAlert.showAndWait(ex);
+                        Logger.error(LogType.FILE_ERROR, ex.getMessage());
+                    }
                 }
             });
             setPrefWidth(120);
@@ -278,13 +273,13 @@ public class _03FontPackScene extends SceneTemplate {
                         }
 
                         /* 询问用户是否删除 */
-                        ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog();
-                        dialog.getVStage().getStage().initModality(Modality.APPLICATION_MODAL);
-                        dialog.setText(MessageFormat.format(fpI18n.confirmRemoveFontpack, selected.getName()));
-
+                        ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog(
+                                MessageFormat.format(fpI18n.confirmRemoveFontpack, selected.getName()),
+                                Modality.APPLICATION_MODAL
+                        );
                         Optional<Integer> result = dialog.showAndWait();
 
-                        if (result.filter(i -> i == 1).isPresent()) {
+                        if (result.filter(i -> i == ForkedDialog.CONFIRM).isPresent()) {
                             try {
                                 boolean flag = fontpackService.deleteFontPack(selected.getId());
                                 if (flag) {
@@ -304,10 +299,32 @@ public class _03FontPackScene extends SceneTemplate {
 
         HBox hbox = new HBox(table.getNode(), new HPadding(10), controlPane.getNode());
         FXUtils.observeWidthCenter(getContentPane(), hbox);
-        hbox.setLayoutY(140);
+        hbox.setLayoutY(100);
 
         getContentPane().getChildren().addAll(pathLabelContent, hbox);
         refreshTable();  /* 刷新列表 */
+    }
+
+    /* 将selected设置为激活状态，同时协调其他的字体包状态 */
+    private void updateAsEnableFontpack(FontpackMetadata selected) {
+        List<FontpackMetadata> result = fontpackService.listFontPacksByCondition(FontpackMetadata.builder().enabled(true).build());
+        result.forEach(f -> {
+            f.setEnabled(false);
+            try {
+                fontpackService.updateFontPack(f);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        selected.setEnabled(true);
+        try {
+            fontpackService.updateFontPack(selected);  /* 改激活状态 */
+            refreshTable();
+
+        } catch (IOException ex) {
+            StackTraceAlert.showAndWait(ex);
+        }
     }
 
     private boolean selectGameHome() {
@@ -333,14 +350,13 @@ public class _03FontPackScene extends SceneTemplate {
         /* 检查是否存在原始字体包 */
         if (Files.exists(originalFontpack)) {
             /* 存在原始字体包，询问是否保存 */
-            ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog();
-            dialog.setText(MessageFormat.format(fpI18n.fontpackExisted,
-                    originalFontpack.toAbsolutePath().toString()));
+            ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog(
+                    MessageFormat.format(fpI18n.fontpackExisted, originalFontpack.toAbsolutePath().toString()),
+                    Modality.APPLICATION_MODAL
+            );
 
-            dialog.getVStage().getStage().initModality(Modality.APPLICATION_MODAL);
             Optional<Integer> result = dialog.showAndWait();
-
-            if (result.filter(i -> i == 1).isPresent()) {
+            if (result.filter(i -> i == ForkedDialog.CONFIRM).isPresent()) {
                 /* 用户确认保存字体包，键入字体包名称 */
                 Optional<String> fontpackName = readFontpackNameFromUser();
                 fontpackName.ifPresent(s -> createFontpack(s, true, originalFontpack));
@@ -352,13 +368,13 @@ public class _03FontPackScene extends SceneTemplate {
     }
 
     private Optional<String> readFontpackNameFromUser() {
-        ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog();
+        ForkedDialog<Integer> dialog = ForkedDialog.confirmDialog(Modality.APPLICATION_MODAL);
 
         dialog.getVStage().getStage().setWidth(600);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");;
         String defaultFontpackName = fpI18n.defaultNaming + ZonedDateTime.now().format(formatter);
 
-        HBox content = dialog.getContent();
+        HBox content = dialog.getBody();
         content.setAlignment(Pos.CENTER_LEFT);
 
         ThemeLabel fontpackNameLabel = new ThemeLabel(fpI18n.fontpackName + ": ");
@@ -372,10 +388,8 @@ public class _03FontPackScene extends SceneTemplate {
                 fontpackNameLabel,
                 fontpackTextField);
 
-        dialog.getVStage().getStage().initModality(Modality.APPLICATION_MODAL);
         Optional<Integer> result = dialog.showAndWait();
-
-        if (result.filter(i -> i == 1).isPresent()) {
+        if (result.filter(i -> i == ForkedDialog.CONFIRM).isPresent()) {
             String fontpackName = fontpackTextField.getText();
 
             if (fontpackName == null || fontpackName.trim().isEmpty()) {
@@ -388,7 +402,8 @@ public class _03FontPackScene extends SceneTemplate {
 
     private void createFontpack(String name, boolean enabled, Path source) {
         try {
-            FontpackMetadata newFontpack = fontpackService.createFontPack(name, enabled,"", 0);  /* 将信息写入数据库 */
+            long size = source.toFile().length();
+            FontpackMetadata newFontpack = fontpackService.createFontPack(name, enabled,"", 0, size);  /* 将信息写入数据库 */
             Path target = PathUtils.getFontpacksBaseDirPath().resolve(newFontpack.getId()).resolve("update.rpf");  /* 拷贝文件到目标目录 */
 //            Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);  /* 将文件拷贝到目标目录 */
             asyncCopy(source, target, new Callback<>() {
@@ -396,7 +411,7 @@ public class _03FontPackScene extends SceneTemplate {
                 protected void onSucceeded(Void unused) {
                     FXUtils.runDelay(20, () ->
                             ForkedAlert.showAndWait(Alert.AlertType.INFORMATION, fpI18n.importSuccess));
-                    table.getItems().add(newFontpack);  /* 创建完成，添加记录到表格 */
+                    updateAsEnableFontpack(newFontpack);
                 }
 
                 @Override

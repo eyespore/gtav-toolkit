@@ -29,7 +29,7 @@ public class TriggerIdentity {
             case SCROLL_WHEEL -> {
                 // 确保滚轮仅仅能和Toggle组合，无法和Hold组合
                 if (key.scroll != null && key.key == null && key.button == null) {
-                    if (mode != TriggerMode.TOGGLE) {
+                    if (mode == TriggerMode.HOLD) {
                         throw new IllegalArgumentException("Mouse wheel can only work with TriggerMode.TOGGLE.");
                     }
                     yield true;

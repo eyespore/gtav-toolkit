@@ -33,11 +33,8 @@ public class ConfigHolder {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         Path configFilePath = PathUtils.getConfigFilePath();
-        Path appHomePath = PathUtils.appHomePath();
-
         if (Files.notExists(configFilePath)) {
             /* 配置不存在，创建默认配置 */
-            Files.createDirectories(appHomePath);  /* 确保应用根目录存在 */
             configuration = new Configuration();  /* 采用默认配置 */
             save();  /* 将配置写入文件 */
         } else {

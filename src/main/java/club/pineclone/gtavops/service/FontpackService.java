@@ -26,7 +26,7 @@ public class FontpackService {
     /**
      * 创建一个新的字体包（分配uuid后建立目录，将字体包元数据存储进入metadata）
      */
-    public FontpackMetadata createFontPack(String name, boolean enabled ,String desc, int type) throws IOException {
+    public FontpackMetadata createFontPack(String name, boolean enabled ,String desc, int type, long size) throws IOException {
         String uuid = UUID.randomUUID().toString();  /* 为新的fontpack生成uuid */
         Path packDir = getFontPackDir(uuid);
 
@@ -34,7 +34,7 @@ public class FontpackService {
             Files.createDirectories(packDir);
         }
 
-        FontpackMetadata meta = FontpackMetadata.builder().id(uuid).name(name).enabled(enabled)
+        FontpackMetadata meta = FontpackMetadata.builder().id(uuid).name(name).enabled(enabled).size(size)
                 .desc(desc).type(type).createAt(System.currentTimeMillis()).build();
         dao.save(meta);
         return meta;

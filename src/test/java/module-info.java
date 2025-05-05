@@ -9,4 +9,5 @@ module club.pineclone.test {
     requires io.vproxy.base;
 
     opens club.pineclone.test.utils;
+    opens club.pineclone.test.context;
 }

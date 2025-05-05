@@ -14,6 +14,7 @@ module club.pineclone.gtavops {
     opens club.pineclone.gtavops;
     opens club.pineclone.gtavops.utils;
     opens club.pineclone.gtavops.pojo;
+    opens club.pineclone.gtavops.context;
 
     exports club.pineclone.gtavops;
     exports club.pineclone.gtavops.utils;
@@ -28,4 +29,5 @@ module club.pineclone.gtavops {
     exports club.pineclone.gtavops.macro.action.robot;
     exports club.pineclone.gtavops.macro.trigger.source;
     exports club.pineclone.gtavops.macro.trigger.policy;
+    exports club.pineclone.gtavops.context;
 }

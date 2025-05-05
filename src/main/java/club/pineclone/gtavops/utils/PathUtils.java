@@ -4,6 +4,7 @@ import com.github.kwhat.jnativehook.NativeSystem;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class PathUtils {
@@ -42,6 +43,16 @@ public class PathUtils {
             throw new IOException("i18n file not found");
         }
         return Path.of(resource.toExternalForm());
+    }
+
+    public static void initAppHome() throws IOException {
+        Path appHomePath = PathUtils.appHomePath();
+        Files.createDirectories(appHomePath);  /* 确保应用根目录存在 */
+    }
+
+    /* 应用程序锁文件 */
+    public static Path getLockFilePath() {
+        return appHomePath().resolve("singleton.lock");
     }
 
     /* 配置目录路径( %appdata%/roaming/.gtav-ops/* (windows) ) */

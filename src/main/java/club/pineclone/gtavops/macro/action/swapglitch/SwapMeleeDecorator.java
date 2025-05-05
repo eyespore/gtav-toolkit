@@ -1,5 +1,6 @@
 package club.pineclone.gtavops.macro.action.swapglitch;
 
+import club.pineclone.gtavops.macro.action.ActionEvent;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
 import club.pineclone.gtavops.macro.action.ScheduledActionDecorator;
@@ -20,12 +21,13 @@ public class SwapMeleeDecorator extends ScheduledActionDecorator {
     }
 
     @Override
-    public void beforeSchedule() throws Exception {
+    public boolean beforeSchedule(ActionEvent event) throws Exception {
         /* 尝试切换到近战 */
-        delegate.beforeSchedule();
+        delegate.beforeSchedule(event);
         robot.simulate(hotkey);
         Thread.sleep(10);
         robot.simulate(hotkey);
         Thread.sleep(delay);
+        return true;
     }
 }

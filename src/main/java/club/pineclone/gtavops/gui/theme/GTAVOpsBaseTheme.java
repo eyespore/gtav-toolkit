@@ -17,7 +17,7 @@ public class GTAVOpsBaseTheme extends DarkTheme {
     private static final String FONT_NAME_FZMiaoWUS_GB = "FZMiaoWuS-GB";
 
     public Color activeTextColor() {
-        return Color.web("lightgreen");
+        return Color.web("lightblue");
     }
 
 

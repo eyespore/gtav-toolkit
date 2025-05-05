@@ -49,6 +49,9 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
         if (swapRanged) {
             /* 是否开启安全武器轮盘 */
             boolean enableSafetyWeaponWheel = sgConfig.enableSafetyWeaponWheel;
+            Key swapRangedHotkey = sgConfig.rangedWeaponKey;
+            long safetyWeaponWheelDuration = 0;
+
             if (enableSafetyWeaponWheel) {
                 /* 开启安全武器轮盘 */
                 Key safetyWeaponWheelKey = sgConfig.safetyWeaponWheelKey;
@@ -56,9 +59,9 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
                 trigger = new ConditionalTrigger(
                         trigger, TriggerFactory.getTrigger(
                                 new TriggerIdentity(safetyWeaponWheelKey, TriggerMode.HOLD)));
+                safetyWeaponWheelDuration = (long) Math.floor(sgConfig.safetyWeaponWheelDuration);
             }
-            Key swapRangedHotkey = sgConfig.rangedWeaponKey;
-            action = new SwapRangedDecorator(action, swapRangedHotkey);
+            action = new SwapRangedDecorator(action, swapRangedHotkey, safetyWeaponWheelDuration);
         }
 
         bindings = new SimpleMacro(trigger, action);
@@ -145,6 +148,11 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
             setRange(10, 200);
         }};
 
+        private final ForkedSlider safetyWeaponWheelDurationSlider = new ForkedSlider() {{  /* 安全轮盘持续时间 */
+            setLength(400);
+            setRange(0, 1000);
+        }};
+
         public SGSettingStage() {
             super();
             getContent().getChildren().addAll(contentBuilder()
@@ -159,6 +167,7 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
                     .button(sgI18n.preferredRangedKey, preferredRangedKeyBtn)
                     .toggle(sgI18n.enableSafetyWeaponWheel, enableSafetyWeaponWheelToggle)
                     .button(sgI18n.safetyWeaponWheelKey, safetyWeaponWheelBtn)
+                    .slider(sgI18n.safetyWeaponWheelDuration, safetyWeaponWheelDurationSlider)
                     .build()
             );
         }
@@ -185,6 +194,7 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
 
             enableSafetyWeaponWheelToggle.selectedProperty().set(sgConfig.enableSafetyWeaponWheel);
             safetyWeaponWheelBtn.keyProperty().set(sgConfig.safetyWeaponWheelKey);
+            safetyWeaponWheelDurationSlider.setValue(sgConfig.safetyWeaponWheelDuration);
         }
 
         @Override
@@ -202,6 +212,7 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
 
             sgConfig.enableSafetyWeaponWheel = enableSafetyWeaponWheelToggle.selectedProperty().get();
             sgConfig.safetyWeaponWheelKey = safetyWeaponWheelBtn.keyProperty().get();
+            sgConfig.safetyWeaponWheelDuration = safetyWeaponWheelDurationSlider.valueProperty().get();
         }
     }
 }

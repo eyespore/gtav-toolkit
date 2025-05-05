@@ -1,5 +1,7 @@
 package club.pineclone.gtavops.macro.action;
 
+import lombok.Getter;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -7,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ActionTaskManager {
 
+    @Getter
     private static final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(
                     Runtime.getRuntime().availableProcessors(),
@@ -14,10 +17,6 @@ public class ActionTaskManager {
             );
 
     private ActionTaskManager() {}
-
-    public static ScheduledExecutorService getScheduler() {
-        return scheduler;
-    }
 
     public static void shutdown() {
         scheduler.shutdownNow();

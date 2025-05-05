@@ -18,6 +18,10 @@ public class VCRobotAdapter implements RobotAdapter {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public void simulate(Key key, long delay) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public void keyPress(Key key) {
         int vkCode = KeyUtils.toVKCode(key.key);
         robot.keyPress(vkCode);

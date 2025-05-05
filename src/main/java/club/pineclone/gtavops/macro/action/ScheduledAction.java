@@ -20,18 +20,17 @@ public abstract class ScheduledAction extends Action implements ScheduleLifecycl
 
     @Override
     public final void activate(ActionEvent event) {
-        if (event.isBlocked()) {
-            /* 阻塞触发，不启动定时任务 */
-            Logger.info(LogType.ALERT, "activation blocked");
-            return;
-        }
-
         if (running.compareAndSet(false, true)) {
             try {
-                beforeSchedule();
+                boolean flag = beforeSchedule(event);
+                if (!flag) {
+                    running.set(false);
+                    return;
+                }
+
                 scheduledFuture = ActionTaskManager.getScheduler().scheduleAtFixedRate(() -> {
                             try {
-                                schedule();
+                                schedule(event);
                             } catch (Exception e) {
                                 Logger.error(LogType.ALERT, e.getMessage());
                                 Thread.currentThread().interrupt();  // 处理异常
@@ -49,7 +48,7 @@ public abstract class ScheduledAction extends Action implements ScheduleLifecycl
             if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
                 scheduledFuture.cancel(true);
                 try {
-                    afterSchedule();
+                    afterSchedule(event);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

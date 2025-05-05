@@ -48,9 +48,14 @@ public class RobotFactory {
 
         @Override
         public void simulate(Key key) throws Exception {
+            simulate(key, 20);
+        }
+
+        @Override
+        public void simulate(Key key, long delay) throws Exception {
             try {
                 keyPress(key);
-                Thread.sleep(20);
+                Thread.sleep(delay);
             } finally {
                 keyRelease(key);  /* 确保按键被抬起 */
             }
@@ -64,9 +69,14 @@ public class RobotFactory {
 
         @Override
         public void simulate(Key key) throws Exception {
+            this.simulate(key, 20);
+        }
+
+        @Override
+        public void simulate(Key key, long delay) throws Exception {
             try {
                 mousePress(key);
-                Thread.sleep(20);
+                Thread.sleep(delay);
             } finally {
                 mouseRelease(key);  /* 确保按键被抬起 */
             }
@@ -81,6 +91,12 @@ public class RobotFactory {
         @Override
         public void simulate(Key key) throws Exception {
             this.mouseWheel(key);
+        }
+
+        @Override
+        public void simulate(Key key, long delay) throws Exception {
+            this.mouseWheel(key);
+            Thread.sleep(delay);
         }
     }
 

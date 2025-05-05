@@ -1,5 +1,6 @@
 package club.pineclone.gtavops.macro.action.adswing;
 
+import club.pineclone.gtavops.macro.action.ActionEvent;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
 import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
@@ -35,7 +36,7 @@ public class ADSwingAction extends ScheduledAction {
 
 
     @Override
-    public void schedule() throws Exception {
+    public void schedule(ActionEvent event) throws Exception {
         if (pressLeft) {
             pressLeft = false;
             robot1.simulate(moveLeftKey);

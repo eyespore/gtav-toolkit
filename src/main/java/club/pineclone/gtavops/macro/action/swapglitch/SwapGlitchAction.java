@@ -23,7 +23,7 @@ public class SwapGlitchAction extends ScheduledAction {
     }
 
     @Override
-    public void schedule() throws Exception {
+    public void schedule(ActionEvent event) throws Exception {
         robot.simulate(this.hotkey);
     }
 }

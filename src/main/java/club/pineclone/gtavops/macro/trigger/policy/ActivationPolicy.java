@@ -19,12 +19,16 @@ public interface ActivationPolicy {
         return 0;
     }
 
-    static ActivationPolicy Toggle() {
+    static ActivationPolicy toggle() {
         return new TogglePolicy();
     }
 
-    static ActivationPolicy Hold() {
+    static ActivationPolicy hold() {
         return new HoldPolicy();
+    }
+
+    static ActivationPolicy click() {
+        return new ClickPolicy();
     }
 
 }

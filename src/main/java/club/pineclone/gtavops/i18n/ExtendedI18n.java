@@ -1,10 +1,19 @@
 package club.pineclone.gtavops.i18n;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.vproxy.vfx.manager.internal_i18n.InternalI18n;
 import lombok.Data;
 
+import java.util.Random;
+import java.util.Set;
+
 @Data
 public class ExtendedI18n implements InternalI18n {
+
+    @JsonIgnore
+    private static final Set<String> FAILURE_EMOJIS = Set.of(
+          "😨", "😔", "🤔", "😫", "😥", "🥶"
+    );
 
     /* 通用 */
     public String toggle = "Toggle";
@@ -16,12 +25,16 @@ public class ExtendedI18n implements InternalI18n {
     public String enabled = "Enabled";
     public String disabled = "Disabled";
 
+    public String legacy = "Legacy";
+    public String enhanced = "Enhanced";
 
-//    public InGame inGame = new InGame();  /* 游戏内名词 */
+
+    //    public InGame inGame = new InGame();  /* 游戏内名词 */
     public SwapGlitch swapGlitch = new SwapGlitch();  /* 切枪偷速 */
     public QuickSnake quickSnake = new QuickSnake();  /* 回血增强 */
     public ADSwing adSwing = new ADSwing();  /* AD摇 */
     public MeleeGlitch meleeGlitch = new MeleeGlitch();  /* 近战武器偷速 */
+    public BetterMMenu betterMMenu = new BetterMMenu();  /* 更好的M菜单 */
 
     public FontPack fontPack = new FontPack();  /* 字体包管理 */
     public Feature feature = new Feature();  /* 功能特性 */
@@ -36,8 +49,13 @@ public class ExtendedI18n implements InternalI18n {
     public String keyChooserMiddleMouseButton = "Middle MouseBtn";
     public String keyChooserRightMouseButton = "Right MouseBtn";
 
-    public String configFileLoadFailed = "config file load failed: {0}, do you want to OVERRIDE current config file?";
-    public String configStillLoadFailed = "config file still load failed: {0}, you can try contact with PINECLONE, he's always glad to help :3";
+    public String configFileLoadFailed = "config file load failed, be caution! Confirm will cause OVERRIDE CURRENT CONFIG FILE";
+    public String configStillLoadFailed = "config file still load failed, you can try contact with PINECLONE, he's always glad to help :3";
+    public String duplicatedAppInstanceRunning = "A duplicated app instance is still running! cannot launch another one";
+
+    public String stacktraceAlertHeaderText = "Looks like we meet with some problem ";
+    public String stacktraceAlertLabel = "If necessary please feel free copy the stack trace blow and send to developers!";
+    public String stacktraceAlertTitle = "Hold On!";
 
     /* 主页 */
     @Data
@@ -56,7 +74,8 @@ public class ExtendedI18n implements InternalI18n {
     @Data
     public static class Feature {
         public String title = "Enhance/Feature";
-        public String header = "Right Click one of enhance/feature for further configuration!";
+        public String header = "Right Click one of feature for configuration!";
+        public String gameVersion = "game version";
     }
 
     /* 字体包管理 */
@@ -72,8 +91,6 @@ public class ExtendedI18n implements InternalI18n {
         public String createAt = "create At";
         public String status = "status";
 
-        public String legacy = "Legacy";
-        public String enhanced = "Enhanced";
 
         public String importFontpack = "Import";
         public String removeFontpack = "Remove";
@@ -97,6 +114,8 @@ public class ExtendedI18n implements InternalI18n {
         public String emptyGameHome = "/path/to/your/Grand Theft Auto V";
         public String confirmActivateFontpack = "Do you want to activate fontpack [{0}]?";
         public String confirmRemoveFontpack = "Are you sure you want to remove fontpack [{0}]?";
+
+        public String emptyGameHomeAlert = "You have not choose 'Game Home' yet, choose your game home first.";
     }
 
     /* 切枪偷速 */
@@ -116,6 +135,7 @@ public class ExtendedI18n implements InternalI18n {
 
         public String enableSafetyWeaponWheel = "enable safety weapon wheel";  /* 启用安全武器轮盘 */
         public String safetyWeaponWheelKey = "safety weapon wheel key";  /* 安全武器轮盘键 */
+        public String safetyWeaponWheelDuration = "safety weapon wheel duration";  /* 安全轮盘有效期 */
     }
 
     /* 近战武器偷速 */
@@ -150,9 +170,22 @@ public class ExtendedI18n implements InternalI18n {
     }
 
     /* 应用配置 */
+    @Data
     public static class Config {
         public String title = "App Configuration";
         public String header = "Configure GTAV OPS!";
+    }
+
+    /* 更好的M菜单 */
+    @Data
+    public static class BetterMMenu {
+        public String title = "better MMenu";
+        public String menuKey = "menu key";  /* 互动菜单键 */
+        public String arrowKeyInterval = "arrow key interval";  /* 方向键之后的等待时间 */
+        public String enterKeyInterval = "enter interval";  /* 回车之后的等待时间 */
+        public String startEngineKey = "start engine key";  /* 快速点火 */
+        public String openVehicleDoor = "open vehicle";  /* 是否打开车门 */
+
     }
 
 //    @Data
@@ -172,5 +205,21 @@ public class ExtendedI18n implements InternalI18n {
     @Override
     public String keyChooserRightMouseButton() {
         return keyChooserRightMouseButton;
+    }
+
+    @Override
+    public String stacktraceAlertHeaderText() {
+        int skip = new Random().nextInt(FAILURE_EMOJIS.size());
+        return stacktraceAlertHeaderText + FAILURE_EMOJIS.stream().skip(skip).findFirst().orElse(null);
+    }
+
+    @Override
+    public String stacktraceAlertTitle() {
+        return stacktraceAlertTitle;
+    }
+
+    @Override
+    public String stacktraceAlertLabel() {
+        return stacktraceAlertLabel;
     }
 }
