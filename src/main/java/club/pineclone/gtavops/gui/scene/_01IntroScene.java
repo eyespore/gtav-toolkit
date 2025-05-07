@@ -33,7 +33,7 @@ public class _01IntroScene extends SceneTemplate {
                     FontManager.get().setFont(this, settings -> settings.setSize(40));
                 }},
                 new VPadding(10),
-                new ThemeLabel(iI18n.versionLabel + ConfigHolder.APPLICATION_VERSION) {{
+                new ThemeLabel(iI18n.versionLabel + ConfigHolder.version) {{
                     FontManager.get().setFont(this, settings -> settings.setSize(28));
                 }},
                 new VPadding(10),

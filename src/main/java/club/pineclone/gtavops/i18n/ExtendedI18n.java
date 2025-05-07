@@ -266,4 +266,8 @@ public class ExtendedI18n implements InternalI18n {
     public String stacktraceAlertLabel() {
         return stacktraceAlertLabel;
     }
+
+    public String toString() {
+        return "";
+    }
 }

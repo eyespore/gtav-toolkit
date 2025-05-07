@@ -10,20 +10,31 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.vproxy.vfx.entity.input.Key;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ConfigHolder {
 
-    private static ObjectMapper mapper;
-
-    private static Configuration configuration;  /* 配置 */
     public static final String APPLICATION_TITLE = "GTAV Ops";  /* 应用基础信息 */
-    public static final String APPLICATION_VERSION = "build00001-alpha8";
+
+    private static ObjectMapper mapper;
+    private static Configuration configuration;  /* 配置 */
+    private static final String VERSION_FILE = "/version.txt";
+
+    public static String version = "unknown";
 
     private ConfigHolder() {}
 
     public static void load() throws IOException {
+        /* 加载版本号信息 */
+        try (InputStream in = ConfigHolder.class.getResourceAsStream(VERSION_FILE)) {
+            if (in != null) {
+                version = new String(in.readAllBytes(), StandardCharsets.UTF_8).trim();
+            }
+        }
+
         SimpleModule module = new SimpleModule();
         module.addSerializer(Key.class, new KeySerializer());  /* 按键序列化 */
         module.addDeserializer(Key.class, new KeyDeserializer());
