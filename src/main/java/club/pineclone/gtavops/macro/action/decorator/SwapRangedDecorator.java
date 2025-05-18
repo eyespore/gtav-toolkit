@@ -15,7 +15,7 @@ import javafx.scene.input.MouseButton;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SwapRangedDecorator extends ScheduledActionDecorator {
 
@@ -25,7 +25,7 @@ public class SwapRangedDecorator extends ScheduledActionDecorator {
     private final Key defaultRangedWeaponKey;  /* 默认远程武器 */
     private final boolean swapDefaultRangedWeaponOnEmpty;  /* 当目标远程武器为空值时切换到默认 */
 
-    private Key targetRangedWeaponKey = null;  /* 目标远程武器 */
+    private AtomicReference<Key> targetRangedWeaponKey = new AtomicReference<>();
     private final Map<Key, Key> sourceToTargetMap;  /* 监听源到目标的映射 */
 
     private Macro recorderMacro;  /* 记录器宏 */
@@ -102,16 +102,16 @@ public class SwapRangedDecorator extends ScheduledActionDecorator {
             if (blockAction.isBlocked()) return;
         }
 
-        if (swapDefaultRangedWeaponOnEmpty && targetRangedWeaponKey == null) {
-            targetRangedWeaponKey = defaultRangedWeaponKey;
+        Key keyToUse = targetRangedWeaponKey.getAndSet(null);
+        if (swapDefaultRangedWeaponOnEmpty && keyToUse == null) {
+            keyToUse = defaultRangedWeaponKey;
         }
 
-        if (targetRangedWeaponKey != null) {
+        if (keyToUse != null) {
             Thread.sleep(20);
-            robot.simulate(targetRangedWeaponKey);  /* 切换到枪 */
+            robot.simulate(keyToUse);  /* 切换到枪 */
             Thread.sleep(20);
             robot.simulate(leftButtonKey);  /* 点左键选择 */
-            targetRangedWeaponKey = null;  /* 消费完成后重新置为null */
         }
 
         delegate.afterDeactivate(event);
@@ -128,7 +128,7 @@ public class SwapRangedDecorator extends ScheduledActionDecorator {
         public void activate(ActionEvent event) {
             /* 触发记录，覆写原始targetRangedWeaponKey */
             if (!recorderMacroRunning.get()) return;
-            targetRangedWeaponKey = sourceToTargetMap.get(event.getTriggerEvent().getInputSourceEvent().getKey());
+            targetRangedWeaponKey.set(sourceToTargetMap.get(event.getTriggerEvent().getInputSourceEvent().getKey()));
         }
 
         @Override
