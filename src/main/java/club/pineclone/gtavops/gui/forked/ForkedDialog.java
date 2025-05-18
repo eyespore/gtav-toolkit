@@ -4,6 +4,7 @@ import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.i18n.I18nHolder;
 import io.vproxy.base.util.LogType;
 import io.vproxy.base.util.Logger;
+import io.vproxy.vfx.control.scroll.VScrollPane;
 import io.vproxy.vfx.manager.font.FontManager;
 import io.vproxy.vfx.manager.font.FontUsages;
 import io.vproxy.vfx.manager.internal_i18n.InternalI18n;
@@ -183,7 +184,7 @@ public class ForkedDialog<T> {
     private static ForkedDialog<Integer> createDialog(int flags) {
         ExtendedI18n i18n = I18nHolder.get();
         ForkedDialog<Integer> dialog = new ForkedDialog<>(new VStage(
-                new VStageInitParams().setIconifyButton(false).setMaximizeAndResetButton(false)
+                new VStageInitParams().setIconifyButton(false).setMaximizeAndResetButton(false).setResizable(false)
         ));
         List<ForkedDialogButton<Integer>> buttons = new ArrayList<>();
 
@@ -257,12 +258,19 @@ public class ForkedDialog<T> {
         FXUtils.runDelay(50, () -> stacktraceText.setMinHeight(stacktraceText.getHeight() + 1));
 
         VBox alertMessagePane = new VBox();
+
+        var scrollPaneContent = new VScrollPane();
+        scrollPaneContent.getNode().setPrefWidth(stacktracePane.getNode().getPrefWidth());
+        scrollPaneContent.getNode().setPrefHeight(400);
+        scrollPaneContent.setContent(stacktracePane.getNode());
+
         alertMessagePane.getChildren().addAll(
                 headerText,
                 descText,
                 new VPadding(20),
                 aboutStacktraceText,
-                stacktracePane.getNode()
+                scrollPaneContent.getNode()
+//                stacktracePane.getNode()
         );
         dialog.getBody().getChildren().add(alertMessagePane);
         return dialog;

@@ -47,7 +47,7 @@ public class KeyUtils {
 
     /* 将Key实例转变为字符串 */
     public static String toString(Key key) {
-        return  toString(key.button, key.scroll, key.key, key.isLeftKey);
+        return toString(key.button, key.scroll, key.key, key.isLeftKey);
     }
 
     /* 对Key实例各个字段进行字符串序列化 */

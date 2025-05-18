@@ -1,5 +1,6 @@
 package club.pineclone.gtavops.macro.trigger;
 
+import club.pineclone.gtavops.macro.MacroLifecycleAware;
 import club.pineclone.gtavops.macro.trigger.policy.ActivationPolicy;
 import club.pineclone.gtavops.macro.trigger.source.InputSource;
 
@@ -17,24 +18,12 @@ import java.util.List;
  *
  * 也许未来会拓展更多触发器? 这一套设计很不错
  */
-public abstract class Trigger {
+public abstract class Trigger implements MacroLifecycleAware {
 
     private final List<TriggerListener> listeners = new ArrayList<>();
 
-    /* 触发器执行 */
-    protected void activate() {
-        TriggerEvent event = createTriggerEvent();
-        listeners.forEach(l -> l.onTriggerActivate(event));
-    }
-
     protected void activate(TriggerEvent event) {
         listeners.forEach(l -> l.onTriggerActivate(event));
-    }
-
-    /* 触发器停止 */
-    protected void deactivate() {
-        TriggerEvent event = createTriggerEvent();
-        listeners.forEach(l -> l.onTriggerDeactivate(event));
     }
 
     protected void deactivate(TriggerEvent event) {
@@ -50,13 +39,4 @@ public abstract class Trigger {
     public void removeListener(TriggerListener listener) {
         listeners.remove(listener);
     }
-
-    public abstract void install();
-
-    public abstract void uninstall();
-
-    protected TriggerEvent createTriggerEvent() {
-        return new TriggerEvent(this, false);
-    }
-
 }

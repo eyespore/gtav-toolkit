@@ -26,7 +26,7 @@ public class _03ADSwingFeatureTogglePane extends FeatureTogglePane {
     ExtendedI18n i18n;
     ExtendedI18n.ADSwing adwI18n;
 
-    private SimpleMacro bindings;
+    private SimpleMacro macro;
 
     public _03ADSwingFeatureTogglePane() {
         this.config = ConfigHolder.get();
@@ -45,8 +45,8 @@ public class _03ADSwingFeatureTogglePane extends FeatureTogglePane {
     protected void activate() {
         Trigger trigger = buildTrigger();
         Action action = buildAction();
-        bindings = new SimpleMacro(trigger, action);
-        bindings.install();
+        macro = new SimpleMacro(trigger, action);
+        macro.install();
     }
 
     private Trigger buildTrigger() {
@@ -55,13 +55,13 @@ public class _03ADSwingFeatureTogglePane extends FeatureTogglePane {
         Key activatekey = adwConfig.baseSetting.activatekey;  /* 激活热键 */
         if (adwConfig.baseSetting.enableSafetyKey) {
             Key safetyKey = adwConfig.baseSetting.safetyKey;
-            return TriggerFactory.getTrigger(
-                    new TriggerIdentity(activatekey, mode),
-                    new TriggerIdentity(safetyKey, mode)
+            return TriggerFactory.composite(
+                    new TriggerIdentity(mode, activatekey),
+                    new TriggerIdentity(mode, safetyKey)
             );
         }
 
-        return TriggerFactory.getTrigger(new TriggerIdentity(activatekey, mode));  /* 触发器 */
+        return TriggerFactory.simple(new TriggerIdentity(mode, activatekey));  /* 触发器 */
     }
 
     private Action buildAction() {
@@ -73,7 +73,7 @@ public class _03ADSwingFeatureTogglePane extends FeatureTogglePane {
 
     @Override
     protected void deactivate() {
-        bindings.uninstall();
+        macro.uninstall();
     }
 
     @Override

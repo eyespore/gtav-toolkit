@@ -9,7 +9,7 @@ import com.github.kwhat.jnativehook.mouse.NativeMouseWheelListener;
 import lombok.Setter;
 
 /**
- * @see KeySource
+ * @see KeyboardSource
  */
 public abstract class InputSource {
 

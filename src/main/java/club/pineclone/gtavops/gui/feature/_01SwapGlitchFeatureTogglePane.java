@@ -18,10 +18,14 @@ import club.pineclone.gtavops.macro.action.decorator.SwapRangedDecorator;
 import io.vproxy.vfx.entity.input.Key;
 import io.vproxy.vfx.ui.toggle.ToggleSwitch;
 
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 /* 切枪偷速 */
 public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
 
-    private SimpleMacro bindings;  /* 宏执行器 */
+    private SimpleMacro macro;  /* 宏执行器 */
 
     Configuration.SwapGlitch sgConfig;
 
@@ -44,28 +48,8 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
     protected void activate() {
         ScheduledAction action = buildAction();
         Trigger trigger = buildTrigger();
-
-        boolean swapRanged = sgConfig.swapRangedSetting.enableSwapRanged;  /* 切出偷速前是否切换远程 */
-        if (swapRanged) {
-            /* 是否开启安全武器轮盘 */
-            boolean enableSafetyWeaponWheel = sgConfig.swapRangedSetting.enableSafetyWeaponWheel;
-            Key swapRangedHotkey = sgConfig.swapRangedSetting.rangedWeaponKey;
-            long safetyWeaponWheelDuration = 0;
-
-            if (enableSafetyWeaponWheel) {
-                /* 开启安全武器轮盘 */
-                Key safetyWeaponWheelKey = sgConfig.swapRangedSetting.safetyWeaponWheelKey;
-                /* 将触发器构建为条件触发器，如果安全轮盘键被摁下，那么屏蔽原始执行 */
-                trigger = new ConditionalTrigger(
-                        trigger, TriggerFactory.getTrigger(
-                                new TriggerIdentity(safetyWeaponWheelKey, TriggerMode.HOLD)));
-                safetyWeaponWheelDuration = (long) Math.floor(sgConfig.swapRangedSetting.safetyWeaponWheelDuration);
-            }
-            action = new SwapRangedDecorator(action, swapRangedHotkey, safetyWeaponWheelDuration);
-        }
-
-        bindings = new SimpleMacro(trigger, action);
-        bindings.install();  /* 注册宏执行器 */
+        macro = new SimpleMacro(trigger, action);
+        macro.install();  /* 注册宏执行器 */
     }
 
     /* 构建触发器 */
@@ -76,7 +60,7 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
         TriggerMode mode = sgConfig.baseSetting.activateMethod == 0 ? TriggerMode.HOLD : TriggerMode.TOGGLE;
 
         /* 触发类型 按键 or 鼠标 or 滚轮触发 */
-        return TriggerFactory.getTrigger(new TriggerIdentity(activatekey, mode));  /* 触发器 */
+        return TriggerFactory.simple(new TriggerIdentity(mode, activatekey));  /* 触发器 */
     }
 
     /* 构建基础动作，并根据配置添加装饰器 */
@@ -92,12 +76,38 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
             long postSwapMeleeDelay = (long) Math.floor(sgConfig.swapMeleeSetting.postSwapMeleeDelay);  /* 偷速间隔 */
             action = new SwapMeleeDecorator(action, swapMeleeHotkey, postSwapMeleeDelay);
         }
+
+        Configuration.SwapGlitch.SwapRangedSetting srSetting = sgConfig.swapRangedSetting;
+        boolean swapRanged = srSetting.enableSwapRanged;  /* 切出偷速前是否切换远程 */
+        if (swapRanged) {
+            Map<Key, Key> sourceToTargetMap = new HashMap<>();
+
+            /* 启用映射1 */
+            if (srSetting.enableMapping1) sourceToTargetMap.put(srSetting.mapping1SourceKey, srSetting.mapping1TargetKey);
+            /* 启用映射2 */
+            if (srSetting.enableMapping2) sourceToTargetMap.put(srSetting.mapping2SourceKey, srSetting.mapping2TargetKey);
+            /* 启用映射3 */
+            if (srSetting.enableMapping3) sourceToTargetMap.put(srSetting.mapping3SourceKey, srSetting.mapping3TargetKey);
+            /* 启用映射4 */
+            if (srSetting.enableMapping4) sourceToTargetMap.put(srSetting.mapping4SourceKey, srSetting.mapping4TargetKey);
+
+            action = SwapRangedDecorator.builder()
+                    .delegate(action)
+                    .swapDefaultRangedWeaponOnEmpty(srSetting.swapDefaultRangedWeaponOnEmpty)
+                    .defaultRangedWeaponKey(srSetting.defaultRangedWeaponKey)
+                    .sourceToTargetMap(sourceToTargetMap)
+                    .enableBlockKey(srSetting.enableBlockKey)
+                    .blockKey(srSetting.blockKey)
+                    .blockDuration((long) Math.floor(srSetting.blockDuration))
+                    .build();
+        }
+
         return action;
     }
 
     @Override
     protected void deactivate() {
-        bindings.uninstall();  /* 注销宏执行器 */
+        macro.uninstall();  /* 注销宏执行器 */
     }
 
     @Override
@@ -123,15 +133,10 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
 
         private final VKeyChooseButton activateKeyBtn = new VKeyChooseButton(FLAG_WITH_KEY_AND_MOUSE);
         private final VKeyChooseButton weaponWheelKeyBtn = new VKeyChooseButton(FLAG_WITH_ALL);
-
         private final VKeyChooseButton meleeKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);
-        private final VKeyChooseButton preferredRangedKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);
 
         private final ToggleSwitch enableSwapMeleeToggle = new ToggleSwitch();
-        private final ToggleSwitch enableSwapRangedToggle = new ToggleSwitch();  /* 切出偷速时切换远程武器 */
 
-        private final ToggleSwitch enableSafetyWeaponWheelToggle = new ToggleSwitch();  /* 启用安全武器轮盘 */
-        private final VKeyChooseButton safetyWeaponWheelBtn = new VKeyChooseButton();  /* 启用安全武器轮盘 */
 
         private final VOptionalButton activateMethodBtn = new VOptionalButton() {{
             addOptionalItem(i18n.hold);
@@ -148,7 +153,29 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
             setRange(10, 200);
         }};
 
-        private final ForkedSlider safetyWeaponWheelDurationSlider = new ForkedSlider() {{  /* 安全轮盘持续时间 */
+        private final ToggleSwitch enableSwapRangedToggle = new ToggleSwitch();  /* 切出偷速时切换远程武器 */
+        private final ToggleSwitch swapDefaultRangedWeaponOnEmptyToggle = new ToggleSwitch();  /* 没有选中任何远程武器时自动切换默认远程武器 */
+        private final VKeyChooseButton defaultRangedWeaponKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 默认远程武器键位 */
+
+        private final ToggleSwitch mapping1Toggle = new ToggleSwitch();  /* 监听远程武器映射1 */
+        private final VKeyChooseButton mapping1SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1主键 */
+        private final VKeyChooseButton mapping1TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
+
+        private final ToggleSwitch mapping2Toggle = new ToggleSwitch();  /* 监听远程武器映射1 */
+        private final VKeyChooseButton mapping2SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1主键 */
+        private final VKeyChooseButton mapping2TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
+
+        private final ToggleSwitch mapping3Toggle = new ToggleSwitch();  /* 监听远程武器映射1 */
+        private final VKeyChooseButton mapping3SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1主键 */
+        private final VKeyChooseButton mapping3TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
+
+        private final ToggleSwitch mapping4Toggle = new ToggleSwitch();  /* 监听远程武器映射4 */
+        private final VKeyChooseButton mapping4SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1主键 */
+        private final VKeyChooseButton mapping4TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
+
+        private final ToggleSwitch swapRangedBlockKeyToggle = new ToggleSwitch();  /* 启用屏蔽切换远程武器 */
+        private final VKeyChooseButton swapRangedBlockKeyBtn = new VKeyChooseButton();  /* 屏蔽切换远程武器键 */
+        private final ForkedSlider swapRangedBlockDurationSlider = new ForkedSlider() {{  /* 屏蔽切换远程武器有效时间 */
             setLength(400);
             setRange(0, 1000);
         }};
@@ -170,10 +197,15 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
                     /* 切换远程武器设置 */
                     .divide(sgI18n.swapRangedSetting.title)
                     .toggle(sgI18n.swapRangedSetting.enable, enableSwapRangedToggle)
-                    .button(sgI18n.swapRangedSetting.preferredRangedWeaponKey, preferredRangedKeyBtn)
-                    .toggle(sgI18n.swapRangedSetting.enableBlockKey, enableSafetyWeaponWheelToggle)
-                    .button(sgI18n.swapRangedSetting.blockKey, safetyWeaponWheelBtn)
-                    .slider(sgI18n.swapRangedSetting.blockDuration, safetyWeaponWheelDurationSlider)
+                    .buttonToggle(sgI18n.swapRangedSetting.defaultRangedWeaponKey, swapDefaultRangedWeaponOnEmptyToggle, defaultRangedWeaponKeyBtn)
+                    .buttonToggle(MessageFormat.format(sgI18n.swapRangedSetting.listenRangedWeaponMapping, 1), mapping1Toggle, mapping1SourceKeyBtn, mapping1TargetKeyBtn)
+                    .buttonToggle(MessageFormat.format(sgI18n.swapRangedSetting.listenRangedWeaponMapping, 2), mapping2Toggle, mapping2SourceKeyBtn, mapping2TargetKeyBtn)
+                    .buttonToggle(MessageFormat.format(sgI18n.swapRangedSetting.listenRangedWeaponMapping, 3), mapping3Toggle, mapping3SourceKeyBtn, mapping3TargetKeyBtn)
+                    .buttonToggle(MessageFormat.format(sgI18n.swapRangedSetting.listenRangedWeaponMapping, 4), mapping4Toggle, mapping4SourceKeyBtn, mapping4TargetKeyBtn)
+                    .gap()
+                    .toggle(sgI18n.swapRangedSetting.enableBlockKey, swapRangedBlockKeyToggle)
+                    .button(sgI18n.swapRangedSetting.blockKey, swapRangedBlockKeyBtn)
+                    .slider(sgI18n.swapRangedSetting.blockDuration, swapRangedBlockDurationSlider)
                     .build()
             );
         }
@@ -188,7 +220,6 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
             activateKeyBtn.keyProperty().set(sgConfig.baseSetting.activatekey);
             weaponWheelKeyBtn.keyProperty().set(sgConfig.baseSetting.targetWeaponWheelKey);
             meleeKeyBtn.keyProperty().set(sgConfig.swapMeleeSetting.meleeWeaponKey);
-            preferredRangedKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.rangedWeaponKey);
 
             postSwapMeleeDelaySlider.setValue(sgConfig.swapMeleeSetting.postSwapMeleeDelay);
 
@@ -196,29 +227,67 @@ public class _01SwapGlitchFeatureTogglePane extends FeatureTogglePane {
             triggerIntervalSlider.setValue(sgConfig.baseSetting.triggerInterval);
 
             enableSwapMeleeToggle.selectedProperty().set(sgConfig.swapMeleeSetting.enableSwapMelee);
-            enableSwapRangedToggle.selectedProperty().set(sgConfig.swapRangedSetting.enableSwapRanged);
 
-            enableSafetyWeaponWheelToggle.selectedProperty().set(sgConfig.swapRangedSetting.enableSafetyWeaponWheel);
-            safetyWeaponWheelBtn.keyProperty().set(sgConfig.swapRangedSetting.safetyWeaponWheelKey);
-            safetyWeaponWheelDurationSlider.setValue(sgConfig.swapRangedSetting.safetyWeaponWheelDuration);
+            enableSwapRangedToggle.selectedProperty().set(sgConfig.swapRangedSetting.enableSwapRanged);
+            swapDefaultRangedWeaponOnEmptyToggle.selectedProperty().set(sgConfig.swapRangedSetting.swapDefaultRangedWeaponOnEmpty);
+            defaultRangedWeaponKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.defaultRangedWeaponKey);
+
+            mapping1Toggle.selectedProperty().set(sgConfig.swapRangedSetting.enableMapping1);
+            mapping1SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping1SourceKey);
+            mapping1TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping1TargetKey);
+
+            mapping2Toggle.selectedProperty().set(sgConfig.swapRangedSetting.enableMapping2);
+            mapping2SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping2SourceKey);
+            mapping2TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping2TargetKey);
+
+            mapping3Toggle.selectedProperty().set(sgConfig.swapRangedSetting.enableMapping3);
+            mapping3SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping3SourceKey);
+            mapping3TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping3TargetKey);
+
+            mapping4Toggle.selectedProperty().set(sgConfig.swapRangedSetting.enableMapping4);
+            mapping4SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping4SourceKey);
+            mapping4TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping4TargetKey);
+
+            swapRangedBlockKeyToggle.selectedProperty().set(sgConfig.swapRangedSetting.enableBlockKey);
+            swapRangedBlockKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.blockKey);
+            swapRangedBlockDurationSlider.setValue(sgConfig.swapRangedSetting.blockDuration);
         }
 
         @Override
         public void stop() {
             sgConfig.baseSetting.targetWeaponWheelKey = weaponWheelKeyBtn.keyProperty().get();
             sgConfig.swapMeleeSetting.meleeWeaponKey = meleeKeyBtn.keyProperty().get();
-            sgConfig.swapRangedSetting.rangedWeaponKey = preferredRangedKeyBtn.keyProperty().get();
 
             sgConfig.baseSetting.activatekey = activateKeyBtn.keyProperty().get();
             sgConfig.baseSetting.activateMethod = activateMethodBtn.indexProperty().get();
             sgConfig.baseSetting.triggerInterval = triggerIntervalSlider.valueProperty().get();
             sgConfig.swapMeleeSetting.postSwapMeleeDelay = postSwapMeleeDelaySlider.valueProperty().get();
             sgConfig.swapMeleeSetting.enableSwapMelee = enableSwapMeleeToggle.selectedProperty().get();
-            sgConfig.swapRangedSetting.enableSwapRanged = enableSwapRangedToggle.selectedProperty().get();
 
-            sgConfig.swapRangedSetting.enableSafetyWeaponWheel = enableSafetyWeaponWheelToggle.selectedProperty().get();
-            sgConfig.swapRangedSetting.safetyWeaponWheelKey = safetyWeaponWheelBtn.keyProperty().get();
-            sgConfig.swapRangedSetting.safetyWeaponWheelDuration = safetyWeaponWheelDurationSlider.valueProperty().get();
+            Configuration.SwapGlitch.SwapRangedSetting srSetting = sgConfig.swapRangedSetting;
+            srSetting.enableSwapRanged = enableSwapRangedToggle.selectedProperty().get();
+            srSetting.swapDefaultRangedWeaponOnEmpty = swapDefaultRangedWeaponOnEmptyToggle.selectedProperty().get();
+            srSetting.defaultRangedWeaponKey = defaultRangedWeaponKeyBtn.keyProperty().get();
+
+            srSetting.enableMapping1 = mapping1Toggle.selectedProperty().get();
+            srSetting.mapping1SourceKey = mapping1SourceKeyBtn.keyProperty().get();
+            srSetting.mapping1TargetKey = mapping1TargetKeyBtn.keyProperty().get();
+
+            srSetting.enableMapping2 = mapping2Toggle.selectedProperty().get();
+            srSetting.mapping2SourceKey = mapping2SourceKeyBtn.keyProperty().get();
+            srSetting.mapping2TargetKey = mapping2TargetKeyBtn.keyProperty().get();
+
+            srSetting.enableMapping3 = mapping3Toggle.selectedProperty().get();
+            srSetting.mapping3SourceKey = mapping3SourceKeyBtn.keyProperty().get();
+            srSetting.mapping3TargetKey = mapping3TargetKeyBtn.keyProperty().get();
+
+            srSetting.enableMapping4 = mapping4Toggle.selectedProperty().get();
+            srSetting.mapping4SourceKey = mapping4SourceKeyBtn.keyProperty().get();
+            srSetting.mapping4TargetKey = mapping4TargetKeyBtn.keyProperty().get();
+
+            srSetting.enableBlockKey = swapRangedBlockKeyToggle.selectedProperty().get();
+            srSetting.blockKey = swapRangedBlockKeyBtn.keyProperty().get();
+            srSetting.blockDuration = swapRangedBlockDurationSlider.valueProperty().get();
         }
     }
 }

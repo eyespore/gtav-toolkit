@@ -45,9 +45,9 @@ public class _02QuickSnakeFeatureTogglePane extends FeatureTogglePane {
         Key weaponWheelKey = rsConfig.baseSetting.weaponWheel;
         long triggerInterval = (long) Math.floor(rsConfig.baseSetting.triggerInterval);
 
-        TriggerIdentity identity1 = new TriggerIdentity(activatekey, TriggerMode.HOLD);
-        TriggerIdentity identity2 = new TriggerIdentity(weaponWheelKey, TriggerMode.HOLD);
-        Trigger trigger = TriggerFactory.getTrigger(identity1, identity2);
+        TriggerIdentity identity1 = new TriggerIdentity(TriggerMode.HOLD, activatekey);
+        TriggerIdentity identity2 = new TriggerIdentity(TriggerMode.HOLD, weaponWheelKey);
+        Trigger trigger = TriggerFactory.composite(identity1, identity2);
 
         Action action = new QuickSnakeAction(triggerInterval, snakeKey);
         bindings = new SimpleMacro(trigger, action);

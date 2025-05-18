@@ -32,5 +32,7 @@ public class MacroPriorityContext {
 
     /* 是否允许切枪偷速，用于兼容近战偷速与切枪偷速 */
     public final AtomicBoolean blockSwapGlitch = new AtomicBoolean(false);
+    /* 是否允许快速切枪，用于兼容快速切枪 */
+    public final AtomicBoolean blockQuickSwap = new AtomicBoolean(false);
 
 }

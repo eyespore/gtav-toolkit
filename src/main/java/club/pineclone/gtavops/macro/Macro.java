@@ -20,11 +20,13 @@ public abstract class Macro implements TriggerListener {
 
     public void install() {  /* 加载宏，例如注册监听器等 */
         this.trigger.install();
+        this.action.install();  /* 告知生命周期 */
     }
 
     public void uninstall() {  /* 卸载宏，例如注销监听器等 */
-        this.trigger.removeListener(this);  /* 注销自身 */
+        this.action.uninstall();
         this.trigger.uninstall();  /* 注销执行器 */
+        this.trigger.removeListener(this);  /* 注销自身 */
     }
 
 

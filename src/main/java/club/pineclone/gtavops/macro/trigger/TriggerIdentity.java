@@ -1,42 +1,57 @@
 package club.pineclone.gtavops.macro.trigger;
 
 import io.vproxy.vfx.entity.input.Key;
+import lombok.Getter;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Getter
 public class TriggerIdentity {
+
     private final TriggerType type;
     private final TriggerMode mode;
-    private final Key key;
+    private final Set<Key> keys = new HashSet<>();
 
-    private TriggerIdentity(TriggerType type, TriggerMode mode, Key key) {
-        if (!checkCompatibility(type, mode, key)) {
-            throw new IllegalArgumentException();
-        }
-        this.type = type;
+    /**
+     * 创建一个触发器标识符
+     * @param mode 触发模式
+     * @param keys 触发按键，支持多按键触发
+     */
+    public TriggerIdentity(TriggerMode mode, Key... keys) {
+        this(mode, Arrays.stream(keys).collect(Collectors.toSet()));
+    }
+
+    public TriggerIdentity(TriggerMode mode, Set<Key> keys) {
+        this.type = checkKeyType(keys);  /* 检查类型 */
+        keys.forEach(k -> this.checkKeyCompatibility(k, mode));  /* 检查合法性 */
         this.mode = mode;
-        this.key = key;
+        this.keys.addAll(keys);
     }
 
-    public TriggerIdentity(Key key, TriggerMode mode) {
-        this(TriggerType.of(key), mode, key);
+    private void checkKeyCompatibility(Key key, TriggerMode mode) {
+        TriggerType type = TriggerType.of(key);
+        if (type == TriggerType.SCROLL_WHEEL && mode == TriggerMode.HOLD) {
+            throw new IllegalArgumentException("Mouse wheel can only work with TriggerMode.TOGGLE.");
+        }
     }
 
-    private boolean checkCompatibility(TriggerType type, TriggerMode mode, Key key) {
-        return switch (type) {
-            case KEYBOARD -> key.key != null && key.button == null && key.scroll == null;
-            case MOUSE_BUTTON -> key.button != null && key.key == null && key.scroll == null;
-            case SCROLL_WHEEL -> {
-                // 确保滚轮仅仅能和Toggle组合，无法和Hold组合
-                if (key.scroll != null && key.key == null && key.button == null) {
-                    if (mode == TriggerMode.HOLD) {
-                        throw new IllegalArgumentException("Mouse wheel can only work with TriggerMode.TOGGLE.");
-                    }
-                    yield true;
-                }
-                yield false;
+    /* 获取key的类型，要求一个Trigger触发的key至少为同一类型 */
+    public TriggerType checkKeyType(Set<Key> keys) {
+        if (keys.isEmpty()) {
+            throw new IllegalArgumentException("Key set is empty.");
+        }
+
+        Iterator<Key> iterator = keys.iterator();
+        TriggerType type = TriggerType.of(iterator.next());
+
+        while (iterator.hasNext()) {
+            if (TriggerType.of(iterator.next()) != type) {
+                throw new IllegalArgumentException("Keys have inconsistent TriggerTypes.");
             }
-        };
+        }
+
+        return type;
     }
 
     @Override
@@ -44,23 +59,12 @@ public class TriggerIdentity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TriggerIdentity that = (TriggerIdentity) o;
-        return type == that.type && mode == that.mode && Objects.equals(key, that.key);
+        return type == that.type && mode == that.mode && Objects.equals(keys, that.keys);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, mode, key);
+        return Objects.hash(type, mode, keys);
     }
 
-    public TriggerType getType() {
-        return type;
-    }
-
-    public TriggerMode getMode() {
-        return mode;
-    }
-
-    public Key getKey() {
-        return key;
-    }
 }

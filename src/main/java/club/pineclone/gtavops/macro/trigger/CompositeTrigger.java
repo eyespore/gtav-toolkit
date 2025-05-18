@@ -38,7 +38,8 @@ public class CompositeTrigger extends Trigger implements TriggerListener {
 //            lastActiveTime.put(source, System.currentTimeMillis());
             if (activeSet.size() == triggers.size() && !isActive) {
                 isActive = true;
-                activate();
+                TriggerEvent wrappedEvent = TriggerEvent.ofNormal(this, event.getInputSourceEvent());
+                activate(wrappedEvent);
             }
         }
     }
@@ -53,7 +54,8 @@ public class CompositeTrigger extends Trigger implements TriggerListener {
             activeSet.remove(source);
             if (isActive && activeSet.size() < triggers.size()) {
                 isActive = false;
-                deactivate();
+                TriggerEvent wrappedEvent = TriggerEvent.ofNormal(this, event.getInputSourceEvent());
+                deactivate(wrappedEvent);
             }
         }
     }

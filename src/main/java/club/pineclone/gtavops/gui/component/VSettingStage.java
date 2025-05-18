@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class VSettingStage {
@@ -86,12 +87,13 @@ public abstract class VSettingStage {
         return hBox;
     }
 
-    protected HBox createButton(String intro, FusionButton button) {
+    protected HBox createButton(String intro, FusionButton... buttons) {
         HBox hBox = getBaseConfigContent(new Insets(24, 7, 0, 20));
         Region spacer = getSpacer();
 
         ThemeLabel label = new ThemeLabel(intro);
-        hBox.getChildren().addAll(label, spacer, button);
+        hBox.getChildren().addAll(label, spacer);
+        Arrays.stream(buttons).forEach(hBox.getChildren()::addAll);
         return hBox;
     }
 
@@ -124,6 +126,38 @@ public abstract class VSettingStage {
         return hBox;
     }
 
+    protected HBox createButtonToggle(String intro, ToggleSwitch toggle, FusionButton... buttons) {
+        HBox baseContent = getBaseConfigContent(new Insets(0, 0, 0, 0));
+        baseContent.setPrefHeight(60);
+
+        HBox labelContent = new HBox(10);
+        labelContent.setPadding(new Insets(22, 7, 0, 20));
+        Region spacer = getSpacer();
+        ThemeLabel label = new ThemeLabel(intro);
+        labelContent.getChildren().addAll(label);
+
+        HBox componentContent = new HBox(20);
+        componentContent.setPadding(new Insets(24, 7, 0, 20));
+
+        componentContent.getChildren().add(new HBox(20) {{
+            Arrays.stream(buttons).forEach(this.getChildren()::addAll);
+        }});
+
+        componentContent.getChildren().add(new HBox() {{
+            setPadding(new Insets(3, 0, 0, 0));
+            getChildren().add(toggle.getNode());
+        }});
+
+        baseContent.getChildren().addAll(labelContent, spacer, componentContent);
+        return baseContent;
+    }
+
+    protected HBox createGap(double height) {
+        HBox hBox = getBaseConfigContent(new Insets(0, 0, 0, 0));
+        hBox.setPrefHeight(height);
+        return hBox;
+    }
+
     private Region getSpacer() {
         Region spacer = new Region();
         spacer.setMinWidth(10);
@@ -132,7 +166,7 @@ public abstract class VSettingStage {
     }
 
     private HBox getBaseConfigContent(Insets insets) {
-        HBox hBox = new HBox(0);
+        HBox hBox = new HBox(10);
         hBox.setPadding(insets);
         hBox.setPrefWidth(750);
         return hBox;
@@ -150,13 +184,28 @@ public abstract class VSettingStage {
             return this;
         }
 
-        public ContentBuilder button(String intro, FusionButton button) {
-            items.add(createButton(intro, button));
+        public ContentBuilder button(String intro, FusionButton... buttons) {
+            items.add(createButton(intro, buttons));
+            return this;
+        }
+
+        public ContentBuilder buttonToggle(String intro, ToggleSwitch toggle, FusionButton... buttons) {
+            items.add(createButtonToggle(intro, toggle, buttons));
             return this;
         }
 
         public ContentBuilder slider(String intro, ForkedSlider slider) {
             items.add(createSlider(intro, slider));
+            return this;
+        }
+
+        public ContentBuilder gap(double height) {
+            items.add(createGap(height));
+            return this;
+        }
+
+        public ContentBuilder gap() {
+            items.add(createGap(40));
             return this;
         }
 

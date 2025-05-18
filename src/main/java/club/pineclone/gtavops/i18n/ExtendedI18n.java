@@ -1,5 +1,6 @@
 package club.pineclone.gtavops.i18n;
 
+import club.pineclone.gtavops.config.Configuration;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.vproxy.vfx.manager.internal_i18n.InternalI18n;
 import lombok.Data;
@@ -28,6 +29,10 @@ public class ExtendedI18n implements InternalI18n {
     public String legacy = "Legacy";
     public String enhanced = "Enhanced";
 
+    public String keyboard = "keyboard";
+    public String mouseButton = "Mouse button";
+    public String mouseWheel = "Mouse wheel";
+
 
     //    public InGame inGame = new InGame();  /* 游戏内名词 */
     public SwapGlitch swapGlitch = new SwapGlitch();  /* 切枪偷速 */
@@ -36,6 +41,7 @@ public class ExtendedI18n implements InternalI18n {
     public MeleeGlitch meleeGlitch = new MeleeGlitch();  /* 近战武器偷速 */
     public BetterMMenu betterMMenu = new BetterMMenu();  /* 更好的M菜单 */
     public BetterLButton betterLButton = new BetterLButton();  /* 更好的鼠标左键 */
+    public QuickSwap quickSwap = new QuickSwap();  /* 快速切枪 */
 
     public FontPack fontPack = new FontPack();  /* 字体包管理 */
     public Feature feature = new Feature();  /* 功能特性 */
@@ -43,7 +49,7 @@ public class ExtendedI18n implements InternalI18n {
     public Config config = new Config();  /* 应用配置 */
 
     /* UI组件 */
-    public String keyMouseChooserDesc = "press a key or mouse button for applying";
+    public String keyChooserDescription = "press [{0}] to apply setting";
     public String keyChooserForwardMouseButton = "Forward MouseBtn";
     public String keyChooserBackMouseButton = "Back MouseBtn";
     public String keyChooserLeftMouseButton = "Left MouseBtn";
@@ -156,7 +162,7 @@ public class ExtendedI18n implements InternalI18n {
         @Data
         public static class SwapMeleeSetting {
             public String title = "swap melee settings";
-            public String enable = "swap melee on activate";
+            public String enable = "enable sub function";
             public String postSwapMeleeDelay = "delay after swapping melee";
             public String meleeKey = "melee weapon key";  /* 近战武器键 */
         }
@@ -165,11 +171,12 @@ public class ExtendedI18n implements InternalI18n {
         @Data
         public static class SwapRangedSetting {
             public String title = "swap ranged settings";
-            public String enable = "swap ranged weapon on deactivate";
-            public String preferredRangedWeaponKey = "preferred ranged weapon key";
-            public String enableBlockKey = "enable block key";  /* 启用安全武器轮盘 */
-            public String blockKey = "block key";  /* 安全武器轮盘键 */
-            public String blockDuration = "block duration";  /* 安全轮盘有效期 */
+            public String enable = "enable sub function";
+            public String defaultRangedWeaponKey = "default ranged weapon key";
+            public String listenRangedWeaponMapping = "listen ranged weapon mapping [{0}]";
+            public String enableBlockKey = "enable block key";  /* 启用屏蔽键 */
+            public String blockKey = "block key";  /* 屏蔽键 */
+            public String blockDuration = "block duration(ms)";  /* 屏蔽持续时间 */
         }
     }
 
@@ -269,6 +276,21 @@ public class ExtendedI18n implements InternalI18n {
             public String triggerInterval = "trigger interval(ms)";
         }
     }
+
+    /* 快速切枪 */
+    public static class QuickSwap {
+        public String title = "quick swap";
+        public BaseSetting baseSetting = new BaseSetting();
+
+        public static class BaseSetting {
+            public String title = "base settings";
+            public String quickSwapMapping = "enable mapping [{0}]";
+            public String enableBlockKey = "enable block key";
+            public String blockKey = "block key";
+            public String blockDuration = "block duration(ms)";
+        }
+    }
+
 
 //    @Data
 //    public static class InGame {

@@ -1,5 +1,6 @@
 package club.pineclone.gtavops.gui.forked;
 
+import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.i18n.I18nHolder;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
@@ -18,6 +19,7 @@ import io.vproxy.vfx.manager.internal_i18n.InternalI18n;
 import javafx.application.Platform;
 import javafx.scene.input.MouseButton;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,12 +48,13 @@ public class ForkedKeyChooser extends VDialog<Key> {
         this.flags = flags;
 
         List<VDialogButton<Key>> buttons = new ArrayList<>();
+        ExtendedI18n i18n = I18nHolder.get();
         if ((flags & FLAG_WITH_MOUSE) == FLAG_WITH_MOUSE) {
             buttons.add(new VDialogButton<>(InternalI18n.get().keyChooserLeftMouseButton(), new Key(MouseButton.PRIMARY)));
             buttons.add(new VDialogButton<>(InternalI18n.get().keyChooserMiddleMouseButton(), new Key(MouseButton.MIDDLE)));
             buttons.add(new VDialogButton<>(InternalI18n.get().keyChooserRightMouseButton(), new Key(MouseButton.SECONDARY)));
-            buttons.add(new VDialogButton<>(I18nHolder.get().keyChooserForwardMouseButton, new Key(MouseButton.FORWARD)));
-            buttons.add(new VDialogButton<>(I18nHolder.get().keyChooserBackMouseButton, new Key(MouseButton.BACK)));
+            buttons.add(new VDialogButton<>(i18n.keyChooserForwardMouseButton, new Key(MouseButton.FORWARD)));
+            buttons.add(new VDialogButton<>(i18n.keyChooserBackMouseButton, new Key(MouseButton.BACK)));
         }
         buttons.add(new VDialogButton<>(InternalI18n.get().cancelButton(), () -> null));
         setButtons(buttons);
@@ -62,7 +65,19 @@ public class ForkedKeyChooser extends VDialog<Key> {
             getStage().getStage().setWidth(1200);
         }
 
-        getMessageNode().setText(I18nHolder.get().keyMouseChooserDesc);
+        List<String> listenedComponents = new ArrayList<>();
+
+        if ((flags & FLAG_WITH_KEY) != 0) {
+            listenedComponents.add(i18n.keyboard);
+        }
+        if ((flags & FLAG_WITH_MOUSE) != 0) {
+            listenedComponents.add(i18n.mouseButton);
+        }
+        if ((flags & FLAG_WITH_WHEEL_SCROLL) != 0) {
+            listenedComponents.add(i18n.mouseWheel);
+        }
+
+        getMessageNode().setText(MessageFormat.format(i18n.keyChooserDescription, String.join(",", listenedComponents)));
     }
 
     private void registerListeners(int flags) {

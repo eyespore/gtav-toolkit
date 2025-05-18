@@ -47,7 +47,7 @@ public class _05BetterMMenuFeatureTogglePane extends FeatureTogglePane {
         long arrowKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.arrowKeyInterval));
         long enterKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.enterKeyInterval));
 
-        Trigger trigger = TriggerFactory.getTrigger(new TriggerIdentity(startEngineKey, TriggerMode.CLICK));
+        Trigger trigger = TriggerFactory.simple(new TriggerIdentity(TriggerMode.CLICK, startEngineKey));
         Action action = new StartEngineAction(menuKey, arrowKeyInterval, enterKeyInterval);
 
         macro = new SimpleMacro(trigger, action);

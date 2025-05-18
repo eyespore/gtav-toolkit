@@ -2,6 +2,6 @@ package club.pineclone.gtavops.macro.trigger.source;
 
 public interface InputSourceListener {
 
-    void onInputSourceEvent(boolean press);
+    void onInputSourceEvent(InputSourceEvent event);
 
 }

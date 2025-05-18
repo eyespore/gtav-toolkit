@@ -1,9 +1,10 @@
 package club.pineclone.gtavops.macro.action;
 
+import club.pineclone.gtavops.macro.MacroLifecycleAware;
 import lombok.Getter;
 
 @Getter
-public abstract class Action implements ActionLifecycle {
+public abstract class Action implements ActionLifecycle, MacroLifecycleAware {
 
     /* 主要用于装饰器辨别当前父动作，以获取缓存的机器人实例 */
     protected final String actionId;

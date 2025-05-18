@@ -9,21 +9,14 @@ import lombok.ToString;
 @ToString
 public class ActionEvent {
 
-    private final Trigger source;
-    private final boolean blocked;
+    private final TriggerEvent triggerEvent;
 
-    public ActionEvent(Trigger source, boolean blocked) {
-        this.source = source;
-        this.blocked = blocked;
-    }
-
-    public static ActionEvent of(Trigger source, boolean blocked) {
-        return new ActionEvent(source, blocked);
+    public ActionEvent(TriggerEvent triggerEvent) {
+        this.triggerEvent = triggerEvent;
     }
 
     /* TriggerEvent派生ActionEvent */
     public static ActionEvent of(TriggerEvent event) {
-        return ActionEvent.of(event.getSource(), event.isBlocked());
+        return new ActionEvent(event);
     }
-
 }

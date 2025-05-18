@@ -1,6 +1,5 @@
 package club.pineclone.gtavops.config;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import io.vproxy.vfx.entity.input.Key;
 import io.vproxy.vfx.entity.input.KeyCode;
 import io.vproxy.vfx.entity.input.MouseWheelScroll;
@@ -18,6 +17,7 @@ public class Configuration {
     public MeleeGlitch meleeGlitch = new MeleeGlitch();  /* 近战偷速 */
     public BetterMMenu betterMMenu = new BetterMMenu();  /* 更好的M菜单 */
     public BetterLButton betterLButton = new BetterLButton();  /* 更好的鼠标左键 */
+    public QuickSwap quickSwap = new QuickSwap();  /* 快速切枪 */
 
     public String gameHome = "";  /* 游戏路径 */
 
@@ -44,10 +44,28 @@ public class Configuration {
 
         public static class SwapRangedSetting {
             public boolean enableSwapRanged = false;  /* 解除偷速切换远程 */
-            public Key rangedWeaponKey = new Key(KeyCode.KEY_1);  /* 远程武器 */
-            public boolean enableSafetyWeaponWheel = false;
-            public Key safetyWeaponWheelKey = new Key(KeyCode.TAB);
-            public double safetyWeaponWheelDuration = 500.0;  /* 安全轮盘有效期 */
+            public boolean swapDefaultRangedWeaponOnEmpty = false;  /* 切换默认远程武器如果没有指定武器 */
+            public Key defaultRangedWeaponKey = new Key(KeyCode.KEY_1);  /* 远程武器 */
+
+            public boolean enableMapping1 = false;  /* 启用映射1 */
+            public Key mapping1SourceKey = new Key(KeyCode.KEY_1);  /* 映射1源键 */
+            public Key mapping1TargetKey = new Key(KeyCode.KEY_6);  /* 映射1目标键 */
+
+            public boolean enableMapping2 = false;  /* 启用映射2 */
+            public Key mapping2SourceKey = new Key(KeyCode.KEY_2);
+            public Key mapping2TargetKey = new Key(KeyCode.KEY_7);
+
+            public boolean enableMapping3 = false;  /* 启用映射3 */
+            public Key mapping3SourceKey = new Key(KeyCode.KEY_3);
+            public Key mapping3TargetKey = new Key(KeyCode.KEY_8);
+
+            public boolean enableMapping4 = false;  /* 启用映射4 */
+            public Key mapping4SourceKey = new Key(KeyCode.KEY_4);
+            public Key mapping4TargetKey = new Key(KeyCode.KEY_9);
+
+            public boolean enableBlockKey = false;  /* 启用屏蔽键 */
+            public Key blockKey = new Key(KeyCode.TAB);  /* 屏蔽键 */
+            public double blockDuration = 500.0;  /* 屏蔽有效时间 */
         }
     }
 
@@ -58,8 +76,8 @@ public class Configuration {
         public static class BaseSetting {
             public boolean enable = false;
             public double triggerInterval = 20.0;  /* 点按间隔 */
-            public Key activatekey = new Key(MouseButton.MIDDLE);  /* 激活热键 */
-            public Key snakeKey = new Key(KeyCode.C);  /* 零食键 */
+            public Key activatekey = new Key(KeyCode.TAB);  /* 激活热键 */
+            public Key snakeKey = new Key(KeyCode.MINUS);  /* 零食键 */
             public Key weaponWheel = new Key(KeyCode.TAB);  /* 武器轮盘 */
         }
     }
@@ -72,11 +90,11 @@ public class Configuration {
             public boolean enable = false;
             public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
             public double triggerInterval = 20.0;  /* AD点按间隔 */
-            public Key activatekey = new Key(MouseButton.MIDDLE);
+            public Key activatekey = new Key(KeyCode.E);
             public Key moveLeftKey = new Key(KeyCode.A);
             public Key moveRightKey = new Key(KeyCode.D);
             public Key safetyKey = new Key(MouseButton.BACK);
-            public boolean enableSafetyKey = false;
+            public boolean enableSafetyKey = true;
         }
     }
 
@@ -88,9 +106,9 @@ public class Configuration {
             public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
             public double triggerInterval = 20.0;
             public Key meleeSnakeScrollKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.UP));
-            public Key activatekey = new Key(KeyCode.C);
+            public Key activatekey = new Key(KeyCode.E);
             public Key safetyKey = new Key(MouseButton.BACK);
-            public boolean enableSafetyKey = false;
+            public boolean enableSafetyKey = true;
         }
     }
 
@@ -127,6 +145,23 @@ public class Configuration {
             public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
             public Key activateKey = new Key(KeyCode.V);
             public double triggerInterval = 20.0;
+        }
+    }
+
+    /* 快速切枪 */
+    public static class QuickSwap {
+        public String title = "quick swap";
+        public BaseSetting baseSetting = new BaseSetting();
+
+        public static class BaseSetting {
+            public boolean enable = false;
+            public boolean enableMapping1 = false;
+            public boolean enableMapping2 = false;
+            public boolean enableMapping3 = false;
+            public boolean enableMapping4 = false;
+            public boolean enableBlockKey = true;
+            public Key blockKey = new Key(MouseButton.BACK);
+            public double blockDuration = 500.0;
         }
     }
 }

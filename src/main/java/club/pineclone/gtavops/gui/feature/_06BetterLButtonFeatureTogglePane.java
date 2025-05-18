@@ -13,7 +13,6 @@ import club.pineclone.gtavops.macro.SimpleMacro;
 import club.pineclone.gtavops.macro.action.Action;
 import club.pineclone.gtavops.macro.action.impl.HoldLButtonAction;
 import club.pineclone.gtavops.macro.action.impl.RapidlyClickLButtonAction;
-import club.pineclone.gtavops.macro.action.impl.StartEngineAction;
 import club.pineclone.gtavops.macro.trigger.Trigger;
 import club.pineclone.gtavops.macro.trigger.TriggerFactory;
 import club.pineclone.gtavops.macro.trigger.TriggerIdentity;
@@ -50,7 +49,7 @@ public class _06BetterLButtonFeatureTogglePane extends FeatureTogglePane {
         if (blbConfig.holdLButtonSetting.enable) {
             TriggerMode mode = getMode(blbConfig.holdLButtonSetting.activateMethod);
             Key activateKey = blbConfig.holdLButtonSetting.activateKey;
-            Trigger trigger = TriggerFactory.getTrigger(new TriggerIdentity(activateKey, mode));
+            Trigger trigger = TriggerFactory.simple(new TriggerIdentity(mode, activateKey));
 
             Action action = new HoldLButtonAction();
             holdLButtonMacro = new SimpleMacro(trigger, action);
@@ -62,7 +61,7 @@ public class _06BetterLButtonFeatureTogglePane extends FeatureTogglePane {
             Key activateKey = blbConfig.rapidlyClickLButtonSetting.activateKey;
             long triggerInterval = (long) (Math.floor(blbConfig.rapidlyClickLButtonSetting.triggerInterval));
 
-            Trigger trigger = TriggerFactory.getTrigger(new TriggerIdentity(activateKey, mode));
+            Trigger trigger = TriggerFactory.simple(new TriggerIdentity(mode, activateKey));
             Action action = new RapidlyClickLButtonAction(triggerInterval);
 
             rapidlyClickLButtonMacro = new SimpleMacro(trigger, action);

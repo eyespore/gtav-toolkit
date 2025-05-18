@@ -11,8 +11,6 @@ import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.i18n.I18nHolder;
 import club.pineclone.gtavops.macro.SimpleMacro;
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.action.ScheduledAction;
-import club.pineclone.gtavops.macro.action.decorator.SwapRangedDecorator;
 import club.pineclone.gtavops.macro.action.impl.MeleeGlitchAction;
 import club.pineclone.gtavops.macro.trigger.Trigger;
 import club.pineclone.gtavops.macro.trigger.TriggerFactory;
@@ -59,13 +57,13 @@ public class _04MeleeGlitchFeatureTogglePane extends FeatureTogglePane {
 
         if (mgConfig.baseSetting.enableSafetyKey) {
             Key safetyKey = mgConfig.baseSetting.safetyKey;
-            return TriggerFactory.getTrigger(
-                    new TriggerIdentity(activatekey, mode),
-                    new TriggerIdentity(safetyKey, mode)
+            return TriggerFactory.composite(
+                    new TriggerIdentity(mode, activatekey),
+                    new TriggerIdentity(mode, safetyKey)
             );
         }
 
-        return TriggerFactory.getTrigger(new TriggerIdentity(activatekey, mode));  /* 触发器 */
+        return TriggerFactory.simple(new TriggerIdentity(mode, activatekey));  /* 触发器 */
     }
 
     private Action buildAction() {

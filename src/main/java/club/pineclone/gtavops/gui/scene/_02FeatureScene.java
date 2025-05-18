@@ -23,7 +23,6 @@ public class _02FeatureScene extends SceneTemplate {
     ExtendedI18n i18n;
     ExtendedI18n.Feature fI18n;
 
-    private FusionButton gameVersionChooseBtn;
     private GTAVRuntimeContext context;
 
     public _02FeatureScene() {
@@ -42,7 +41,8 @@ public class _02FeatureScene extends SceneTemplate {
         HBox gameVersionPane = new HBox(10);
         gameVersionPane.setPadding(new Insets(24, 0, 0, 0));
 
-        gameVersionChooseBtn = new VOptionalButton() {{
+        /* 传承版 */
+        FusionButton gameVersionChooseBtn = new VOptionalButton() {{
             setPrefWidth(100);
             setPrefHeight(35);
 //            setOnAction(e -> selectGameHome());
@@ -67,7 +67,8 @@ public class _02FeatureScene extends SceneTemplate {
 
             indexProperty().set(context.getGameVersion());
         }};
-        gameVersionPane.getChildren().addAll(GameVerLabel, gameVersionChooseBtn, headerLabel);
+//        gameVersionPane.getChildren().addAll(GameVerLabel, gameVersionChooseBtn, headerLabel);
+        gameVersionPane.getChildren().addAll(headerLabel);
         gameVersionPane.setAlignment(Pos.CENTER);
         gameVersionPane.setLayoutY(10);
         FXUtils.observeWidthCenter(getContentPane(), gameVersionPane);

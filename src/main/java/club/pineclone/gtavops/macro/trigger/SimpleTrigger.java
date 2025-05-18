@@ -2,6 +2,7 @@ package club.pineclone.gtavops.macro.trigger;
 
 import club.pineclone.gtavops.macro.trigger.policy.ActivationPolicy;
 import club.pineclone.gtavops.macro.trigger.source.InputSource;
+import club.pineclone.gtavops.macro.trigger.source.InputSourceEvent;
 import club.pineclone.gtavops.macro.trigger.source.InputSourceListener;
 
 /* 触发器 */
@@ -27,10 +28,10 @@ public class SimpleTrigger extends Trigger implements InputSourceListener {
     }
 
     @Override
-    public void onInputSourceEvent(boolean press) {
-        int flag = policy.decide(press);
-        if (flag == 1) activate();
-        else if (flag == -1) deactivate();
+    public void onInputSourceEvent(InputSourceEvent event) {
+        int flag = policy.decide(event);
+        if (flag == 1) activate(TriggerEvent.ofNormal(this, event));  /* 执行 */
+        else if (flag == 0) deactivate(TriggerEvent.ofNormal(this, event));  /* 拒绝 */
     }
 
     @Override

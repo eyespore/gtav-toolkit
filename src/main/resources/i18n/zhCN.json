@@ -9,6 +9,9 @@
   "disabled" : "停用",
   "legacy" : "传承版",
   "enhanced" : "增强版",
+  "keyboard" : "键盘",
+  "mouseButton" : "鼠标",
+  "mouseWheel" : "滚轮",
   "swapGlitch" : {
     "title" : "普通偷速",
     "baseSetting" : {
@@ -20,17 +23,18 @@
     },
     "swapMeleeSetting" : {
       "title" : "切近战武器设置",
-      "enable" : "激活偷速时切换近战武器",
+      "enable" : "启用子功能",
       "postSwapMeleeDelay" : "切换近战武器之后的延时",
       "meleeKey" : "近战武器键"
     },
     "swapRangedSetting" : {
       "title" : "切远程武器设置",
-      "enable" : "撤销偷速时切换远程武器",
-      "preferredRangedWeaponKey" : "偏好远程武器键位",
-      "enableBlockKey" : "启用保险",
-      "blockKey" : "保险键位",
-      "blockDuration" : "保险持续时间"
+      "enable" : "启用子功能",
+      "defaultRangedWeaponKey" : "默认远程武器键位",
+      "listenRangedWeaponMapping" : "监听远程武器映射[{0}]",
+      "enableBlockKey" : "启用屏蔽键",
+      "blockKey" : "屏蔽键位",
+      "blockDuration" : "屏蔽持续时间(ms)"
     }
   },
   "quickSnake" : {
@@ -95,6 +99,16 @@
       "triggerInterval" : "触发间隔(ms)"
     }
   },
+  "quickSwap" : {
+    "title" : "快速切枪",
+    "baseSetting" : {
+      "title" : "基础设置",
+      "quickSwapMapping" : "启用映射 [{0}]",
+      "enableBlockKey" : "启用屏蔽键",
+      "blockKey" : "屏蔽键位",
+      "blockDuration" : "屏蔽持续时间(ms)"
+    }
+  },
   "fontPack" : {
     "title" : "字体包管理",
     "gamePath" : "游戏家目录",
@@ -154,7 +168,7 @@
     "title" : "应用配置",
     "header" : "对GTAV OPS进行配置！"
   },
-  "keyMouseChooserDesc" : "按下一个按键或是一个鼠标键来确认",
+  "keyChooserDescription" : "按下 [{0}] 来设置键位",
   "keyChooserForwardMouseButton" : "鼠标前侧键",
   "keyChooserBackMouseButton" : "鼠标后侧键",
   "keyChooserLeftMouseButton" : "鼠标左键",

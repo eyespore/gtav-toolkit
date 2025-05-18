@@ -23,8 +23,7 @@ public class SwapMeleeDecorator extends ScheduledActionDecorator {
     /* 在动作(比如切枪偷速)开始之前，切换到近战武器 */
     @Override
     public boolean beforeActivate(ActionEvent event) throws Exception {
-        boolean flag = delegate.beforeActivate(event);
-        if (!flag) return false;
+        if (!delegate.beforeActivate(event)) return false;
 
         robot.simulate(hotkey);
         Thread.sleep(10);

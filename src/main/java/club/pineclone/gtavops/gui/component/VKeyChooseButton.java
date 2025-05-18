@@ -44,7 +44,7 @@ public class VKeyChooseButton extends FusionButton {
         textProperty.bind(Bindings.createStringBinding(() -> {
             Key key = keyProperty.get();
             if (key == null) return I18nHolder.get().unset;
-            return KeyUtils.toString(key);
+            return KeyUtils.toString(key);  // todo: 修复选择按键后的本地化显示问题
         }, keyProperty));
 
         getTextNode().textProperty().bind(textProperty);
