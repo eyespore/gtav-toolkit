@@ -83,6 +83,7 @@ public class SwapRangedDecorator
         if (swapDefaultRangedWeaponOnEmpty) {
             targetRangedWeaponKey.set(defaultRangedWeaponKey);
         }
+
         return true;
     }
 
@@ -91,7 +92,7 @@ public class SwapRangedDecorator
     public void afterDeactivate(ActionEvent event) throws Exception {
         recorderRunning.set(false);
 
-        Key keyToUse = targetRangedWeaponKey.get();
+        Key keyToUse = targetRangedWeaponKey.getAndSet(null);
         if (keyToUse != null) {
             Thread.sleep(20);
             robot.simulate(keyToUse);  /* 切换到枪 */
