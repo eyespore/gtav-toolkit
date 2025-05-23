@@ -1,6 +1,6 @@
 package club.pineclone.test.utils;
 
-import club.pineclone.gtavops.config.Configuration;
+import club.pineclone.gtavops.config.Config;
 import club.pineclone.gtavops.utils.KeyUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -35,7 +35,7 @@ public class ConfigTest extends TestCase {
 
     public void testConfiguration() throws JsonProcessingException {
 
-        Configuration config = new Configuration();
+        Config config = new Config();
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
 
@@ -49,7 +49,7 @@ public class ConfigTest extends TestCase {
 
         System.out.println(serialized);
 
-        System.out.println(mapper.readValue(serialized, Configuration.class));
+        System.out.println(mapper.readValue(serialized, Config.class));
     }
 
     private static final class TestConfig {

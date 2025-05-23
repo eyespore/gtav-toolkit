@@ -1,5 +1,6 @@
-package club.pineclone.gtavops.utils;
+package club.pineclone.gtavops.common;
 
+import club.pineclone.gtavops.utils.PathUtils;
 import com.github.kwhat.jnativehook.DefaultLibraryLocator;
 import com.github.kwhat.jnativehook.NativeLibraryLocator;
 

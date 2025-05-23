@@ -48,14 +48,6 @@ public class PriorityMacro extends Macro {
         }
     }
 
-    protected void resume() {
-        // 恢复
-    }
-
-    protected void suspend() {
-        // 挂起
-    }
-
     protected void stop() {
         // 停止
     }

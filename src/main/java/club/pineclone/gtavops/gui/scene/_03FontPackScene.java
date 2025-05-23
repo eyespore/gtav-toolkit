@@ -1,7 +1,7 @@
 package club.pineclone.gtavops.gui.scene;
 
 import club.pineclone.gtavops.config.ConfigHolder;
-import club.pineclone.gtavops.config.Configuration;
+import club.pineclone.gtavops.config.Config;
 import club.pineclone.gtavops.gui.component.VTextField;
 import club.pineclone.gtavops.gui.forked.*;
 import club.pineclone.gtavops.gui.theme.BaseTheme;
@@ -49,7 +49,7 @@ import java.util.function.Function;
 
 public class _03FontPackScene extends SceneTemplate {
 
-    private final Configuration config;
+    private final Config config;
 
     private final ExtendedI18n i18n;
     private final ExtendedI18n.FontPack fpI18n;

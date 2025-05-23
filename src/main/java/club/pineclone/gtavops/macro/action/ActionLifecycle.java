@@ -11,6 +11,8 @@ public interface ActionLifecycle {
         return true;
     }
 
+    default void activate(ActionEvent event) throws Exception {}
+
     /**
      * 动作执行之后，执行后处理工作
      */
@@ -27,4 +29,7 @@ public interface ActionLifecycle {
      * 动作撤销之后，执行撤销之后的后处理工作
      */
     default void afterDeactivate(ActionEvent event) throws Exception {}
+
+    default void deactivate(ActionEvent event) throws Exception {}
+
 }

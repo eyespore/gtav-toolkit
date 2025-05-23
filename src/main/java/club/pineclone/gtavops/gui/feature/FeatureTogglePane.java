@@ -21,14 +21,20 @@ public abstract class FeatureTogglePane {
     private final ToggleSwitch toggle;  /* 激活开关 */
     private final FusionPane content;  /* 面板 */
 
-    public FeatureTogglePane() {
+    protected final FeatureContext context;  /* 功能上下文 */
+    protected final VSettingStage setting;
+
+    public FeatureTogglePane(final FeatureContext context, final VSettingStage setting) {
+        this.context = context;
+        this.setting = setting;
+
         Region spacer = new Region();
         spacer.setMinWidth(10);
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         toggle = new ToggleSwitch();
-        ThemeLabel intro = new ThemeLabel(getTitle());
 
+        ThemeLabel intro = new ThemeLabel(getTitle());
         HBox hBox = new HBox(0);
         hBox.setPadding(new Insets(12, 22, 0, 5));
         hBox.getChildren().addAll(intro, spacer, toggle.getNode());
@@ -47,15 +53,11 @@ public abstract class FeatureTogglePane {
         this.content = pane;
     }
 
-    /**
-     * 开关状态监听器，监听此功能状态开关，并在状态转变到激活时调用{@link FeatureTogglePane#activate()}方法以启用
-     * 功能，当状态转变到关闭时调用{@link FeatureTogglePane#deactivate()}方法以停止功能
-     */
     private class ToggleEventHandler implements ChangeListener<Boolean> {
         @Override
         public void changed(ObservableValue<? extends Boolean> obs, Boolean oldV, Boolean newV) {
-            if (newV) activate();
-            else deactivate();
+            if (newV) context.activate();
+            else context.deactivate();
         }
     }
 
@@ -73,14 +75,14 @@ public abstract class FeatureTogglePane {
                 toggle.setSelected(!flag);
 
             } else if (e.getButton() == MouseButton.SECONDARY) {
-                VSettingStage settingStage = FeatureTogglePane.this.getSettingStage();
+                VSettingStage settingStage = FeatureTogglePane.this.setting;
                 if (settingStage == null) return;
 
-                FeaturePaneInitializer.getInstance().disable();  // 禁用宏，启用设置
-                settingStage.init();  // 设置页面初始化
+                FeatureTogglePaneRegistry.getInstance().stopAll();  // 禁用宏，启用设置
+                settingStage.doInit();  // 设置页面初始化
                 settingStage.showAndWait();  // 展示设置页面
-                settingStage.stop();
-                FeaturePaneInitializer.getInstance().enable();  // 重新启用宏
+                settingStage.doStop();
+                FeatureTogglePaneRegistry.getInstance().initAll();  // 重新启用宏
             }
         }
     }
@@ -89,38 +91,35 @@ public abstract class FeatureTogglePane {
         return content.getNode();
     }
 
-    public BooleanProperty selectedProperty() {
+    private BooleanProperty selectedProperty() {
         return toggle.selectedProperty();
     }
 
     protected abstract String getTitle();
 
     /**
-     * 应该避免直接调用这个方法启动功能
-     * 激活功能
-     */
-    protected abstract void activate();
-
-    /**
-     * 外部不应该调用此方法停止宏功能
-     * 停止功能
-     */
-    protected abstract void deactivate();
-
-    /**
-     * 功能上下文初始化，{@link FeaturePaneInitializer}会在应用初始化阶段对{@link FeatureRegistry}
+     * 功能上下文初始化，{@link FeatureTogglePaneRegistry}会在应用初始化阶段对{@link FeatureTogglePaneRegistry}
      * 注册表当中注册的所有宏功能类进行遍历，逐个调用此方法，进行初始化和激活
      *
+     * @return 初始化之后，此功能面板是否应该处于开启状态
      */
-    public abstract void init();
+    public abstract boolean init();
 
     /**
-     * 功能上下文停止，{@link FeaturePaneInitializer}会在停止阶段对注册表当中注册的功能逐个调用此方法，以在用户进行功能设置、应用退出
+     * 功能上下文停止，{@link FeatureTogglePaneRegistry}会在停止阶段对注册表当中注册的功能逐个调用此方法，以在用户进行功能设置、应用退出
      * 之前正确的关闭宏功能，避免一些问题出现
+     *
+     * @param enabled 停止时此功能面板是否处于开启状态，用于结合配置持久化开启状态
      */
-    public abstract void stop();
+    public abstract void stop(boolean enabled);
 
-    public VSettingStage getSettingStage() {
-        return null;
+
+    protected final void doInit() {
+        selectedProperty().set(init());
+    }
+
+    protected final void doStop() {
+        stop(selectedProperty().get());
+        selectedProperty().set(false);
     }
 }

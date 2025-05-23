@@ -6,4 +6,8 @@ public interface MacroLifecycleAware {
 
     default void uninstall() {}
 
+    default void suspend() {}
+
+    default void resume() {}
+
 }

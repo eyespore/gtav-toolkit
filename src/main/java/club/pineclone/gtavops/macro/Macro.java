@@ -29,5 +29,13 @@ public abstract class Macro implements TriggerListener {
         this.trigger.removeListener(this);  /* 注销自身 */
     }
 
+    public void suspend() {
+        this.action.suspend();
+        this.trigger.suspend();
+    }
 
+    public void resume() {
+        this.action.resume();
+        this.trigger.resume();
+    }
 }

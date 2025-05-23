@@ -1,14 +1,13 @@
 package club.pineclone.gtavops.gui.feature;
 
-import club.pineclone.gtavops.config.ConfigHolder;
-import club.pineclone.gtavops.config.Configuration;
+import club.pineclone.gtavops.common.ResourceHolder;
+import club.pineclone.gtavops.config.Config;
 import club.pineclone.gtavops.gui.component.VKeyChooseButton;
 import club.pineclone.gtavops.gui.component.VSettingStage;
 import club.pineclone.gtavops.gui.forked.ForkedKeyChooser;
 import club.pineclone.gtavops.gui.forked.ForkedSlider;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
-import club.pineclone.gtavops.i18n.I18nHolder;
-import club.pineclone.gtavops.macro.SimpleMacro;
+import club.pineclone.gtavops.macro.MacroContextHolder;
 import club.pineclone.gtavops.macro.action.Action;
 import club.pineclone.gtavops.macro.action.impl.StartEngineAction;
 import club.pineclone.gtavops.macro.trigger.Trigger;
@@ -17,65 +16,69 @@ import club.pineclone.gtavops.macro.trigger.TriggerIdentity;
 import club.pineclone.gtavops.macro.trigger.TriggerMode;
 import io.vproxy.vfx.entity.input.Key;
 
-public class _05BetterMMenuFeatureTogglePane extends FeatureTogglePane {
+import java.util.UUID;
 
-    ExtendedI18n i18n;
-    ExtendedI18n.BetterMMenu bmmI18n;
-
-    Configuration config;
-    Configuration.BetterMMenu bmmConfig;
-
-    private SimpleMacro macro;
+public class _05BetterMMenuFeatureTogglePane
+        extends FeatureTogglePane
+        implements ResourceHolder {
 
     public _05BetterMMenuFeatureTogglePane() {
-        i18n = I18nHolder.get();
-        bmmI18n = i18n.betterMMenu;
-
-        config = ConfigHolder.get();
-        bmmConfig = config.betterMMenu;
+        super(new BMMFeatureContext(), new BMMSettingStage());
     }
 
     @Override
     protected String getTitle() {
-        return I18nHolder.get().betterMMenu.title;
+        return getI18n().betterMMenu.title;
     }
 
     @Override
-    protected void activate() {
-        Key startEngineKey = bmmConfig.baseSetting.startEngineKey;
-        Key menuKey = bmmConfig.baseSetting.menuKey;
-        long arrowKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.arrowKeyInterval));
-        long enterKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.enterKeyInterval));
-
-        Trigger trigger = TriggerFactory.simple(new TriggerIdentity(TriggerMode.CLICK, startEngineKey));
-        Action action = new StartEngineAction(menuKey, arrowKeyInterval, enterKeyInterval);
-
-        macro = new SimpleMacro(trigger, action);
-        macro.install();
+    public boolean init() {
+        return getConfig().betterMMenu.baseSetting.enable;
     }
 
     @Override
-    protected void deactivate() {
-        macro.uninstall();
+    public void stop(boolean enabled) {
+        getConfig().betterMMenu.baseSetting.enable = enabled;
     }
 
-    @Override
-    public void init() {
-        selectedProperty().set(bmmConfig.baseSetting.enable);
+    private static class BMMFeatureContext
+            extends FeatureContext
+            implements ResourceHolder, MacroContextHolder {
+
+        private UUID macroId;
+        private final Config config = getConfig();
+        private final Config.BetterMMenu bmmConfig = config.betterMMenu;
+
+        @Override
+        protected void activate() {
+            Key startEngineKey = bmmConfig.baseSetting.startEngineKey;
+            Key menuKey = bmmConfig.baseSetting.menuKey;
+            long arrowKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.arrowKeyInterval));
+            long enterKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.enterKeyInterval));
+
+            Trigger trigger = TriggerFactory.simple(new TriggerIdentity(TriggerMode.CLICK, startEngineKey));
+            Action action = new StartEngineAction(menuKey, arrowKeyInterval, enterKeyInterval);
+
+            macroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
+            MACRO_REGISTRY.install(macroId);
+        }
+
+        @Override
+        protected void deactivate() {
+            MACRO_REGISTRY.uninstall(macroId);
+        }
+
     }
 
-    @Override
-    public void stop() {
-        bmmConfig.baseSetting.enable = selectedProperty().get();
-        selectedProperty().set(false);
-    }
+    private static class BMMSettingStage
+            extends VSettingStage
+            implements ResourceHolder {
 
-    @Override
-    public VSettingStage getSettingStage() {
-        return new BMMSettingStage();
-    }
+        private final ExtendedI18n i18n = getI18n();
+        private final ExtendedI18n.BetterMMenu bmmI18n = i18n.betterMMenu;
 
-    private class BMMSettingStage extends VSettingStage {
+        private final Config config = getConfig();
+        private final Config.BetterMMenu bmmConfig = config.betterMMenu;
 
         private static final int FLAG_WITH_KEY_AND_MOUSE = ForkedKeyChooser.FLAG_WITH_KEY  | ForkedKeyChooser.FLAG_WITH_MOUSE;
         private static final int FLAG_WITH_ALL = FLAG_WITH_KEY_AND_MOUSE | ForkedKeyChooser.FLAG_WITH_WHEEL_SCROLL;

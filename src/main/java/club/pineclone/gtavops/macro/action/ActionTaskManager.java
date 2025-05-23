@@ -10,19 +10,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ActionTaskManager {
 
     @Getter
-    private static final ScheduledExecutorService scheduler =
+    private static final ScheduledExecutorService SCHEDULER =
             Executors.newScheduledThreadPool(
                     Runtime.getRuntime().availableProcessors(),
-                    new NamedThreadFactory("app-scheduler-%d")
+                    new NamedThreadFactory("action-task-scheduler-%d")
             );
 
     private ActionTaskManager() {}
 
     public static void shutdown() {
-        scheduler.shutdownNow();
+        SCHEDULER.shutdownNow();
     }
 
-    private static class NamedThreadFactory implements ThreadFactory {
+    public static class NamedThreadFactory implements ThreadFactory {
         private final AtomicInteger count = new AtomicInteger();
         private final String pattern;
         public NamedThreadFactory(String pattern) { this.pattern = pattern; }
@@ -33,5 +33,4 @@ public class ActionTaskManager {
             return t;
         }
     }
-
 }

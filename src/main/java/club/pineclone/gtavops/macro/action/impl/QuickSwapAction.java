@@ -1,8 +1,6 @@
 package club.pineclone.gtavops.macro.action.impl;
 
-import club.pineclone.gtavops.macro.Macro;
-import club.pineclone.gtavops.macro.MacroPriorityContext;
-import club.pineclone.gtavops.macro.SimpleMacro;
+import club.pineclone.gtavops.macro.*;
 import club.pineclone.gtavops.macro.action.Action;
 import club.pineclone.gtavops.macro.action.ActionEvent;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
@@ -19,21 +17,17 @@ import javafx.scene.input.MouseButton;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-
+import java.util.UUID;
 
 /* 快速切枪 */
-public class QuickSwapAction extends Action {
+public class QuickSwapAction extends Action implements MacroContextHolder {
 
     private final VCRobotAdapter robot;
     private final Map<Key, Key> sourceToTargetMap = new HashMap<>();
 
     protected static final String ACTION_ID = "quick-swap";
-
     private final Key leftButtonKey = new Key(MouseButton.PRIMARY);
-
-    private Macro blockerMacro;  /* 屏蔽器宏 */
+    private UUID blockerMacroId;
     private BlockAction blockAction;
 
     public QuickSwapAction(Map<Key, Key> sourceToTargetMap, boolean enableBlockKey, Key blockKey ,long blockDuration) {
@@ -46,25 +40,26 @@ public class QuickSwapAction extends Action {
             Trigger trigger = TriggerFactory.simple(new TriggerIdentity(TriggerMode.HOLD, blockKey));
             blockAction = new BlockAction(blockDuration);
             blockAction.enable();  // 转为激活状态
-            blockerMacro = new SimpleMacro(trigger, blockAction);
+
+            blockerMacroId = MACRO_FACTORY.createSimpleMacro(trigger, blockAction);
         }
     }
 
     @Override
     public void install() {
         super.install();
-        if (blockerMacro != null) blockerMacro.install();
+        MACRO_REGISTRY.install(blockerMacroId);
     }
 
     @Override
     public void uninstall() {
-        if (blockerMacro != null) blockerMacro.uninstall();
+        MACRO_REGISTRY.uninstall(blockerMacroId);
         super.uninstall();
     }
 
     @Override
     public void activate(ActionEvent event) {
-        if (blockerMacro != null && blockAction.isBlocked()) return;
+        if (blockAction != null && blockAction.isBlocked()) return;
 
         try {
             Thread.sleep(20);

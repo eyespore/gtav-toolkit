@@ -20,7 +20,7 @@ public class ConfigHolder {
     public static final String APPLICATION_TITLE = "GTAV Ops";  /* 应用基础信息 */
 
     private static ObjectMapper mapper;
-    private static Configuration configuration;  /* 配置 */
+    private static Config config;  /* 配置 */
     private static final String VERSION_FILE = "/version.txt";
 
     public static String version = "unknown";
@@ -46,27 +46,27 @@ public class ConfigHolder {
         Path configFilePath = PathUtils.getConfigFilePath();
         if (Files.notExists(configFilePath)) {
             /* 配置不存在，创建默认配置 */
-            configuration = new Configuration();  /* 采用默认配置 */
+            config = new Config();  /* 采用默认配置 */
             save();  /* 将配置写入文件 */
         } else {
             /* 配置存在，尝试加载配置 */
-            configuration = mapper.readValue(configFilePath.toFile(), Configuration.class);
+            config = mapper.readValue(configFilePath.toFile(), Config.class);
         }
     }
 
     public static void overrideConfigToDefault() throws IOException {
-        configuration = new Configuration();
+        config = new Config();
         save();  /* 将配置写入文件 */
     }
 
-    public static Configuration get() {
-        return configuration;
+    public static Config get() {
+        return config;
     }
 
     /* 保存配置 */
     public static void save() throws IOException {
         Path configFilePath = PathUtils.getConfigFilePath();
-        mapper.writeValue(configFilePath.toFile(), configuration);  /* 保存配置 */
+        mapper.writeValue(configFilePath.toFile(), config);  /* 保存配置 */
     }
 
     private static class KeySerializer extends JsonSerializer<Key> {

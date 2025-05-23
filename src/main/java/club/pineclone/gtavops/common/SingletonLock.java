@@ -1,11 +1,12 @@
-package club.pineclone.gtavops.utils;
+package club.pineclone.gtavops.common;
+
+import club.pineclone.gtavops.utils.PathUtils;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 /* 单运行实例锁 */

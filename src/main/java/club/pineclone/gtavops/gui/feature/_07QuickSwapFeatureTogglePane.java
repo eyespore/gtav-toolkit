@@ -1,14 +1,13 @@
 package club.pineclone.gtavops.gui.feature;
 
-import club.pineclone.gtavops.config.ConfigHolder;
-import club.pineclone.gtavops.config.Configuration;
+import club.pineclone.gtavops.common.ResourceHolder;
+import club.pineclone.gtavops.config.Config;
 import club.pineclone.gtavops.gui.component.VKeyChooseButton;
 import club.pineclone.gtavops.gui.component.VSettingStage;
 import club.pineclone.gtavops.gui.forked.ForkedKeyChooser;
 import club.pineclone.gtavops.gui.forked.ForkedSlider;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
-import club.pineclone.gtavops.i18n.I18nHolder;
-import club.pineclone.gtavops.macro.SimpleMacro;
+import club.pineclone.gtavops.macro.MacroContextHolder;
 import club.pineclone.gtavops.macro.action.Action;
 import club.pineclone.gtavops.macro.action.impl.QuickSwapAction;
 import club.pineclone.gtavops.macro.trigger.Trigger;
@@ -21,82 +20,87 @@ import io.vproxy.vfx.ui.toggle.ToggleSwitch;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /* 快速切枪 */
-public class _07QuickSwapFeatureTogglePane extends FeatureTogglePane {
-
-    Configuration config;
-    Configuration.QuickSwap qsConfig;
-    Configuration.SwapGlitch sgConfig;
-    ExtendedI18n i18n;
-    ExtendedI18n.QuickSwap qsI18n;
-    ExtendedI18n.SwapGlitch sgI18n;  /* 切枪偷速本地化 */
-
-    private SimpleMacro macro;
+public class _07QuickSwapFeatureTogglePane
+        extends FeatureTogglePane
+        implements ResourceHolder {
 
     public _07QuickSwapFeatureTogglePane() {
-        config = ConfigHolder.get();
-        qsConfig = config.quickSwap;
-        sgConfig = config.swapGlitch;
-        i18n = I18nHolder.get();
-        qsI18n = i18n.quickSwap;
-        sgI18n = i18n.swapGlitch;
+        super(new QSFeatureContext(), new QSSettingStage());
     }
 
     @Override
     protected String getTitle() {
-        return I18nHolder.get().quickSwap.title;
+        return getI18n().quickSwap.title;
     }
 
     @Override
-    protected void activate() {
-        Map<Key, Key> sourceToTargetMap = new HashMap<>();
-        Configuration.SwapGlitch.SwapRangedSetting srSetting = sgConfig.swapRangedSetting;
-        Configuration.QuickSwap.BaseSetting bSetting = qsConfig.baseSetting;
-
-        /* 启用映射1 */
-        if (bSetting.enableMapping1) sourceToTargetMap.put(srSetting.mapping1SourceKey, srSetting.mapping1TargetKey);
-        /* 启用映射2 */
-        if (bSetting.enableMapping2) sourceToTargetMap.put(srSetting.mapping2SourceKey, srSetting.mapping2TargetKey);
-        /* 启用映射3 */
-        if (bSetting.enableMapping3) sourceToTargetMap.put(srSetting.mapping3SourceKey, srSetting.mapping3TargetKey);
-        /* 启用映射4 */
-        if (bSetting.enableMapping4) sourceToTargetMap.put(srSetting.mapping4SourceKey, srSetting.mapping4TargetKey);
-
-        if (sourceToTargetMap.isEmpty()) return;
-
-        Action action = new QuickSwapAction(
-                sourceToTargetMap,
-                bSetting.enableBlockKey,
-                bSetting.blockKey,
-                (long) Math.floor(bSetting.blockDuration));
-
-        Trigger trigger = TriggerFactory.simple(new TriggerIdentity(TriggerMode.CLICK, sourceToTargetMap.keySet()));
-        macro = new SimpleMacro(trigger, action);
-        macro.install();
+    public boolean init() {
+        return getConfig().getQuickSwap().baseSetting.enable;
     }
 
     @Override
-    protected void deactivate() {
-        if (macro != null) macro.uninstall();
-    }
-    @Override
-    public void init() {
-        selectedProperty().set(qsConfig.baseSetting.enable);
+    public void stop(boolean enabled) {
+        getConfig().getQuickSwap().baseSetting.enable = enabled;
     }
 
-    @Override
-    public void stop() {
-        qsConfig.baseSetting.enable = selectedProperty().get();
-        selectedProperty().set(false);
+    private static class QSFeatureContext
+            extends FeatureContext
+            implements ResourceHolder, MacroContextHolder {
+
+        private UUID macroId;
+
+        private final Config config = getConfig();
+        private final Config.QuickSwap qsConfig = config.getQuickSwap();
+        private final Config.SwapGlitch sgConfig = config.getSwapGlitch();
+
+        @Override
+        protected void activate() {
+            Map<Key, Key> sourceToTargetMap = new HashMap<>();
+            Config.SwapGlitch.SwapRangedSetting srSetting = sgConfig.swapRangedSetting;
+            Config.QuickSwap.BaseSetting bSetting = qsConfig.baseSetting;
+
+            /* 启用映射1 */
+            if (bSetting.enableMapping1) sourceToTargetMap.put(srSetting.mapping1SourceKey, srSetting.mapping1TargetKey);
+            /* 启用映射2 */
+            if (bSetting.enableMapping2) sourceToTargetMap.put(srSetting.mapping2SourceKey, srSetting.mapping2TargetKey);
+            /* 启用映射3 */
+            if (bSetting.enableMapping3) sourceToTargetMap.put(srSetting.mapping3SourceKey, srSetting.mapping3TargetKey);
+            /* 启用映射4 */
+            if (bSetting.enableMapping4) sourceToTargetMap.put(srSetting.mapping4SourceKey, srSetting.mapping4TargetKey);
+
+            if (sourceToTargetMap.isEmpty()) return;
+
+            Action action = new QuickSwapAction(
+                    sourceToTargetMap,
+                    bSetting.enableBlockKey,
+                    bSetting.blockKey,
+                    (long) Math.floor(bSetting.blockDuration));
+
+            Trigger trigger = TriggerFactory.simple(new TriggerIdentity(TriggerMode.CLICK, sourceToTargetMap.keySet()));
+            macroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
+            MACRO_REGISTRY.install(macroId);
+        }
+
+        @Override
+        protected void deactivate() {
+            MACRO_REGISTRY.uninstall(macroId);
+        }
+
     }
 
-    @Override
-    public VSettingStage getSettingStage() {
-        return new QSSettingStage();
-    }
+    private static class QSSettingStage
+            extends VSettingStage
+            implements ResourceHolder {
 
-    private class QSSettingStage extends VSettingStage {
+        private final Config config = getConfig();
+        private final Config.QuickSwap qsConfig = config.getQuickSwap();
+        private final Config.SwapGlitch sgConfig = config.getSwapGlitch();
+        private final ExtendedI18n i18n = getI18n();
+        private final ExtendedI18n.QuickSwap qsI18n = i18n.getQuickSwap();
+
         private static final int FLAG_WITH_KEY_AND_MOUSE = ForkedKeyChooser.FLAG_WITH_KEY  | ForkedKeyChooser.FLAG_WITH_MOUSE;
         private static final int FLAG_WITH_ALL = FLAG_WITH_KEY_AND_MOUSE | ForkedKeyChooser.FLAG_WITH_WHEEL_SCROLL;
 
@@ -170,8 +174,8 @@ public class _07QuickSwapFeatureTogglePane extends FeatureTogglePane {
 
         @Override
         public void stop() {
-            Configuration.SwapGlitch.SwapRangedSetting srSetting = sgConfig.swapRangedSetting;
-            Configuration.QuickSwap.BaseSetting bSetting = qsConfig.baseSetting;
+            Config.SwapGlitch.SwapRangedSetting srSetting = sgConfig.swapRangedSetting;
+            Config.QuickSwap.BaseSetting bSetting = qsConfig.baseSetting;
 
             bSetting.enableMapping1 = mapping1Toggle.selectedProperty().get();
             srSetting.mapping1SourceKey = mapping1SourceKeyBtn.keyProperty().get();

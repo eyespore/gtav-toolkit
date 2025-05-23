@@ -8,9 +8,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class TUtils {
 
-    private TUtils() {
-    }
-
     public static String randomString(int lenMin, int lenMax) {
         var n = ThreadLocalRandom.current().nextInt(lenMax - lenMin);
         return randomString(n + lenMin);

@@ -1,21 +1,20 @@
 package club.pineclone.gtavops;
 
 import club.pineclone.gtavops.config.ConfigHolder;
-import club.pineclone.gtavops.gui.feature.FeaturePaneInitializer;
-import club.pineclone.gtavops.gui.forked.ForkedAlert;
+import club.pineclone.gtavops.gui.feature.FeatureTogglePaneRegistry;
 import club.pineclone.gtavops.gui.forked.ForkedDialog;
-import club.pineclone.gtavops.gui.forked.ForkedDialogButton;
 import club.pineclone.gtavops.gui.scene.SceneRegistry;
 import club.pineclone.gtavops.gui.scene.SceneTemplate;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.i18n.I18nHolder;
+import club.pineclone.gtavops.jni.PlatformFocusMonitor;
+import club.pineclone.gtavops.macro.MacroRegistry;
 import club.pineclone.gtavops.macro.action.ActionTaskManager;
 import club.pineclone.gtavops.utils.ImageUtils;
-import club.pineclone.gtavops.utils.JLibLocator;
+import club.pineclone.gtavops.common.JLibLocator;
 import club.pineclone.gtavops.utils.PathUtils;
-import club.pineclone.gtavops.utils.SingletonLock;
+import club.pineclone.gtavops.common.SingletonLock;
 import com.github.kwhat.jnativehook.GlobalScreen;
-import io.vproxy.base.util.LogType;
 import io.vproxy.vfx.control.globalscreen.GlobalScreenUtils;
 import io.vproxy.vfx.manager.task.TaskManager;
 import io.vproxy.vfx.theme.Theme;
@@ -27,22 +26,16 @@ import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.stage.VStage;
-import io.vproxy.vfx.ui.stage.VStageInitParams;
 import io.vproxy.vfx.util.FXUtils;
-import io.vproxy.vpacket.dns.rdata.A;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -115,11 +108,15 @@ public class MainFX extends Application {
         ExtendedI18n i18n = I18nHolder.get();
         ExtendedI18n.Intro iI18n = i18n.intro;
 
-        Class.forName(ActionTaskManager.class.getName());  /* 任务调度 */
+        Class.forName(PlatformFocusMonitor.class.getName());  /* 平台焦点监听 */
+        PlatformFocusMonitor.addListener(MacroRegistry.getInstance());  /* 添加监听器 */
+
+        Class.forName(ActionTaskManager.class.getName());  /* 宏任务调度 */
+
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());  /* 停止jnativehook日志记录 */
         logger.setLevel(Level.OFF);
         logger.setUseParentHandlers(false);
-        FeaturePaneInitializer.getInstance().enable();  /* 启用宏引擎 */
+        FeatureTogglePaneRegistry.getInstance().initAll();  /* 启用宏引擎 */
 
         VStage vStage = new VStage(primaryStage) {
             @Override
@@ -132,7 +129,8 @@ public class MainFX extends Application {
         vStage.getInitialScene().enableAutoContentWidthHeight();
         vStage.setTitle(ConfigHolder.APPLICATION_TITLE);
 
-        mainScenes.addAll(SceneRegistry.getInstance().getRegistry());  // 添加所有注册的场景
+        // 添加所有注册的场景
+        mainScenes.addAll(SceneRegistry.getInstance().values());
 
         // var initialScene = mainScenes.stream().filter(e -> e instanceof ).findAny().get();
         var initialScene = mainScenes.get(0);
@@ -187,7 +185,7 @@ public class MainFX extends Application {
         vStage.getInitialScene().getContentPane().getChildren().add(box);
 
         var menuScene = new VScene(VSceneRole.DRAWER_VERTICAL);
-        menuScene.getNode().setPrefWidth(450);
+        menuScene.getNode().setPrefWidth(300);
         menuScene.enableAutoContentWidth();
         menuScene.getNode().setBackground(new Background(new BackgroundFill(
                 Theme.current().subSceneBackgroundColor(),
@@ -202,7 +200,7 @@ public class MainFX extends Application {
         }};
         menuScene.getContentPane().getChildren().add(menuVBox);
         for (int i = 0; i < mainScenes.size(); ++i) {
-            final var fi = i;
+            final var targetIndex = i;
             var scene = mainScenes.get(i);
             var title = scene.getTitle();
             var button = new FusionButton(title);
@@ -210,14 +208,19 @@ public class MainFX extends Application {
             button.setOnAction(e -> {
                 //noinspection SuspiciousMethodCalls
                 var currentIndex = mainScenes.indexOf(sceneGroup.getCurrentMainScene());
-                if (currentIndex != fi) {
-                    sceneGroup.show(scene, currentIndex < fi ? VSceneShowMethod.FROM_RIGHT : VSceneShowMethod.FROM_LEFT);
+                if (currentIndex != targetIndex) {
+                    sceneGroup.show(scene, currentIndex < targetIndex ? VSceneShowMethod.FROM_RIGHT : VSceneShowMethod.FROM_LEFT);
+
+                    /* 修复通过左侧菜单栏切换页面导航按钮不变化的问题 */
+                    for (int naviBtnIndex = 0; naviBtnIndex < navigatorButtons.size(); naviBtnIndex++) {
+                        navigatorButtons.get(naviBtnIndex).setDisable(naviBtnIndex == targetIndex);
+                    }
                 }
                 vStage.getRootSceneGroup().hide(menuScene, VSceneHideMethod.TO_LEFT);
-//                prevButton.setDisable(fi == 0);
-//                nextButton.setDisable(fi == mainScenes.size() - 1);
+//                prevButton.setDisable(targetIndex == 0);
+//                nextButton.setDisable(targetIndex == mainScenes.size() - 1);
             });
-            button.setPrefWidth(400);
+            button.setPrefWidth(250);
             button.setPrefHeight(40);
             if (i != 0) {
                 menuVBox.getChildren().add(new VPadding(20));
@@ -233,6 +236,7 @@ public class MainFX extends Application {
             setLayoutX(-2);
             setLayoutY(-1);
         }};
+
         menuBtn.setOnAction(e -> vStage.getRootSceneGroup().show(menuScene, VSceneShowMethod.FROM_LEFT));
         vStage.getRoot().getContentPane().getChildren().add(menuBtn);
 
@@ -315,8 +319,10 @@ public class MainFX extends Application {
 
     @Override
     public void stop() throws Exception {
-        FeaturePaneInitializer.getInstance().disable();  /* 停止宏引擎 */
+        FeatureTogglePaneRegistry.getInstance().stopAll();  /* 停止宏引擎 */
         ActionTaskManager.shutdown();  /* 停止任务调度 */
+        PlatformFocusMonitor.shutdown();  /* 停止焦点监听 */
+
         ConfigHolder.save();  /* 保存配置 */
     }
 }

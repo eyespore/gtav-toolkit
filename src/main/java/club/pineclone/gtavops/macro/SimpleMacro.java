@@ -8,7 +8,7 @@ import club.pineclone.gtavops.macro.trigger.TriggerEvent;
 /* 简单宏实现，构建trigger和action的连接并执行 */
 public class SimpleMacro extends Macro {
 
-    public SimpleMacro(Trigger trigger, Action action) {
+    protected SimpleMacro(Trigger trigger, Action action) {
         super(trigger, action);
     }
 

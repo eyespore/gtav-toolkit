@@ -1,15 +1,14 @@
 package club.pineclone.gtavops.gui.feature;
 
-import club.pineclone.gtavops.config.ConfigHolder;
-import club.pineclone.gtavops.config.Configuration;
+import club.pineclone.gtavops.common.ResourceHolder;
+import club.pineclone.gtavops.config.Config;
+import club.pineclone.gtavops.gui.component.TriggerModeButton;
 import club.pineclone.gtavops.gui.component.VKeyChooseButton;
-import club.pineclone.gtavops.gui.component.VOptionalButton;
 import club.pineclone.gtavops.gui.component.VSettingStage;
 import club.pineclone.gtavops.gui.forked.ForkedKeyChooser;
 import club.pineclone.gtavops.gui.forked.ForkedSlider;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
-import club.pineclone.gtavops.i18n.I18nHolder;
-import club.pineclone.gtavops.macro.SimpleMacro;
+import club.pineclone.gtavops.macro.MacroContextHolder;
 import club.pineclone.gtavops.macro.action.Action;
 import club.pineclone.gtavops.macro.action.impl.HoldLButtonAction;
 import club.pineclone.gtavops.macro.action.impl.RapidlyClickLButtonAction;
@@ -20,100 +19,95 @@ import club.pineclone.gtavops.macro.trigger.TriggerMode;
 import io.vproxy.vfx.entity.input.Key;
 import io.vproxy.vfx.ui.toggle.ToggleSwitch;
 
-public class _06BetterLButtonFeatureTogglePane extends FeatureTogglePane {
+import java.util.UUID;
 
-    ExtendedI18n i18n;
-    ExtendedI18n.BetterLButton blbI18n;
-
-    Configuration config;
-    Configuration.BetterLButton blbConfig;
-
-    private SimpleMacro holdLButtonMacro;
-    private SimpleMacro rapidlyClickLButtonMacro;
+public class _06BetterLButtonFeatureTogglePane
+        extends FeatureTogglePane
+        implements ResourceHolder {
 
     public _06BetterLButtonFeatureTogglePane() {
-        i18n = I18nHolder.get();
-        blbI18n = i18n.betterLButton;
-
-        config = ConfigHolder.get();
-        blbConfig = config.betterLButton;
+        super(new BLBFeatureContext(), new BLBSettingStage());
     }
 
     @Override
     protected String getTitle() {
-        return I18nHolder.get().betterLButton.title;
+        return getI18n().betterLButton.title;
     }
 
     @Override
-    protected void activate() {
-        if (blbConfig.holdLButtonSetting.enable) {
-            TriggerMode mode = getMode(blbConfig.holdLButtonSetting.activateMethod);
-            Key activateKey = blbConfig.holdLButtonSetting.activateKey;
-            Trigger trigger = TriggerFactory.simple(new TriggerIdentity(mode, activateKey));
+    public boolean init() {
+        return getConfig().betterLButton.baseSetting.enable;
+    }
 
-            Action action = new HoldLButtonAction();
-            holdLButtonMacro = new SimpleMacro(trigger, action);
-            holdLButtonMacro.install();
+    @Override
+    public void stop(boolean enabled) {
+        getConfig().betterLButton.baseSetting.enable = enabled;
+    }
+
+    private static class BLBFeatureContext
+            extends FeatureContext
+            implements ResourceHolder, MacroContextHolder {
+
+        private final Config config = getConfig();
+        private final Config.BetterLButton blbConfig = config.betterLButton;
+
+        private UUID holdLButtonMacroId;
+        private UUID rapidlyClickLButtonMacroId;
+
+        @Override
+        protected void activate() {
+            if (blbConfig.holdLButtonSetting.enable) {
+                TriggerMode mode = blbConfig.holdLButtonSetting.activateMethod;
+                Key activateKey = blbConfig.holdLButtonSetting.activateKey;
+                Trigger trigger = TriggerFactory.simple(new TriggerIdentity(mode, activateKey));
+
+                Action action = new HoldLButtonAction();
+                holdLButtonMacroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
+                MACRO_REGISTRY.install(holdLButtonMacroId);
+            }
+
+            if (blbConfig.rapidlyClickLButtonSetting.enable) {
+                TriggerMode mode = blbConfig.rapidlyClickLButtonSetting.activateMethod;
+                Key activateKey = blbConfig.rapidlyClickLButtonSetting.activateKey;
+                long triggerInterval = (long) (Math.floor(blbConfig.rapidlyClickLButtonSetting.triggerInterval));
+
+                Trigger trigger = TriggerFactory.simple(new TriggerIdentity(mode, activateKey));
+                Action action = new RapidlyClickLButtonAction(triggerInterval);
+
+                rapidlyClickLButtonMacroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
+                MACRO_REGISTRY.install(rapidlyClickLButtonMacroId);
+            }
         }
 
-        if (blbConfig.rapidlyClickLButtonSetting.enable) {
-            TriggerMode mode = getMode(blbConfig.rapidlyClickLButtonSetting.activateMethod);
-            Key activateKey = blbConfig.rapidlyClickLButtonSetting.activateKey;
-            long triggerInterval = (long) (Math.floor(blbConfig.rapidlyClickLButtonSetting.triggerInterval));
-
-            Trigger trigger = TriggerFactory.simple(new TriggerIdentity(mode, activateKey));
-            Action action = new RapidlyClickLButtonAction(triggerInterval);
-
-            rapidlyClickLButtonMacro = new SimpleMacro(trigger, action);
-            rapidlyClickLButtonMacro.install();
+        @Override
+        protected void deactivate() {
+            MACRO_REGISTRY.uninstall(holdLButtonMacroId);
+            MACRO_REGISTRY.uninstall(rapidlyClickLButtonMacroId);
         }
-
     }
 
-    private TriggerMode getMode(int triggerMethod) {
-        return triggerMethod == 0 ? TriggerMode.HOLD : TriggerMode.TOGGLE;
-    }
+    private static class BLBSettingStage
+            extends VSettingStage
+            implements ResourceHolder {
 
-    @Override
-    protected void deactivate() {
-        if (holdLButtonMacro != null) holdLButtonMacro.uninstall();
-        if (rapidlyClickLButtonMacro != null) rapidlyClickLButtonMacro.uninstall();
-    }
+        private final ExtendedI18n i18n = getI18n();
+        private final ExtendedI18n.BetterLButton blbI18n = i18n.betterLButton;
 
-    @Override
-    public void init() {
-        selectedProperty().set(blbConfig.baseSetting.enable);
-    }
-
-    @Override
-    public void stop() {
-        blbConfig.baseSetting.enable = selectedProperty().get();
-        selectedProperty().set(false);
-    }
-
-    @Override
-    public VSettingStage getSettingStage() {
-        return new BLBSettingStage();
-    }
-
-    private class BLBSettingStage extends VSettingStage {
+        private final Config config = getConfig();
+        private final Config.BetterLButton blbConfig = config.betterLButton;
 
         private static final int FLAG_WITH_KEY_AND_MOUSE = ForkedKeyChooser.FLAG_WITH_KEY  | ForkedKeyChooser.FLAG_WITH_MOUSE;
         private static final int FLAG_WITH_ALL = FLAG_WITH_KEY_AND_MOUSE | ForkedKeyChooser.FLAG_WITH_WHEEL_SCROLL;
 
         private final ToggleSwitch enableHoldLButtonToggle = new ToggleSwitch();
         private final VKeyChooseButton holdLButtonActivateKeyBtn = new VKeyChooseButton(FLAG_WITH_ALL);
-        private final VOptionalButton holdLButtonActivateMethodBtn = new VOptionalButton() {{
-            addOptionalItem(i18n.hold);
-            addOptionalItem(i18n.toggle);
-        }};
+        private final TriggerModeButton holdLButtonActivateMethodBtn = new TriggerModeButton(
+                TriggerModeButton.FLAG_WITH_HOLD | TriggerModeButton.FLAG_WITH_TOGGLE);
 
         private final ToggleSwitch enableRapidlyClickLButtonToggle = new ToggleSwitch();
         private final VKeyChooseButton rapidlyClickLButtonActivateKeyBtn = new VKeyChooseButton(FLAG_WITH_ALL);
-        private final VOptionalButton rapidlyClickLButtonActivateMethodBtn = new VOptionalButton() {{
-            addOptionalItem(i18n.hold);
-            addOptionalItem(i18n.toggle);
-        }};
+        private final TriggerModeButton rapidlyClickLButtonActivateMethodBtn = new TriggerModeButton(
+                TriggerModeButton.FLAG_WITH_HOLD | TriggerModeButton.FLAG_WITH_TOGGLE);
         private final ForkedSlider rapidlyClickLButtonTriggerInterval = new ForkedSlider() {{
             setLength(200);
             setRange(10, 100);
@@ -142,11 +136,11 @@ public class _06BetterLButtonFeatureTogglePane extends FeatureTogglePane {
         @Override
         public void init() {
             enableHoldLButtonToggle.selectedProperty().set(blbConfig.holdLButtonSetting.enable);
-            holdLButtonActivateMethodBtn.indexProperty().set(blbConfig.holdLButtonSetting.activateMethod);
+            holdLButtonActivateMethodBtn.triggerModeProperty().set(blbConfig.holdLButtonSetting.activateMethod);
             holdLButtonActivateKeyBtn.keyProperty().set(blbConfig.holdLButtonSetting.activateKey);
 
             enableRapidlyClickLButtonToggle.selectedProperty().set(blbConfig.rapidlyClickLButtonSetting.enable);
-            rapidlyClickLButtonActivateMethodBtn.indexProperty().set(blbConfig.rapidlyClickLButtonSetting.activateMethod);
+            rapidlyClickLButtonActivateMethodBtn.triggerModeProperty().set(blbConfig.rapidlyClickLButtonSetting.activateMethod);
             rapidlyClickLButtonActivateKeyBtn.keyProperty().set(blbConfig.rapidlyClickLButtonSetting.activateKey);
             rapidlyClickLButtonTriggerInterval.setValue(blbConfig.rapidlyClickLButtonSetting.triggerInterval);
         }
@@ -154,11 +148,11 @@ public class _06BetterLButtonFeatureTogglePane extends FeatureTogglePane {
         @Override
         public void stop() {
             blbConfig.holdLButtonSetting.enable = enableHoldLButtonToggle.selectedProperty().get();
-            blbConfig.holdLButtonSetting.activateMethod = holdLButtonActivateMethodBtn.indexProperty().get();
+            blbConfig.holdLButtonSetting.activateMethod = holdLButtonActivateMethodBtn.triggerModeProperty().get();
             blbConfig.holdLButtonSetting.activateKey = holdLButtonActivateKeyBtn.keyProperty().get();
 
             blbConfig.rapidlyClickLButtonSetting.enable = enableRapidlyClickLButtonToggle.selectedProperty().get();
-            blbConfig.rapidlyClickLButtonSetting.activateMethod = rapidlyClickLButtonActivateMethodBtn.indexProperty().get();
+            blbConfig.rapidlyClickLButtonSetting.activateMethod = rapidlyClickLButtonActivateMethodBtn.triggerModeProperty().get();
             blbConfig.rapidlyClickLButtonSetting.activateKey = rapidlyClickLButtonActivateKeyBtn.keyProperty().get();
             blbConfig.rapidlyClickLButtonSetting.triggerInterval = rapidlyClickLButtonTriggerInterval.valueProperty().get();
 

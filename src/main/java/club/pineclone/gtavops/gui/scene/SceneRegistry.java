@@ -1,17 +1,16 @@
 package club.pineclone.gtavops.gui.scene;
 
-import club.pineclone.gtavops.utils.AbstractRegistry;
+import club.pineclone.gtavops.common.AbstractRegistry;
 import lombok.Getter;
 
 public class SceneRegistry extends AbstractRegistry<SceneTemplate> {
 
-    @Getter
-    private static final SceneRegistry instance = new SceneRegistry();
+    @Getter private static final SceneRegistry instance = new SceneRegistry();
 
     private SceneRegistry() {
-        registry.add(new _01IntroScene());
-        registry.add(new _02FeatureScene());
-        registry.add(new _03FontPackScene());
-        registry.add(new _04ConfigScene());
+        register(new _01IntroScene());
+        register(new _02FeatureScene());
+        register(new _03FontPackScene());
+        register(new _04ConfigScene());
     }
 }

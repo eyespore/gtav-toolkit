@@ -1,6 +1,7 @@
 {
   "toggle" : "切换",
   "hold" : "按住",
+  "click": "点按",
   "unset" : "<未设置>",
   "confirm" : "确认",
   "cancel" : "取消",

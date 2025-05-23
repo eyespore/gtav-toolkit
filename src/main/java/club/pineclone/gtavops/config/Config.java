@@ -1,5 +1,6 @@
 package club.pineclone.gtavops.config;
 
+import club.pineclone.gtavops.macro.trigger.TriggerMode;
 import io.vproxy.vfx.entity.input.Key;
 import io.vproxy.vfx.entity.input.KeyCode;
 import io.vproxy.vfx.entity.input.MouseWheelScroll;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Configuration {
+public class Config {
 //    public InGame inGame = new InGame();
     public SwapGlitch swapGlitch = new SwapGlitch();
     public QuickSnake quickSnake = new QuickSnake();
@@ -30,7 +31,7 @@ public class Configuration {
 
         public static class BaseSetting {
             public boolean enable = false;  /* 是否启用 */
-            public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
+            public TriggerMode activateMethod = TriggerMode.HOLD;  /* 激活方式 0: 按住激活; 1: 切换激活 */
             public double triggerInterval = 50.0;  /* 切枪间隔 */
             public Key activatekey = new Key(MouseButton.BACK);  /* 激活热键 */
             public Key targetWeaponWheelKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.DOWN));  /* 武器轮盘 */
@@ -65,7 +66,6 @@ public class Configuration {
 
             public boolean enableClearKey = false;  /* 启用屏蔽键 */
             public Key clearKey = new Key(KeyCode.TAB);  /* 屏蔽键 */
-            public double blockDuration = 500.0;  /* 屏蔽有效时间 */
         }
     }
 
@@ -75,7 +75,7 @@ public class Configuration {
         public BaseSetting baseSetting = new BaseSetting();
         public static class BaseSetting {
             public boolean enable = false;
-            public double triggerInterval = 20.0;  /* 点按间隔 */
+            public double triggerInterval = 40.0;  /* 点按间隔 */
             public Key activatekey = new Key(KeyCode.TAB);  /* 激活热键 */
             public Key snakeKey = new Key(KeyCode.MINUS);  /* 零食键 */
             public Key weaponWheel = new Key(KeyCode.TAB);  /* 武器轮盘 */
@@ -88,7 +88,7 @@ public class Configuration {
         public BaseSetting baseSetting = new BaseSetting();
         public static class BaseSetting {
             public boolean enable = false;
-            public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
+            public TriggerMode activateMethod = TriggerMode.HOLD;  /* 激活方式 0: 按住激活; 1: 切换激活 */
             public double triggerInterval = 20.0;  /* AD点按间隔 */
             public Key activatekey = new Key(KeyCode.E);
             public Key moveLeftKey = new Key(KeyCode.A);
@@ -103,7 +103,7 @@ public class Configuration {
         public BaseSetting baseSetting = new BaseSetting();
         public static class BaseSetting {
             public boolean enable = false;
-            public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
+            public TriggerMode activateMethod = TriggerMode.HOLD;  /* 激活方式 0: 按住激活; 1: 切换激活 */
             public double triggerInterval = 20.0;
             public Key meleeSnakeScrollKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.UP));
             public Key activatekey = new Key(KeyCode.E);
@@ -120,7 +120,7 @@ public class Configuration {
             public Key menuKey = new Key(KeyCode.M);
             public double arrowKeyInterval = 20.0;
             public double enterKeyInterval = 20.0;
-            public Key startEngineKey = new Key(MouseButton.FORWARD);
+            public Key startEngineKey = new Key(MouseButton.MIDDLE);
         }
     }
 
@@ -136,13 +136,13 @@ public class Configuration {
 
         public static class HoldLButtonSetting {
             public boolean enable = false;
-            public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
+            public TriggerMode activateMethod = TriggerMode.TOGGLE;  /* 激活方式 0: 按住激活; 1: 切换激活 */
             public Key activateKey = new Key(KeyCode.C);
         }
 
         public static class RapidlyClickLButtonSetting {
             public boolean enable = false;
-            public int activateMethod = 0;  /* 激活方式 0: 按住激活; 1: 切换激活 */
+            public TriggerMode activateMethod = TriggerMode.TOGGLE;  /* 激活方式 0: 按住激活; 1: 切换激活 */
             public Key activateKey = new Key(KeyCode.V);
             public double triggerInterval = 20.0;
         }
@@ -164,5 +164,6 @@ public class Configuration {
             public double blockDuration = 500.0;
         }
     }
+
 }
 

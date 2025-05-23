@@ -39,8 +39,11 @@ public abstract class VSettingStage {
         vStage.getStage().setWidth(800);
         vStage.getStage().setHeight(500);
         vStage.getStage().initModality(Modality.APPLICATION_MODAL);
-        vStage.setTitle(getTitle());
         content = new VBox();
+    }
+
+    private void setTitle(String title) {
+
     }
 
     protected VBox getContent() {
@@ -49,6 +52,10 @@ public abstract class VSettingStage {
 
     public VStage getStage() {
         return vStage;
+    }
+
+    public String getTitle() {
+        return "";
     }
 
     public void show() {
@@ -65,13 +72,18 @@ public abstract class VSettingStage {
         vStage.showAndWait();
     }
 
-    public String getTitle() {
-        return "";
+    protected void init() {}
+
+    protected void stop() {}
+
+    public void doInit() {
+        vStage.setTitle(getTitle());
+        init();
     }
 
-    public void init() {}
-
-    public void stop() {}
+    public void doStop() {
+        stop();
+    }
 
     protected HBox creatToggle(String intro, ToggleSwitch toggle) {
         HBox hBox = getBaseConfigContent(new Insets(22, 7, 0, 20));

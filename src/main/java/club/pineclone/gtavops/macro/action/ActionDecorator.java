@@ -10,12 +10,12 @@ public class ActionDecorator extends Action {
     }
 
     @Override
-    public void activate(ActionEvent event) {
+    public void activate(ActionEvent event) throws Exception {
         delegate.activate(event);
     }
 
     @Override
-    public void deactivate(ActionEvent event) {
+    public void deactivate(ActionEvent event) throws Exception {
         delegate.deactivate(event);
     }
 }

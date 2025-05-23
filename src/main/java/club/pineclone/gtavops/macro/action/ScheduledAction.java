@@ -23,7 +23,7 @@ public abstract class ScheduledAction extends Action implements ScheduleActionLi
     public final void activate(ActionEvent event) {
         if (running.compareAndSet(false, true)) {
             try {
-                scheduledFuture = ActionTaskManager.getScheduler().scheduleAtFixedRate(() -> {
+                scheduledFuture = ActionTaskManager.getSCHEDULER().scheduleAtFixedRate(() -> {
                             try {
 
                                 boolean flag = beforeSchedule(event);

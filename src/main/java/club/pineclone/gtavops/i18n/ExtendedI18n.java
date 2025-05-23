@@ -18,6 +18,8 @@ public class ExtendedI18n implements InternalI18n {
     /* 通用 */
     public String toggle = "Toggle";
     public String hold = "Hold";
+    public String click = "Click";
+
     public String unset = "<unset>";
     public String confirm = "Confirm";
     public String cancel = "Cancel";

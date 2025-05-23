@@ -1,6 +1,8 @@
 package club.pineclone.gtavops.macro.action.decorator;
 
 import club.pineclone.gtavops.macro.Macro;
+import club.pineclone.gtavops.macro.MacroContextHolder;
+import club.pineclone.gtavops.macro.MacroRegistry;
 import club.pineclone.gtavops.macro.SimpleMacro;
 import club.pineclone.gtavops.macro.action.Action;
 import club.pineclone.gtavops.macro.action.ActionEvent;
@@ -13,10 +15,13 @@ import io.vproxy.vfx.entity.input.Key;
 import javafx.scene.input.MouseButton;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SwapRangedDecorator extends ScheduledActionDecorator {
+public class SwapRangedDecorator
+        extends ScheduledActionDecorator
+        implements MacroContextHolder {
 
     private final Key leftButtonKey = new Key(MouseButton.PRIMARY);
 
@@ -27,7 +32,7 @@ public class SwapRangedDecorator extends ScheduledActionDecorator {
     private final AtomicReference<Key> targetRangedWeaponKey = new AtomicReference<>();
     private final Map<Key, Key> sourceToTargetMap;  /* 监听源到目标的映射 */
 
-    private Macro recorderMacro;  /* 记录器宏 */
+    private UUID recorderMacroId;
     private final AtomicBoolean recorderRunning = new AtomicBoolean(false);
 
     public static SwapRangedDecoratorBuilder builder() {
@@ -54,26 +59,26 @@ public class SwapRangedDecorator extends ScheduledActionDecorator {
             /* 映射表不为空，创建子宏 */
             Trigger trigger = TriggerFactory.simple(new TriggerIdentity(TriggerMode.CLICK, sourceToTargetMap.keySet()));
             Action action = new RecordAction();
-            recorderMacro = new SimpleMacro(trigger, action);
+            recorderMacroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
         }
     }
 
     @Override
     public void install() {
         delegate.install();
-        if (recorderMacro != null) recorderMacro.install();
+        MACRO_REGISTRY.install(recorderMacroId);
     }
 
     @Override
     public void uninstall() {
-        if (recorderMacro != null) recorderMacro.uninstall();
+        MACRO_REGISTRY.uninstall(recorderMacroId);
         delegate.uninstall();
     }
 
     @Override
     public boolean beforeActivate(ActionEvent event) throws Exception {
         if (!delegate.beforeActivate(event)) return false;
-        if (recorderMacro != null) recorderRunning.set(true);
+        recorderRunning.set(true);
 
         if (swapDefaultRangedWeaponOnEmpty) {
             targetRangedWeaponKey.set(defaultRangedWeaponKey);
@@ -84,7 +89,7 @@ public class SwapRangedDecorator extends ScheduledActionDecorator {
     /* 在宏(例如切枪偷速、近战偷速)执行结束之后，尝试切换远程武器 */
     @Override
     public void afterDeactivate(ActionEvent event) throws Exception {
-        if (recorderMacro != null) recorderRunning.set(false);
+        recorderRunning.set(false);
 
         Key keyToUse = targetRangedWeaponKey.get();
         if (keyToUse != null) {
