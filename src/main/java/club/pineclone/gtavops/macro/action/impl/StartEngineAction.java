@@ -35,7 +35,6 @@ public class StartEngineAction extends Action {
     public void activate(ActionEvent event) {
         if (running) return;
         running = true;
-        System.out.println("execute!");
         try {
             pressM();
             pressDown();

@@ -64,6 +64,10 @@ public class Config {
             public Key mapping4SourceKey = new Key(KeyCode.KEY_4);
             public Key mapping4TargetKey = new Key(KeyCode.KEY_9);
 
+            public boolean enableMapping5 = false;  /* 启用映射5 */
+            public Key mapping5SourceKey = new Key(KeyCode.Q);
+            public Key mapping5TargetKey = new Key(KeyCode.KEY_5);
+
             public boolean enableClearKey = false;  /* 启用屏蔽键 */
             public Key clearKey = new Key(KeyCode.TAB);  /* 屏蔽键 */
         }
@@ -159,6 +163,8 @@ public class Config {
             public boolean enableMapping2 = false;
             public boolean enableMapping3 = false;
             public boolean enableMapping4 = false;
+            public boolean enableMapping5 = false;
+
             public boolean enableBlockKey = true;
             public Key blockKey = new Key(MouseButton.BACK);
             public double blockDuration = 500.0;

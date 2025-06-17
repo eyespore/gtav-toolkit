@@ -102,6 +102,9 @@ public class _01SwapGlitchFeatureTogglePane
                 /* 启用映射4 */
                 if (SwapRangedSetting.enableMapping4)
                     sourceToTargetMap.put(SwapRangedSetting.mapping4SourceKey, SwapRangedSetting.mapping4TargetKey);
+                /* 启用映射5 */
+                if (SwapRangedSetting.enableMapping5)
+                    sourceToTargetMap.put(SwapRangedSetting.mapping5SourceKey, SwapRangedSetting.mapping5TargetKey);
 
                 action = SwapRangedDecorator.builder()
                         .delegate(action)
@@ -163,16 +166,20 @@ public class _01SwapGlitchFeatureTogglePane
         private final VKeyChooseButton mapping1TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
 
         private final ToggleSwitch mapping2Toggle = new ToggleSwitch();  /* 监听远程武器映射1 */
-        private final VKeyChooseButton mapping2SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1主键 */
-        private final VKeyChooseButton mapping2TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
+        private final VKeyChooseButton mapping2SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射2主键 */
+        private final VKeyChooseButton mapping2TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射2目标键 */
 
         private final ToggleSwitch mapping3Toggle = new ToggleSwitch();  /* 监听远程武器映射1 */
-        private final VKeyChooseButton mapping3SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1主键 */
-        private final VKeyChooseButton mapping3TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
+        private final VKeyChooseButton mapping3SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射3主键 */
+        private final VKeyChooseButton mapping3TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射3目标键 */
 
         private final ToggleSwitch mapping4Toggle = new ToggleSwitch();  /* 监听远程武器映射4 */
-        private final VKeyChooseButton mapping4SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1主键 */
-        private final VKeyChooseButton mapping4TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
+        private final VKeyChooseButton mapping4SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射4主键 */
+        private final VKeyChooseButton mapping4TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射4目标键 */
+
+        private final ToggleSwitch mapping5Toggle = new ToggleSwitch();  /* 监听远程武器映射5 */
+        private final VKeyChooseButton mapping5SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射5主键 */
+        private final VKeyChooseButton mapping5TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射5目标键 */
 
         private final ToggleSwitch swapRangedClearKeyToggle = new ToggleSwitch();  /* 启用屏蔽切换远程武器 */
         private final VKeyChooseButton swapRangedClearKeyBtn = new VKeyChooseButton();  /* 屏蔽切换远程武器键 */
@@ -199,6 +206,7 @@ public class _01SwapGlitchFeatureTogglePane
                     .buttonToggle(MessageFormat.format(sgI18n.swapRangedSetting.listenRangedWeaponMapping, 2), mapping2Toggle, mapping2SourceKeyBtn, mapping2TargetKeyBtn)
                     .buttonToggle(MessageFormat.format(sgI18n.swapRangedSetting.listenRangedWeaponMapping, 3), mapping3Toggle, mapping3SourceKeyBtn, mapping3TargetKeyBtn)
                     .buttonToggle(MessageFormat.format(sgI18n.swapRangedSetting.listenRangedWeaponMapping, 4), mapping4Toggle, mapping4SourceKeyBtn, mapping4TargetKeyBtn)
+                    .buttonToggle(MessageFormat.format(sgI18n.swapRangedSetting.listenRangedWeaponMapping, 5), mapping5Toggle, mapping5SourceKeyBtn, mapping5TargetKeyBtn)
                     .gap()
                     .toggle(sgI18n.swapRangedSetting.enableClearKey, swapRangedClearKeyToggle)
                     .button(sgI18n.swapRangedSetting.clearKey, swapRangedClearKeyBtn)
@@ -245,6 +253,10 @@ public class _01SwapGlitchFeatureTogglePane
             mapping4SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping4SourceKey);
             mapping4TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping4TargetKey);
 
+            mapping5Toggle.selectedProperty().set(sgConfig.swapRangedSetting.enableMapping5);
+            mapping5SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping5SourceKey);
+            mapping5TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping5TargetKey);
+
             swapRangedClearKeyToggle.selectedProperty().set(sgConfig.swapRangedSetting.enableClearKey);
             swapRangedClearKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.clearKey);
         }
@@ -280,6 +292,10 @@ public class _01SwapGlitchFeatureTogglePane
             srSetting.enableMapping4 = mapping4Toggle.selectedProperty().get();
             srSetting.mapping4SourceKey = mapping4SourceKeyBtn.keyProperty().get();
             srSetting.mapping4TargetKey = mapping4TargetKeyBtn.keyProperty().get();
+
+            srSetting.enableMapping5 = mapping5Toggle.selectedProperty().get();
+            srSetting.mapping5SourceKey = mapping5SourceKeyBtn.keyProperty().get();
+            srSetting.mapping5TargetKey = mapping5TargetKeyBtn.keyProperty().get();
 
             srSetting.enableClearKey = swapRangedClearKeyToggle.selectedProperty().get();
             srSetting.clearKey = swapRangedClearKeyBtn.keyProperty().get();

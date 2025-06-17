@@ -70,6 +70,8 @@ public class _07QuickSwapFeatureTogglePane
             if (bSetting.enableMapping3) sourceToTargetMap.put(srSetting.mapping3SourceKey, srSetting.mapping3TargetKey);
             /* 启用映射4 */
             if (bSetting.enableMapping4) sourceToTargetMap.put(srSetting.mapping4SourceKey, srSetting.mapping4TargetKey);
+            /* 启用映射5 */
+            if (bSetting.enableMapping5) sourceToTargetMap.put(srSetting.mapping5SourceKey, srSetting.mapping5TargetKey);
 
             if (sourceToTargetMap.isEmpty()) return;
 
@@ -88,7 +90,6 @@ public class _07QuickSwapFeatureTogglePane
         protected void deactivate() {
             MACRO_REGISTRY.uninstall(macroId);
         }
-
     }
 
     private static class QSSettingStage
@@ -120,6 +121,10 @@ public class _07QuickSwapFeatureTogglePane
         private final VKeyChooseButton mapping4SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1主键 */
         private final VKeyChooseButton mapping4TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射1目标键 */
 
+        private final ToggleSwitch mapping5Toggle = new ToggleSwitch();  /* 监听远程武器映射5 */
+        private final VKeyChooseButton mapping5SourceKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射5主键 */
+        private final VKeyChooseButton mapping5TargetKeyBtn = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);  /* 映射5目标键 */
+
         private final ToggleSwitch enableBlockKeyToggle = new ToggleSwitch();  /* 启用屏蔽键 */
         private final VKeyChooseButton blockKeyBtn = new VKeyChooseButton(FLAG_WITH_ALL);  /* 屏蔽键 */
         private final ForkedSlider blockDurationSlider = new ForkedSlider() {{  /* 屏蔽有效时间 */
@@ -141,6 +146,7 @@ public class _07QuickSwapFeatureTogglePane
                     .buttonToggle(MessageFormat.format(qsI18n.baseSetting.quickSwapMapping, 2), mapping2Toggle, mapping2SourceKeyBtn, mapping2TargetKeyBtn)
                     .buttonToggle(MessageFormat.format(qsI18n.baseSetting.quickSwapMapping, 3), mapping3Toggle, mapping3SourceKeyBtn, mapping3TargetKeyBtn)
                     .buttonToggle(MessageFormat.format(qsI18n.baseSetting.quickSwapMapping, 4), mapping4Toggle, mapping4SourceKeyBtn, mapping4TargetKeyBtn)
+                    .buttonToggle(MessageFormat.format(qsI18n.baseSetting.quickSwapMapping, 5), mapping5Toggle, mapping5SourceKeyBtn, mapping5TargetKeyBtn)
                     .gap()
                     .toggle(qsI18n.baseSetting.enableBlockKey, enableBlockKeyToggle)
                     .button(qsI18n.baseSetting.blockKey, blockKeyBtn)
@@ -167,6 +173,10 @@ public class _07QuickSwapFeatureTogglePane
             mapping4SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping4SourceKey);
             mapping4TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping4TargetKey);
 
+            mapping5Toggle.selectedProperty().set(qsConfig.baseSetting.enableMapping5);
+            mapping5SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping5SourceKey);
+            mapping5TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping5TargetKey);
+
             enableBlockKeyToggle.selectedProperty().set(qsConfig.baseSetting.enableBlockKey);
             blockKeyBtn.keyProperty().set(qsConfig.baseSetting.blockKey);
             blockDurationSlider.setValue(qsConfig.baseSetting.blockDuration);
@@ -192,6 +202,10 @@ public class _07QuickSwapFeatureTogglePane
             bSetting.enableMapping4 = mapping4Toggle.selectedProperty().get();
             srSetting.mapping4SourceKey = mapping4SourceKeyBtn.keyProperty().get();
             srSetting.mapping4TargetKey = mapping4TargetKeyBtn.keyProperty().get();
+
+            bSetting.enableMapping5 = mapping5Toggle.selectedProperty().get();
+            srSetting.mapping5SourceKey = mapping5SourceKeyBtn.keyProperty().get();
+            srSetting.mapping5TargetKey = mapping5TargetKeyBtn.keyProperty().get();
 
             bSetting.enableBlockKey = enableBlockKeyToggle.selectedProperty().get();
             bSetting.blockKey = blockKeyBtn.keyProperty().get();
