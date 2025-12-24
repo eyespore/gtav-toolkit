@@ -14,9 +14,16 @@ public abstract class ScheduledAction extends Action implements ScheduleActionLi
     private ScheduledFuture<?> scheduledFuture;
     @Getter private final long interval;
 
+    private final long initialDelay;
+
     public ScheduledAction(String macroId, long interval) {
-        super(macroId);
+        this(macroId, interval, 0);
+    }
+
+    public ScheduledAction(String actionId, long interval, long initialDelay) {
+        super(actionId);
         this.interval = interval;
+        this.initialDelay = initialDelay;
     }
 
     @Override
@@ -37,7 +44,7 @@ public abstract class ScheduledAction extends Action implements ScheduleActionLi
                             } catch (Exception e) {
                                 Logger.error(LogType.ALERT, e.getMessage());
                             }
-                        }, 0, interval, TimeUnit.MILLISECONDS);
+                        }, initialDelay, interval, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

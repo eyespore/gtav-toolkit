@@ -10,6 +10,7 @@ module club.pineclone.gtavops {
     requires com.fasterxml.jackson.databind;
     requires vjson;
     requires static lombok;
+    requires javafx.graphics;
 
     opens club.pineclone.gtavops;
     opens club.pineclone.gtavops.utils;

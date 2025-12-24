@@ -3,7 +3,7 @@ package club.pineclone.gtavops.macro.action;
 public interface ScheduleActionLifecycle extends ActionLifecycle {
 
     /**
-     * 循环具体逻辑
+     * 循环具体逻辑，该循环逻辑基于ScheduledExecutorService.scheduleAtFixedRate()方法执行
      */
     default void schedule(ActionEvent event) throws Exception {}
 

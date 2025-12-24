@@ -127,7 +127,7 @@ public class _04MeleeGlitchFeatureTogglePane
 
 
         @Override
-        public void init() {
+        public void onVSettingStageInit() {
             activateMethodBtn.triggerModeProperty().set(mgConfig.baseSetting.activateMethod);
             activateKeyBtn.keyProperty().set(mgConfig.baseSetting.activatekey);
             meleeSnakeScrollKeyBtn.keyProperty().set(mgConfig.baseSetting.meleeSnakeScrollKey);
@@ -138,7 +138,7 @@ public class _04MeleeGlitchFeatureTogglePane
         }
 
         @Override
-        public void stop() {
+        public void onVSettingStageExit() {
             mgConfig.baseSetting.activateMethod = activateMethodBtn.triggerModeProperty().get();
             mgConfig.baseSetting.activatekey = activateKeyBtn.keyProperty().get();
             mgConfig.baseSetting.triggerInterval = triggerIntervalSlider.valueProperty().get();

@@ -107,8 +107,8 @@ public class _02QuickSnakeFeatureTogglePane
         }
 
         @Override
-        public void init() {
-            super.init();
+        public void onVSettingStageInit() {
+            super.onVSettingStageInit();
             activateKeyBtn.keyProperty().set(qsConfig.baseSetting.activatekey);
             snakeKeyBtn.keyProperty().set(qsConfig.baseSetting.snakeKey);
             weaponWheelKeyBtn.keyProperty().set(qsConfig.baseSetting.weaponWheel);
@@ -116,7 +116,7 @@ public class _02QuickSnakeFeatureTogglePane
         }
 
         @Override
-        public void stop() {
+        public void onVSettingStageExit() {
             qsConfig.baseSetting.activatekey = activateKeyBtn.keyProperty().get();
             qsConfig.baseSetting.snakeKey = snakeKeyBtn.keyProperty().get();
             qsConfig.baseSetting.weaponWheel = weaponWheelKeyBtn.keyProperty().get();

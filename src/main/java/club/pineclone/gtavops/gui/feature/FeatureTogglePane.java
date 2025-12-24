@@ -81,7 +81,7 @@ public abstract class FeatureTogglePane {
                 FeatureTogglePaneRegistry.getInstance().stopAll();  // 禁用宏，启用设置
                 settingStage.doInit();  // 设置页面初始化
                 settingStage.showAndWait();  // 展示设置页面
-                settingStage.doStop();
+                settingStage.doExit();
                 FeatureTogglePaneRegistry.getInstance().initAll();  // 重新启用宏
             }
         }

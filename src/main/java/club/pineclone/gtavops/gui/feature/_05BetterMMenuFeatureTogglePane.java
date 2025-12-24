@@ -110,7 +110,7 @@ public class _05BetterMMenuFeatureTogglePane
         }
 
         @Override
-        public void init() {
+        public void onVSettingStageInit() {
             menuKeyBtn.keyProperty().set(bmmConfig.baseSetting.menuKey);
             arrowKeyIntervalSlider.setValue(bmmConfig.baseSetting.arrowKeyInterval);
             enterKeyIntervalSlider.setValue(bmmConfig.baseSetting.enterKeyInterval);
@@ -118,7 +118,7 @@ public class _05BetterMMenuFeatureTogglePane
         }
 
         @Override
-        public void stop() {
+        public void onVSettingStageExit() {
             bmmConfig.baseSetting.menuKey = menuKeyBtn.keyProperty().get();
             bmmConfig.baseSetting.arrowKeyInterval = arrowKeyIntervalSlider.valueProperty().get();
             bmmConfig.baseSetting.enterKeyInterval = enterKeyIntervalSlider.valueProperty().get();

@@ -42,10 +42,6 @@ public abstract class VSettingStage {
         content = new VBox();
     }
 
-    private void setTitle(String title) {
-
-    }
-
     protected VBox getContent() {
         return content;
     }
@@ -72,17 +68,17 @@ public abstract class VSettingStage {
         vStage.showAndWait();
     }
 
-    protected void init() {}
+    protected void onVSettingStageInit() {}
 
-    protected void stop() {}
+    protected void onVSettingStageExit() {}
 
     public void doInit() {
         vStage.setTitle(getTitle());
-        init();
+        onVSettingStageInit();
     }
 
-    public void doStop() {
-        stop();
+    public void doExit() {
+        onVSettingStageExit();
     }
 
     protected HBox createToggle(String intro, ToggleSwitch toggle) {

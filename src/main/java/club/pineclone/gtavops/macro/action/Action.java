@@ -21,7 +21,7 @@ public abstract class Action implements ActionLifecycle, MacroLifecycleAware {
         this.actionId = actionId;
     }
 
-    public void doActivate(ActionEvent event) throws Exception {
+    public final void doActivate(ActionEvent event) throws Exception {
         if (suspended) return;  /* 若当前动作被挂起，那么拒绝执行 */
         if (!enable) return;  /* 若当前动作被禁用，那么拒绝执行 */
 
@@ -32,7 +32,7 @@ public abstract class Action implements ActionLifecycle, MacroLifecycleAware {
         }
     }
 
-    public void doDeactivate(ActionEvent event) throws Exception {
+    public final void doDeactivate(ActionEvent event) throws Exception {
         if (suspended) return;  /* 若当前动作被挂起，那么拒绝停止 */
         if (!enable) return;  /* 若当前动作被禁用，那么拒绝停止 */
 

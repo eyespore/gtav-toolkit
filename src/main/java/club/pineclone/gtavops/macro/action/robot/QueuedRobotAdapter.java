@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 /**
  * 单消息队列机器人装饰器
  */
+@Deprecated
 public class QueuedRobotAdapter extends VCRobotAdapter {
 
     private final VCRobotAdapter delegate;

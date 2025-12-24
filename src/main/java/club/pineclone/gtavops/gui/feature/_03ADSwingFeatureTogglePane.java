@@ -128,7 +128,7 @@ public class _03ADSwingFeatureTogglePane
         }
 
         @Override
-        public void init() {
+        public void onVSettingStageInit() {
             activateMethodBtn.triggerModeProperty().set(adwConfig.baseSetting.activateMethod);
             activateKeyBtn.keyProperty().set(adwConfig.baseSetting.activatekey);
             moveLeftKeyBtn.keyProperty().set(adwConfig.baseSetting.moveLeftKey);
@@ -140,7 +140,7 @@ public class _03ADSwingFeatureTogglePane
         }
 
         @Override
-        public void stop() {
+        public void onVSettingStageExit() {
             adwConfig.baseSetting.activateMethod = activateMethodBtn.triggerModeProperty().get();
             adwConfig.baseSetting.activatekey = activateKeyBtn.keyProperty().get();
             adwConfig.baseSetting.moveLeftKey = moveLeftKeyBtn.keyProperty().get();

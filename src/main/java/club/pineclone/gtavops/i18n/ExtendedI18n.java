@@ -311,9 +311,11 @@ public class ExtendedI18n implements InternalI18n {
             public String usePhoneKey = "use phone key";  /* 使用手机 */
             public String hideInCoverKey = "hide in cover key";  /* 躲入掩体按键 */
             public String triggerInterval = "trigger interval(ms)";  /* 启用相机-关闭相机之间的间隔 */
+            public String timeUtilCameraExited = "time util camera exited (ms)";  /* 相机退出等待时间1 */
+            public String timeUtilCameraLoaded1 = "time util camera loaded 1 (ms)";  /* 相机退出等待时间2 */
+            public String timeUtilCameraLoaded2 = "time util camera loaded 2 (ms)";  /* 相机退出等待时间2 */
         }
     }
-
 
 //    @Data
 //    public static class InGame {

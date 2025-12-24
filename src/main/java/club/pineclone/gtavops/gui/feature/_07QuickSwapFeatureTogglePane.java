@@ -156,7 +156,7 @@ public class _07QuickSwapFeatureTogglePane
         }
 
         @Override
-        public void init() {
+        public void onVSettingStageInit() {
             mapping1Toggle.selectedProperty().set(qsConfig.baseSetting.enableMapping1);
             mapping1SourceKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping1SourceKey);
             mapping1TargetKeyBtn.keyProperty().set(sgConfig.swapRangedSetting.mapping1TargetKey);
@@ -183,7 +183,7 @@ public class _07QuickSwapFeatureTogglePane
         }
 
         @Override
-        public void stop() {
+        public void onVSettingStageExit() {
             Config.SwapGlitch.SwapRangedSetting srSetting = sgConfig.swapRangedSetting;
             Config.QuickSwap.BaseSetting bSetting = qsConfig.baseSetting;
 

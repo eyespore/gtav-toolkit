@@ -10,7 +10,6 @@ import io.vproxy.vfx.entity.input.KeyCode;
 /* 快速点火 */
 public class StartEngineAction extends Action {
 
-    private boolean running = false;
     private final long arrowKeyInterval;
     private final long enterKeyInterval;
 
@@ -23,6 +22,8 @@ public class StartEngineAction extends Action {
     private final Key enterKey = new Key(KeyCode.ENTER);
     private final Key menuKey;
 
+    private final Object lock = new Object();
+
     public StartEngineAction(Key menukey, long arrowKeyInterval, long enterKeyInterval) {
         super(ACTION_ID);
         this.arrowKeyInterval = arrowKeyInterval;
@@ -32,10 +33,8 @@ public class StartEngineAction extends Action {
     }
 
     @Override
-    public void activate(ActionEvent event) {
-        if (running) return;
-        running = true;
-        try {
+    public void activate(ActionEvent event) throws Exception {
+        synchronized (lock) {
             pressM();
             pressDown();
             pressDown();
@@ -48,10 +47,6 @@ public class StartEngineAction extends Action {
             pressEnter();
             pressEnter();
             pressM();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            running = false;
         }
     }
 

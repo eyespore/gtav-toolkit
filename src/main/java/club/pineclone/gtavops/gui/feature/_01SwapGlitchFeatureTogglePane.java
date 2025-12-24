@@ -221,7 +221,7 @@ public class _01SwapGlitchFeatureTogglePane
         }
 
         @Override
-        public void init() {
+        public void onVSettingStageInit() {
             activateKeyBtn.keyProperty().set(sgConfig.baseSetting.activatekey);
             weaponWheelKeyBtn.keyProperty().set(sgConfig.baseSetting.targetWeaponWheelKey);
             meleeKeyBtn.keyProperty().set(sgConfig.swapMeleeSetting.meleeWeaponKey);
@@ -262,7 +262,7 @@ public class _01SwapGlitchFeatureTogglePane
         }
 
         @Override
-        public void stop() {
+        public void onVSettingStageExit() {
             sgConfig.baseSetting.targetWeaponWheelKey = weaponWheelKeyBtn.keyProperty().get();
             sgConfig.swapMeleeSetting.meleeWeaponKey = meleeKeyBtn.keyProperty().get();
 

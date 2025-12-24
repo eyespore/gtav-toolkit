@@ -151,7 +151,7 @@ public class _06BetterLButtonFeatureTogglePane
         }
 
         @Override
-        public void init() {
+        public void onVSettingStageInit() {
             enableHoldLButtonToggle.selectedProperty().set(blbConfig.holdLButtonSetting.enable);
             holdLButtonActivateMethodBtn.triggerModeProperty().set(blbConfig.holdLButtonSetting.activateMethod);
             holdLButtonActivateKeyBtn.keyProperty().set(blbConfig.holdLButtonSetting.activateKey);
@@ -166,7 +166,7 @@ public class _06BetterLButtonFeatureTogglePane
         }
 
         @Override
-        public void stop() {
+        public void onVSettingStageExit() {
             blbConfig.holdLButtonSetting.enable = enableHoldLButtonToggle.selectedProperty().get();
             blbConfig.holdLButtonSetting.activateMethod = holdLButtonActivateMethodBtn.triggerModeProperty().get();
             blbConfig.holdLButtonSetting.activateKey = holdLButtonActivateKeyBtn.keyProperty().get();

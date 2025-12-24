@@ -188,7 +188,15 @@ public class Config {
             public Key toggleDelayClimbKey = new Key(KeyCode.X);  /* 启用/停止延迟攀 */
             public Key hideInCoverKey = new Key(KeyCode.KEY_5);
             public Key usePhoneKey = new Key(KeyCode.UP);  /* 使用手机键 */
-            public double triggerInterval = 1500.0;  /* 开启相机-停止相机之间的等待时间 */
+            public double triggerInterval = 3000.0;  /* 开启相机-停止相机之间的等待时间 */
+
+            public double timeUtilCameraExited = 1000.0;  /* 等待相机退出的时间 */
+
+            /* 之所以设置了两个等待时间，是因为第一次相机启动往往需要扫描磁盘，因此第一次启动时间要略慢于第二次，
+            *  这里提供两个配置项以提供更好的灵活度 */
+            public double timeUtilCameraLoaded1 = 3000.0;  /* 等待相机加载完成的时间1 */
+            public double timeUtilCameraLoaded2 = 1500.0;  /* 等待相机加载完成的时间2 */
+
         }
     }
 }

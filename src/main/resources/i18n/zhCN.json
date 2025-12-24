@@ -1,7 +1,7 @@
 {
   "toggle" : "切换",
   "hold" : "按住",
-  "click": "点按",
+  "click" : "点按",
   "unset" : "<未设置>",
   "confirm" : "确认",
   "cancel" : "取消",
@@ -98,10 +98,10 @@
       "activateKey" : "激活键位",
       "triggerInterval" : "触发间隔(ms)"
     },
-    "remapLButtonSetting": {
-      "title": "鼠标左键重映射",
-      "enable": "启用鼠标左键重映射",
-      "activateKey": "激活键位"
+    "remapLButtonSetting" : {
+      "title" : "鼠标左键重映射",
+      "enable" : "启用鼠标左键重映射",
+      "activateKey" : "激活键位"
     }
   },
   "quickSwap" : {
@@ -112,6 +112,19 @@
       "enableBlockKey" : "启用屏蔽键",
       "blockKey" : "屏蔽键位",
       "blockDuration" : "屏蔽持续时间(ms)"
+    }
+  },
+  "delayClimb" : {
+    "title" : "延迟攀爬",
+    "baseSetting" : {
+      "title" : "基础设置",
+      "toggleDelayClimbKey" : "启动/停止延迟攀",
+      "usePhoneKey" : "使用电话键位",
+      "hideInCoverKey" : "找掩护键位",
+      "triggerInterval" : "打开相机间隔(ms)",
+      "timeUtilCameraExited" : "完全退出相机耗时 (ms)",
+      "timeUtilCameraLoaded1" : "第一次启用相机加载耗时 (ms)",
+      "timeUtilCameraLoaded2" : "后续启动相机加载耗时 (ms)"
     }
   },
   "fontPack" : {
