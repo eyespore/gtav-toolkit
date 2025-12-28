@@ -21,18 +21,20 @@ public class SimpleTrigger extends Trigger implements InputSourceListener {
 
     @Override
     public void onMarcoInstall() {
-        source.install();
+        this.source.onMarcoInstall();
+        this.policy.onMarcoInstall();
     }
 
     @Override
     public void onMarcoUninstall() {
-        source.uninstall();
+        this.policy.onMarcoUninstall();
+        this.source.onMarcoUninstall();
     }
 
     @Override
     public void onInputSourceEvent(InputSourceEvent event) {
-        policy.decide(event).ifPresent(status ->
-                super.fire(TriggerEvent.of(this, status, event)));
+        policy.decide(event, o -> o.ifPresent(
+                s -> super.fire(TriggerEvent.of(this, s, event))));
     }
 
     @Override

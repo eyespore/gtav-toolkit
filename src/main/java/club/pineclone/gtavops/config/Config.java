@@ -122,13 +122,22 @@ public class Config {
     @Data
     public static class BetterMMenu {
         public BaseSetting baseSetting = new BaseSetting();
+        public StartEngine startEngine = new StartEngine();
+
         public static class BaseSetting {
             public boolean enable = false;  /* 是否启用 */
             public Key menuKey = new Key(KeyCode.M);
             public double mouseScrollInterval = 10.0;
             public double enterKeyInterval = 20.0;
-            public Key startEngineKey = new Key(MouseButton.FORWARD);
             public double timeUtilMMenuLoaded = 20.0;
+        }
+
+        /* 快速点火 */
+        public static class StartEngine {
+            public boolean enable = false;
+            public Key startEngineKey = new Key(MouseButton.FORWARD);
+            public boolean enableDoubleClickToOpenDoor = false;  /* 是否启用双击开门 */
+            public double doubleClickInterval = 250;  /* 双击时间窗口 */
         }
     }
 

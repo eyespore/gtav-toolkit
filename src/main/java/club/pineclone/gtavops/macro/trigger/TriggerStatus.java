@@ -2,6 +2,7 @@ package club.pineclone.gtavops.macro.trigger;
 
 public enum TriggerStatus {
     CLICK(true, false),  /* 单次点击 */
+    DOUBLE_CLICK(true, false),  /* 双击 */
     HOLD_START(true, false),  /* 按住开始 */
     HOLD_STOP(false, true),  /* 按住停止 */
     TOGGLE_ON(true, false),  /* 切换启动 */

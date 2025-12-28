@@ -13,6 +13,8 @@ public class TriggerIdentity {
     private final TriggerMode mode;
     private final Set<Key> keys = new HashSet<>();
 
+    private long doubleClickInterval = 250;
+
     /**
      * 创建一个触发器标识符
      * @param mode 触发模式
@@ -55,20 +57,63 @@ public class TriggerIdentity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TriggerIdentity that = (TriggerIdentity) o;
-        return type == that.type && mode == that.mode && Objects.equals(keys, that.keys);
+        return type == that.type
+                && mode == that.mode
+                && Double.compare(doubleClickInterval ,that.doubleClickInterval) == 0
+                && Objects.equals(keys, that.keys);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, mode, keys);
+        return Objects.hash(type, mode, keys, doubleClickInterval);
     }
 
+    @Deprecated
     public static TriggerIdentity of(TriggerMode mode, Key... keys) {
         return TriggerIdentity.of(mode, Arrays.stream(keys).collect(Collectors.toSet()));
     }
 
+    @Deprecated
     public static TriggerIdentity of(TriggerMode mode, Set<Key> keys) {
         return new TriggerIdentity(mode, keys);
+    }
+
+    public static TriggerIdentity ofClick(Key... keys) {
+        return of(TriggerMode.CLICK, keys);
+    }
+
+    public static TriggerIdentity ofClick(Set<Key> keys) {
+        return of(TriggerMode.CLICK, keys);
+    }
+
+    public static TriggerIdentity ofHold(Key... keys) {
+        return of(TriggerMode.HOLD, keys);
+    }
+
+    public static TriggerIdentity ofHold(Set<Key> keys) {
+        return of(TriggerMode.HOLD, keys);
+    }
+
+    public static TriggerIdentity ofToggle(Key... keys) {
+        return of(TriggerMode.TOGGLE, keys);
+    }
+
+    public static TriggerIdentity ofToggle(Set<Key> keys) {
+        return of(TriggerMode.TOGGLE, keys);
+    }
+
+    public static TriggerIdentity ofDoubleClick(Key... keys) {
+        return ofDoubleClick(250, Arrays.stream(keys).collect(Collectors.toSet()));
+    }
+
+    public static TriggerIdentity ofDoubleClick(long interval, Key... keys) {
+        return ofDoubleClick(interval, Arrays.stream(keys).collect(Collectors.toSet()));
+    }
+
+    public static TriggerIdentity ofDoubleClick(long interval, Set<Key> keys) {
+        TriggerIdentity triggerIdentity = of(TriggerMode.DOUBLE_CLICK, keys);
+        triggerIdentity.doubleClickInterval = interval;
+        return triggerIdentity;
     }
 
 }

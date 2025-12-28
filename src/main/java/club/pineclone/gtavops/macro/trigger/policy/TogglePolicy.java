@@ -4,18 +4,20 @@ import club.pineclone.gtavops.macro.trigger.TriggerStatus;
 import club.pineclone.gtavops.macro.trigger.source.InputSourceEvent;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class TogglePolicy implements ActivationPolicy {
     private boolean toggled = false;
 
     @Override
-    public Optional<TriggerStatus> decide(InputSourceEvent event) {
-        return switch (event.getOperation()) {
+    public void decide(InputSourceEvent event, Consumer<Optional<TriggerStatus>> callback) {
+        switch (event.getOperation()) {
             case KEY_PRESSED, MOUSE_PRESSED -> {
                 toggled = !toggled;
-                yield toggled ? fire(TriggerStatus.TOGGLE_ON) : fire(TriggerStatus.TOGGLE_OFF);
+                TriggerStatus status = toggled ? TriggerStatus.TOGGLE_ON : TriggerStatus.TOGGLE_OFF;
+                callback.accept(fire(status));
             }
-            default -> Optional.empty();
+            default -> callback.accept(Optional.empty());
         };
     }
 }

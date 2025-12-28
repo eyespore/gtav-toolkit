@@ -15,6 +15,7 @@ import club.pineclone.gtavops.macro.trigger.TriggerFactory;
 import club.pineclone.gtavops.macro.trigger.TriggerIdentity;
 import club.pineclone.gtavops.macro.trigger.TriggerMode;
 import io.vproxy.vfx.entity.input.Key;
+import io.vproxy.vfx.ui.toggle.ToggleSwitch;
 
 import java.util.UUID;
 
@@ -51,24 +52,33 @@ public class _05BetterMMenuFeatureTogglePane
 
         @Override
         protected void activate() {
-            Key startEngineKey = bmmConfig.baseSetting.startEngineKey;
-            Key menuKey = bmmConfig.baseSetting.menuKey;
-            long arrowKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.mouseScrollInterval));
+            long mouseScrollInterval = (long) (Math.floor(bmmConfig.baseSetting.mouseScrollInterval));
             long enterKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.enterKeyInterval));
             long timeUtilMMenuLoaded = (long) (Math.floor(bmmConfig.baseSetting.timeUtilMMenuLoaded));
+            Key menuKey = bmmConfig.baseSetting.menuKey;
 
-            Trigger trigger = TriggerFactory.simple(TriggerIdentity.of(TriggerMode.CLICK, startEngineKey));
-            Action action = new StartEngineAction(menuKey, arrowKeyInterval, enterKeyInterval, timeUtilMMenuLoaded);
+            /* 快速点火 */
+            if (bmmConfig.startEngine.enable) {
+                Key startEngineKey = bmmConfig.startEngine.startEngineKey;
 
-            macroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
-            MACRO_REGISTRY.install(macroId);
+                boolean enableDoubleClickToOpenDoor = bmmConfig.startEngine.enableDoubleClickToOpenDoor;
+                long doubleClickInterval = (long) (Math.floor(bmmConfig.startEngine.doubleClickInterval));
+
+                Trigger trigger;
+                if (enableDoubleClickToOpenDoor) trigger = TriggerFactory.simple(TriggerIdentity.ofDoubleClick(doubleClickInterval, startEngineKey));  // 启用双击触发
+                else trigger = TriggerFactory.simple(TriggerIdentity.ofClick(startEngineKey));  // 仅启用单击触发
+
+                Action action = new StartEngineAction(menuKey, mouseScrollInterval, enterKeyInterval, timeUtilMMenuLoaded, enableDoubleClickToOpenDoor);
+
+                macroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
+                MACRO_REGISTRY.install(macroId);
+            }
         }
 
         @Override
         protected void deactivate() {
             MACRO_REGISTRY.uninstall(macroId);
         }
-
     }
 
     private static class BMMSettingStage
@@ -99,7 +109,14 @@ public class _05BetterMMenuFeatureTogglePane
             setRange(10, 2000);
         }};
 
+        /* start engine */
         private final VKeyChooseButton startEngineKeyBtn = new VKeyChooseButton(FLAG_WITH_ALL);
+        private final ToggleSwitch enableStartEngineToggle = new ToggleSwitch();
+        private final ToggleSwitch enableDoubleClickToOpenDoorToggle = new ToggleSwitch();
+        private final ForkedSlider doubleClickIntervalSlider = new ForkedSlider() {{
+            setLength(200);
+            setRange(50, 500);
+        }};
 
         public BMMSettingStage() {
             getContent().getChildren().addAll(contentBuilder()
@@ -108,7 +125,11 @@ public class _05BetterMMenuFeatureTogglePane
                     .slider(bmmI18n.baseSetting.mouseScrollInterval, arrowKeyIntervalSlider)
                     .slider(bmmI18n.baseSetting.enterKeyInterval, enterKeyIntervalSlider)
                     .slider(bmmI18n.baseSetting.timeUtilMMenuLoaded, timeUtilMMenuLoadedSlider)
-                    .button(bmmI18n.baseSetting.startEngineKey, startEngineKeyBtn)
+                    .divide(bmmI18n.startEngine.title)
+                    .toggle(bmmI18n.startEngine.enableStartEngine, enableStartEngineToggle)
+                    .button(bmmI18n.startEngine.startEngineKey, startEngineKeyBtn)
+                    .toggle(bmmI18n.startEngine.enableDoubleClickToOpenDoor, enableDoubleClickToOpenDoorToggle)
+                    .slider(bmmI18n.startEngine.doubleClickInterval, doubleClickIntervalSlider)
                     .build());
         }
 
@@ -123,7 +144,12 @@ public class _05BetterMMenuFeatureTogglePane
             arrowKeyIntervalSlider.setValue(bmmConfig.baseSetting.mouseScrollInterval);
             enterKeyIntervalSlider.setValue(bmmConfig.baseSetting.enterKeyInterval);
             timeUtilMMenuLoadedSlider.setValue(bmmConfig.baseSetting.timeUtilMMenuLoaded);
-            startEngineKeyBtn.keyProperty().set(bmmConfig.baseSetting.startEngineKey);
+
+            startEngineKeyBtn.keyProperty().set(bmmConfig.startEngine.startEngineKey);
+            enableStartEngineToggle.selectedProperty().set(bmmConfig.startEngine.enable);
+            enableDoubleClickToOpenDoorToggle.selectedProperty().set(bmmConfig.startEngine.enableDoubleClickToOpenDoor);
+            doubleClickIntervalSlider.setValue(bmmConfig.startEngine.doubleClickInterval);
+
         }
 
         @Override
@@ -132,7 +158,11 @@ public class _05BetterMMenuFeatureTogglePane
             bmmConfig.baseSetting.mouseScrollInterval = arrowKeyIntervalSlider.valueProperty().get();
             bmmConfig.baseSetting.enterKeyInterval = enterKeyIntervalSlider.valueProperty().get();
             bmmConfig.baseSetting.timeUtilMMenuLoaded = timeUtilMMenuLoadedSlider.valueProperty().get();
-            bmmConfig.baseSetting.startEngineKey = startEngineKeyBtn.keyProperty().get();
+
+            bmmConfig.startEngine.startEngineKey = startEngineKeyBtn.keyProperty().get();
+            bmmConfig.startEngine.enable = enableStartEngineToggle.selectedProperty().get();
+            bmmConfig.startEngine.enableDoubleClickToOpenDoor = enableDoubleClickToOpenDoorToggle.selectedProperty().get();
+            bmmConfig.startEngine.doubleClickInterval = doubleClickIntervalSlider.valueProperty().get();
         }
     }
 }

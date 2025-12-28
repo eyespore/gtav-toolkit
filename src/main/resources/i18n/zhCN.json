@@ -84,11 +84,16 @@
     "baseSetting" : {
       "title" : "基础设置",
       "menuKey" : "m菜单键位",
-      "arrowKeyInterval" : "方向键间隔(ms)",
+      "mouseScrollInterval" : "鼠标滚轮间隔 (ms)",
       "enterKeyInterval" : "回车间隔(ms)",
-      "startEngineKey" : "点火键位",
-      "timeUtilMMenuLoaded" : "等待M菜单加载时间(ms)",
-      "openVehicleDoor" : "开车门"
+      "timeUtilMMenuLoaded" : "等待M菜单加载时间(ms)"
+    },
+    "startEngine" : {
+      "title" : "快速点火",
+      "enableStartEngine" : "启用快速点火",
+      "startEngineKey" : "快速点火激活键位",
+      "enableDoubleClickToOpenDoor" : "启用双击开门点火",
+      "doubleClickInterval" : "双击检测间隔(ms)"
     }
   },
   "betterLButton" : {
@@ -138,15 +143,22 @@
   "betterPMenu" : {
     "title" : "更好P菜单",
     "baseSetting" : {
-      "mouseScrollInterval" : "滚轮触发间隔 (ms)",
-      "enterKeyInterval" : "回车间隔 (ms)",
-      "timeUtilPMenuLoaded" : "等待P菜单加载时间 (ms)"
+      "title" : "base settings",
+      "mouseScrollInterval" : "滚轮触发间隔(ms)",
+      "enterKeyInterval" : "回车间隔(ms)",
+      "timeUtilPMenuLoaded" : "等待P菜单加载时间(ms)"
     },
     "joinANewSession" : {
       "title" : "寻找新战局",
       "enable" : "启用寻找新战局",
       "activateKey" : "激活键位",
       "sessionType" : "战局类型"
+    },
+    "joinABookmarkedJob" : {
+      "title" : "加入已收藏差事",
+      "enable" : "启用加入已收藏差事",
+      "activateKey" : "激活键位",
+      "timeUtilJobsLoaded" : "差事列表加载时间(ms)"
     }
   },
   "fontPack" : {

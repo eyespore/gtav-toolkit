@@ -47,27 +47,35 @@ public class TriggerFactory {
         TriggerType type = identity.getType();
         TriggerMode mode = identity.getMode();
 
+        long doubleClickInterval = identity.getDoubleClickInterval();
+
         switch (type) {
             case KEYBOARD -> {
+                final KeyboardSource source = new KeyboardSource(key);
                 return switch (mode) {
-                    case HOLD   -> new SimpleTrigger(new KeyboardSource(key), ActivationPolicy.hold());
-                    case TOGGLE -> new SimpleTrigger(new KeyboardSource(key), ActivationPolicy.toggle());
-                    case CLICK -> new SimpleTrigger(new KeyboardSource(key), ActivationPolicy.click());
+                    case HOLD   -> new SimpleTrigger(source, ActivationPolicy.hold());
+                    case TOGGLE -> new SimpleTrigger(source, ActivationPolicy.toggle());
+                    case CLICK -> new SimpleTrigger(source, ActivationPolicy.click());
+                    case DOUBLE_CLICK -> new SimpleTrigger(source, ActivationPolicy.doubleClick(doubleClickInterval));
                 };
             }
             case MOUSE_BUTTON -> {
+                final MouseButtonSource source = new MouseButtonSource(key);
                 return switch (mode) {
-                    case HOLD   -> new SimpleTrigger(new MouseButtonSource(key), ActivationPolicy.hold());
-                    case TOGGLE -> new SimpleTrigger(new MouseButtonSource(key), ActivationPolicy.toggle());
-                    case CLICK -> new SimpleTrigger(new MouseButtonSource(key), ActivationPolicy.click());
+                    case HOLD   -> new SimpleTrigger(source, ActivationPolicy.hold());
+                    case TOGGLE -> new SimpleTrigger(source, ActivationPolicy.toggle());
+                    case CLICK -> new SimpleTrigger(source, ActivationPolicy.click());
+                    case DOUBLE_CLICK -> new SimpleTrigger(source, ActivationPolicy.doubleClick(doubleClickInterval));
                 };
             }
             case SCROLL_WHEEL -> {
                 // 已在 TriggerIdentity 中保证只能与 TOGGLE 组合
+                final MouseScrollSource source = new MouseScrollSource(key);
                 return switch (mode) {
                     case HOLD -> throw new IllegalStateException("Unexpected value: " + mode);
-                    case TOGGLE -> new SimpleTrigger(new MouseScrollSource(key), ActivationPolicy.toggle());
-                    case CLICK -> new SimpleTrigger(new MouseScrollSource(key), ActivationPolicy.click());
+                    case TOGGLE -> new SimpleTrigger(source, ActivationPolicy.toggle());
+                    case CLICK -> new SimpleTrigger(source, ActivationPolicy.click());
+                    case DOUBLE_CLICK -> new SimpleTrigger(source, ActivationPolicy.doubleClick(doubleClickInterval));
                 };
             }
             default -> throw new IllegalArgumentException("Unsupported TriggerType: " + type);

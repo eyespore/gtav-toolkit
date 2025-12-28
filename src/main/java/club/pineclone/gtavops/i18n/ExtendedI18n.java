@@ -258,15 +258,22 @@ public class ExtendedI18n implements InternalI18n {
     public static class BetterMMenu {
         public String title = "Better MMenu";
         public BaseSetting baseSetting = new BaseSetting();
+        public StartEngine startEngine = new StartEngine();
 
         public static class BaseSetting {
             public String title = "base settings";
             public String menuKey = "menu key";  /* 互动菜单键 */
             public String mouseScrollInterval = "mouse scroll interval (ms)";  /* 方向键之后的等待时间 */
             public String enterKeyInterval = "enter interval (ms)";  /* 回车之后的等待时间 */
-            public String startEngineKey = "start engine key";  /* 快速点火 */
             public String timeUtilMMenuLoaded = "time util menu loaded (ms)";  /* 等待M菜单加载时间 */
-            public String openVehicleDoor = "open vehicle";  /* 是否打开车门 */
+        }
+
+        public static class StartEngine {
+            public String title = "start engine";
+            public String enableStartEngine = "enable start engine";
+            public String startEngineKey = "start engine key";  /* 快速点火 */
+            public String enableDoubleClickToOpenDoor = "enable double click to open door";  /* 是否打开车门 */
+            public String doubleClickInterval = "double click interval";  /* 双击间隔 */
         }
     }
 
