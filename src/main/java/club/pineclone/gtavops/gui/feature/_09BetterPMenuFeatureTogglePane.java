@@ -11,7 +11,8 @@ import club.pineclone.gtavops.gui.forked.ForkedSlider;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.macro.MacroContextHolder;
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.action.impl.extrafunction.JoinSessionAction;
+import club.pineclone.gtavops.macro.action.impl.betterpmenu.JoinABookmarkedJobAction;
+import club.pineclone.gtavops.macro.action.impl.betterpmenu.JoinANewSessionAction;
 import club.pineclone.gtavops.macro.trigger.Trigger;
 import club.pineclone.gtavops.macro.trigger.TriggerFactory;
 import club.pineclone.gtavops.macro.trigger.TriggerIdentity;
@@ -51,13 +52,14 @@ public class _09BetterPMenuFeatureTogglePane
             implements ResourceHolder, MacroContextHolder {
 
         private UUID joinANewSessionMacroId;  /* 快速加入新战局 */
+        private UUID joinABookmarkedJobMacroId;  /* 加入已收藏差事 */
 
         private final Config config = getConfig();
         private final Config.BetterPMenu bpmconfig = config.betterPMenu;
 
         @Override
         protected void activate() {
-            long arrowKeyInterval = (long) (Math.floor(bpmconfig.baseSetting.mouseScrollInterval));
+            long mouseScrollInterval = (long) (Math.floor(bpmconfig.baseSetting.mouseScrollInterval));
             long enterKeyInterval = (long) (Math.floor(bpmconfig.baseSetting.enterKeyInterval));
             long timeUtilPMenuLoaded = (long) (Math.floor(bpmconfig.baseSetting.timeUtilPMenuLoaded));
 
@@ -67,17 +69,30 @@ public class _09BetterPMenuFeatureTogglePane
                 SessionType sessionType = bpmconfig.joinANewSession.sessionType;
 
                 Trigger trigger = TriggerFactory.simple(TriggerIdentity.of(TriggerMode.CLICK, activateKey));
-                Action action = new JoinSessionAction(sessionType, arrowKeyInterval, enterKeyInterval, timeUtilPMenuLoaded);
+                Action action = new JoinANewSessionAction(sessionType, mouseScrollInterval, enterKeyInterval, timeUtilPMenuLoaded);
 
                 joinANewSessionMacroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
 //                Logger.lowLevelDebug(KeyUtils.toString(activateKey));
                 MACRO_REGISTRY.install(joinANewSessionMacroId);
+            }
+
+            /* 加入已收藏差事 */
+            if (bpmconfig.joinABookmarkedJob.enable) {
+                Key activateKey = bpmconfig.getJoinABookmarkedJob().activateKey;
+                long timeUtilJobsLoaded = (long) (Math.floor(bpmconfig.joinABookmarkedJob.timeUtilJobsLoaded));
+
+                Trigger trigger = TriggerFactory.simple(TriggerIdentity.of(TriggerMode.CLICK, activateKey));
+                Action action = new JoinABookmarkedJobAction(mouseScrollInterval, enterKeyInterval, timeUtilPMenuLoaded, timeUtilJobsLoaded);
+
+                joinABookmarkedJobMacroId = MACRO_FACTORY.createSimpleMacro(trigger, action);
+                MACRO_REGISTRY.install(joinABookmarkedJobMacroId);
             }
         }
 
         @Override
         protected void deactivate() {
             MACRO_REGISTRY.uninstall(joinANewSessionMacroId);
+            MACRO_REGISTRY.uninstall(joinABookmarkedJobMacroId);
         }
     }
 
@@ -104,22 +119,36 @@ public class _09BetterPMenuFeatureTogglePane
 
         private final ForkedSlider timeUtilPMenuLoadedSlider = new ForkedSlider() {{
             setLength(400);
-            setRange(10, 1000);
+            setRange(10, 3000);
         }};
 
+        /* Join A New Session */
         private final ToggleSwitch enableJoinANewSessionToggle = new ToggleSwitch();
         private final VKeyChooseButton joinANewSessionActivateKey = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);
         private final VCycleButton<SessionType> joinANewSessionTypeCycle = new VCycleButton<>(List.of(SessionType.values()));
 
+        /* Join A Bookmarked Job */
+        private final ToggleSwitch enableJoinABookmarkedJobToggle = new ToggleSwitch();
+        private final VKeyChooseButton joinABookmarkedJobActivateKey = new VKeyChooseButton(ForkedKeyChooser.FLAG_WITH_KEY);
+        private final ForkedSlider timeUtilJobsLoadedSlider = new ForkedSlider() {{
+            setLength(400);
+            setRange(500, 4000);
+        }};
+
         public BPMSettingStage() {
             getContent().getChildren().addAll(contentBuilder()
+                    .divide(bpmI18n.baseSetting.title)
+                    .slider(bpmI18n.baseSetting.mouseScrollInterval, mouseScrollIntervalSlider)
+                    .slider(bpmI18n.baseSetting.enterKeyInterval, enterKeyIntervalSlider)
+                    .slider(bpmI18n.baseSetting.timeUtilPMenuLoaded, timeUtilPMenuLoadedSlider)
                     .divide(bpmI18n.joinANewSession.title)
                     .toggle(bpmI18n.joinANewSession.enable, enableJoinANewSessionToggle)
                     .button(bpmI18n.joinANewSession.activateKey, joinANewSessionActivateKey)
                     .button(bpmI18n.joinANewSession.sessionType, joinANewSessionTypeCycle)
-                    .slider(bpmI18n.baseSetting.mouseScrollInterval, mouseScrollIntervalSlider)
-                    .slider(bpmI18n.baseSetting.enterKeyInterval, enterKeyIntervalSlider)
-                    .slider(bpmI18n.baseSetting.timeUtilPMenuLoaded, timeUtilPMenuLoadedSlider)
+                    .divide(bpmI18n.joinABookmarkedJob.title)
+                    .toggle(bpmI18n.joinABookmarkedJob.enable, enableJoinABookmarkedJobToggle)
+                    .button(bpmI18n.joinABookmarkedJob.activateKey, joinABookmarkedJobActivateKey)
+                    .slider(bpmI18n.joinABookmarkedJob.timeUtilJobsLoaded, timeUtilJobsLoadedSlider)
                     .build());
         }
 
@@ -137,6 +166,10 @@ public class _09BetterPMenuFeatureTogglePane
             enableJoinANewSessionToggle.selectedProperty().set(bpmConfig.joinANewSession.enable);
             joinANewSessionActivateKey.keyProperty().set(bpmConfig.joinANewSession.activateKey);
             joinANewSessionTypeCycle.itemProperty().set(bpmConfig.joinANewSession.sessionType);
+
+            enableJoinABookmarkedJobToggle.selectedProperty().set(bpmConfig.joinABookmarkedJob.enable);
+            joinABookmarkedJobActivateKey.keyProperty().set(bpmConfig.joinABookmarkedJob.activateKey);
+            timeUtilJobsLoadedSlider.setValue(bpmConfig.joinABookmarkedJob.timeUtilJobsLoaded);
         }
 
         @Override
@@ -148,6 +181,10 @@ public class _09BetterPMenuFeatureTogglePane
             bpmConfig.joinANewSession.enable = enableJoinANewSessionToggle.selectedProperty().get();
             bpmConfig.joinANewSession.activateKey = joinANewSessionActivateKey.keyProperty().get();
             bpmConfig.joinANewSession.sessionType = joinANewSessionTypeCycle.itemProperty().get();
+
+            bpmConfig.joinABookmarkedJob.enable = enableJoinABookmarkedJobToggle.selectedProperty().get();
+            bpmConfig.joinABookmarkedJob.activateKey = joinABookmarkedJobActivateKey.keyProperty().get();
+            bpmConfig.joinABookmarkedJob.timeUtilJobsLoaded = timeUtilJobsLoadedSlider.valueProperty().get();
         }
     }
 }

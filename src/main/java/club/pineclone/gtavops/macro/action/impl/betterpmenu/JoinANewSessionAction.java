@@ -1,4 +1,4 @@
-package club.pineclone.gtavops.macro.action.impl.extrafunction;
+package club.pineclone.gtavops.macro.action.impl.betterpmenu;
 
 import club.pineclone.gtavops.common.SessionType;
 import club.pineclone.gtavops.macro.action.Action;
@@ -10,7 +10,7 @@ import io.vproxy.vfx.entity.input.KeyCode;
 import io.vproxy.vfx.entity.input.MouseWheelScroll;
 
 /* 快速点火 */
-public class JoinSessionAction extends Action {
+public class JoinANewSessionAction extends Action {
 
     private final long mouseScrollInterval;
     private final long enterKeyInterval;
@@ -22,17 +22,15 @@ public class JoinSessionAction extends Action {
 
     public static final String ACTION_ID = "better-p-menu";
 
-    private final Key downKey = new Key(KeyCode.DOWN);
-    private final Key upKey = new Key(KeyCode.UP);
     private final Key enterKey = new Key(KeyCode.ENTER);
     private final Key rightKey = new Key(KeyCode.RIGHT);
 
-    private final Key mouseScrollUpKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.UP, 1));
-    private final Key mouseScrollDownKey = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.DOWN, 1));
+    private final Key mouseScrollUp = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.UP, 1));
+    private final Key mouseScrollDown = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.DOWN, 1));
 
     private final Key menuKey = new Key(KeyCode.P);  /* P 菜单按键 */
 
-    public JoinSessionAction(
+    public JoinANewSessionAction(
             SessionType sessionType,
             long mouseScrollInterval,
             long enterKeyInterval,
@@ -55,27 +53,27 @@ public class JoinSessionAction extends Action {
         awaitTimeUtilPMenuLoaded();  /* 等待列表加载 */
 
         pressEnter();
-        for (int i = 0; i < 5; i++) mouseScrollUp();
+        mouseScrollUp();
+        mouseScrollUp();
+        Thread.sleep(700);
+        mouseScrollUp();
+        Thread.sleep(700);
+        mouseScrollUp();
+        mouseScrollUp();
 
         Thread.sleep(200);
         pressEnter();
-
 
         int times;
         switch (sessionType) {
             case INVITE_ONLY_SESSION -> times = 1;
             case CREW_SESSION -> times = 2;
-            case INVITE_ONLY_CREW_SESSION -> times = -2;
-            case INVITE_ONLY_FRIENDS_SESSION -> times = -1;
+            case INVITE_ONLY_CREW_SESSION -> times = 3;
+            case INVITE_ONLY_FRIENDS_SESSION -> times = 4;
             default -> times = 0;
         }
 
-        if (times >= 0) {
-            for (int i = 0; i < times; i++) mouseScrollDown();
-        } else {
-            times = - times;
-            for (int i = 0; i < times; i++) mouseScrollUp();
-        }
+        for (int i = 0; i < times; i++) mouseScrollDown();
 //
         Thread.sleep(200);
         pressEnter();
@@ -84,22 +82,17 @@ public class JoinSessionAction extends Action {
     }
 
     private void mouseScrollDown() throws Exception {
-        robot.mouseWheel(mouseScrollDownKey);
+        robot.mouseWheel(mouseScrollDown);
         Thread.sleep(mouseScrollInterval);
     }
 
     private void mouseScrollUp() throws Exception {
-        robot.mouseWheel(mouseScrollUpKey);
+        robot.mouseWheel(mouseScrollUp);
         Thread.sleep(mouseScrollInterval);
     }
 
     private void pressP() throws Exception {
         robot.simulate(menuKey);
-        awaitArrow();
-    }
-
-    private void pressDown() throws Exception {
-        robot.simulate(downKey);
         awaitArrow();
     }
 
@@ -111,11 +104,6 @@ public class JoinSessionAction extends Action {
     private void pressEnter() throws Exception {
         robot.simulate(enterKey);
         awaitEnter();
-    }
-
-    private void pressUp() throws Exception {
-        robot.simulate(upKey);
-        awaitArrow();
     }
 
     private void awaitArrow() throws InterruptedException {

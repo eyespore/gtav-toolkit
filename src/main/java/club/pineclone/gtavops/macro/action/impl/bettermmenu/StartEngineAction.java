@@ -6,11 +6,12 @@ import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
 import io.vproxy.vfx.entity.input.Key;
 import io.vproxy.vfx.entity.input.KeyCode;
+import io.vproxy.vfx.entity.input.MouseWheelScroll;
 
 /* 快速点火 */
 public class StartEngineAction extends Action {
 
-    private final long arrowKeyInterval;
+    private final long mouseScrollInterval;
     private final long enterKeyInterval;
     private final long timeUtilMMenuLoaded;
 
@@ -19,14 +20,18 @@ public class StartEngineAction extends Action {
     public static final String ACTION_ID = "better-m-menu";
 
     private final Key downKey = new Key(KeyCode.DOWN);
+
+
+    private final Key mouseScrollDown = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.DOWN, 1));
+    private final Key mouseScrollUp = new Key(new MouseWheelScroll(MouseWheelScroll.Direction.UP, 1));
     private final Key upKey = new Key(KeyCode.UP);
     private final Key enterKey = new Key(KeyCode.ENTER);
     private final Key menuKey;
 
-    public StartEngineAction(Key menukey, long arrowKeyInterval,
+    public StartEngineAction(Key menukey, long mouseScrollInterval,
                              long enterKeyInterval, long timeUtilMMenuLoaded) {
         super(ACTION_ID);
-        this.arrowKeyInterval = arrowKeyInterval;
+        this.mouseScrollInterval = mouseScrollInterval;
         this.enterKeyInterval = enterKeyInterval;
         this.timeUtilMMenuLoaded = timeUtilMMenuLoaded;
         this.robot = RobotFactory.getRobot();
@@ -39,14 +44,14 @@ public class StartEngineAction extends Action {
 
         Thread.sleep(timeUtilMMenuLoaded);  /* 解决M键菜单出现过晚的问题 */
 
-        pressDown();
-        pressDown();
+        mouseScrollDown();
+        mouseScrollDown();
         pressEnter();
-        pressUp();
+        mouseScrollUp();
         pressEnter();
-        pressUp();
-        pressUp();
-        pressUp();
+        mouseScrollUp();
+        mouseScrollUp();
+        mouseScrollUp();
         pressEnter();
         pressEnter();
         pressM();
@@ -54,33 +59,21 @@ public class StartEngineAction extends Action {
 
     private void pressM() throws Exception {
         robot.simulate(menuKey);
-        awaitArrow();
+        Thread.sleep(enterKeyInterval);
     }
 
-    private void pressDown() throws Exception {
-        robot.simulate(downKey);
-        awaitArrow();
+    private void mouseScrollDown() throws Exception {
+        robot.mouseWheel(mouseScrollDown);
+        Thread.sleep(mouseScrollInterval);
+    }
+
+    private void mouseScrollUp() throws Exception {
+        robot.mouseWheel(mouseScrollUp);
+        Thread.sleep(mouseScrollInterval);
     }
 
     private void pressEnter() throws Exception {
         robot.simulate(enterKey);
-        awaitEnter();
-    }
-
-    private void pressUp() throws Exception {
-        robot.simulate(upKey);
-        awaitArrow();
-    }
-
-    private void awaitArrow() throws InterruptedException {
-        Thread.sleep(arrowKeyInterval);
-    }
-
-    private void awaitEnter() throws InterruptedException {
         Thread.sleep(enterKeyInterval);
-    }
-
-    private void awaitTimeUtilMMenuLoaded() throws InterruptedException {
-        Thread.sleep(timeUtilMMenuLoaded);
     }
 }

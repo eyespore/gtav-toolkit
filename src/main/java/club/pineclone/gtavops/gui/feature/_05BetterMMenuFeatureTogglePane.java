@@ -53,7 +53,7 @@ public class _05BetterMMenuFeatureTogglePane
         protected void activate() {
             Key startEngineKey = bmmConfig.baseSetting.startEngineKey;
             Key menuKey = bmmConfig.baseSetting.menuKey;
-            long arrowKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.arrowKeyInterval));
+            long arrowKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.mouseScrollInterval));
             long enterKeyInterval = (long) (Math.floor(bmmConfig.baseSetting.enterKeyInterval));
             long timeUtilMMenuLoaded = (long) (Math.floor(bmmConfig.baseSetting.timeUtilMMenuLoaded));
 
@@ -105,7 +105,7 @@ public class _05BetterMMenuFeatureTogglePane
             getContent().getChildren().addAll(contentBuilder()
                     .divide(bmmI18n.baseSetting.title)
                     .button(bmmI18n.baseSetting.menuKey, menuKeyBtn)
-                    .slider(bmmI18n.baseSetting.arrowKeyInterval, arrowKeyIntervalSlider)
+                    .slider(bmmI18n.baseSetting.mouseScrollInterval, arrowKeyIntervalSlider)
                     .slider(bmmI18n.baseSetting.enterKeyInterval, enterKeyIntervalSlider)
                     .slider(bmmI18n.baseSetting.timeUtilMMenuLoaded, timeUtilMMenuLoadedSlider)
                     .button(bmmI18n.baseSetting.startEngineKey, startEngineKeyBtn)
@@ -120,7 +120,7 @@ public class _05BetterMMenuFeatureTogglePane
         @Override
         public void onVSettingStageInit() {
             menuKeyBtn.keyProperty().set(bmmConfig.baseSetting.menuKey);
-            arrowKeyIntervalSlider.setValue(bmmConfig.baseSetting.arrowKeyInterval);
+            arrowKeyIntervalSlider.setValue(bmmConfig.baseSetting.mouseScrollInterval);
             enterKeyIntervalSlider.setValue(bmmConfig.baseSetting.enterKeyInterval);
             timeUtilMMenuLoadedSlider.setValue(bmmConfig.baseSetting.timeUtilMMenuLoaded);
             startEngineKeyBtn.keyProperty().set(bmmConfig.baseSetting.startEngineKey);
@@ -129,7 +129,7 @@ public class _05BetterMMenuFeatureTogglePane
         @Override
         public void onVSettingStageExit() {
             bmmConfig.baseSetting.menuKey = menuKeyBtn.keyProperty().get();
-            bmmConfig.baseSetting.arrowKeyInterval = arrowKeyIntervalSlider.valueProperty().get();
+            bmmConfig.baseSetting.mouseScrollInterval = arrowKeyIntervalSlider.valueProperty().get();
             bmmConfig.baseSetting.enterKeyInterval = enterKeyIntervalSlider.valueProperty().get();
             bmmConfig.baseSetting.timeUtilMMenuLoaded = timeUtilMMenuLoadedSlider.valueProperty().get();
             bmmConfig.baseSetting.startEngineKey = startEngineKeyBtn.keyProperty().get();

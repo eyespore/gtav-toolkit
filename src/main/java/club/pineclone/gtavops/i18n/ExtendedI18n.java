@@ -262,7 +262,7 @@ public class ExtendedI18n implements InternalI18n {
         public static class BaseSetting {
             public String title = "base settings";
             public String menuKey = "menu key";  /* 互动菜单键 */
-            public String arrowKeyInterval = "arrow key interval (ms)";  /* 方向键之后的等待时间 */
+            public String mouseScrollInterval = "mouse scroll interval (ms)";  /* 方向键之后的等待时间 */
             public String enterKeyInterval = "enter interval (ms)";  /* 回车之后的等待时间 */
             public String startEngineKey = "start engine key";  /* 快速点火 */
             public String timeUtilMMenuLoaded = "time util menu loaded (ms)";  /* 等待M菜单加载时间 */
@@ -337,8 +337,10 @@ public class ExtendedI18n implements InternalI18n {
         public String title = "Better PMenu";
         public BaseSetting baseSetting = new BaseSetting();
         public JoinANewSession joinANewSession = new JoinANewSession();
+        public JoinABookmarkedJob joinABookmarkedJob = new JoinABookmarkedJob();
 
         public static class BaseSetting {
+            public String title = "base settings";
             public String mouseScrollInterval = "mouse scroll interval (ms)";  /* 方向键之后的等待时间 */
             public String enterKeyInterval = "enter interval (ms)";  /* 回车之后的等待时间 */
             public String timeUtilPMenuLoaded = "time util menu loaded (ms)";  /* 等待P菜单加载时间 */
@@ -349,6 +351,14 @@ public class ExtendedI18n implements InternalI18n {
             public String enable = "enable join a new session";
             public String activateKey = "activate key";
             public String sessionType = "session type";
+        }
+
+        /* 加入一个已收藏的差事 */
+        public static class JoinABookmarkedJob {
+            public String title = "join a bookmarked job";
+            public String enable = "enable join a bookmarked session";
+            public String activateKey = "activate key";
+            public String timeUtilJobsLoaded = "time util jobs loaded (ms)";
         }
     }
 

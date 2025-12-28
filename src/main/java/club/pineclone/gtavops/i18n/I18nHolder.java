@@ -1,6 +1,7 @@
 package club.pineclone.gtavops.i18n;
 
 import club.pineclone.gtavops.utils.PathUtils;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.vproxy.base.util.LogType;
@@ -28,19 +29,23 @@ public class I18nHolder {
 
     private static ExtendedI18n loadI18n() {
         ExtendedI18n i18n;
+        ExtendedI18n defaultI18n = new ExtendedI18n();  /* 默认本地化 */
+
         try (InputStream is = I18nHolder.class.getResourceAsStream("/i18n/" + LOCALE + ".json")) {
             if (is == null) {
                 Logger.error(LogType.SYS_ERROR, "unable to load i18n file");
-                i18n = new ExtendedI18n();
+                i18n = defaultI18n;
             } else {
                 /* 本地化文件存在 */
                 ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                i18n = mapper.readValue(is, ExtendedI18n.class);
+                mapper.enable(SerializationFeature.INDENT_OUTPUT);  /* 美观输出 */
+                mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);  /* 忽略不存在的属性 */
+
+                i18n = mapper.readerForUpdating(defaultI18n).readValue(is, ExtendedI18n.class);
                 Logger.error(LogType.ACCESS, "successfully load i18n file");
             }
         } catch (IOException e) {
-            i18n = new ExtendedI18n();
+            i18n = defaultI18n;
         }
 
         return i18n;

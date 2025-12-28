@@ -125,7 +125,7 @@ public class Config {
         public static class BaseSetting {
             public boolean enable = false;  /* 是否启用 */
             public Key menuKey = new Key(KeyCode.M);
-            public double arrowKeyInterval = 20.0;
+            public double mouseScrollInterval = 10.0;
             public double enterKeyInterval = 20.0;
             public Key startEngineKey = new Key(MouseButton.FORWARD);
             public double timeUtilMMenuLoaded = 20.0;
@@ -199,7 +199,6 @@ public class Config {
             public double timeUtilCameraLoaded1 = 3000.0;  /* 等待相机加载完成的时间1 */
             public double timeUtilCameraLoaded2 = 1500.0;  /* 等待相机加载完成的时间2 */
 
-
         }
     }
 
@@ -209,13 +208,14 @@ public class Config {
 
         public BaseSetting baseSetting = new BaseSetting();
         public JoinANewSession joinANewSession = new JoinANewSession();
+        public JoinABookmarkedJob joinABookmarkedJob = new JoinABookmarkedJob();
 
         public static class BaseSetting {
             public boolean enable = false;
 
-            public double mouseScrollInterval = 50.0;
-            public double enterKeyInterval = 200.0;
-            public double timeUtilPMenuLoaded = 700.0;
+            public double mouseScrollInterval = 10.0;
+            public double enterKeyInterval = 300.0;
+            public double timeUtilPMenuLoaded = 1000.0;
         }
 
         /* 加入新战局 */
@@ -229,6 +229,7 @@ public class Config {
         public static class JoinABookmarkedJob {
             public boolean enable = false;
             public Key activateKey = new Key(KeyCode.F7);  /* 加入已收藏差事 */
+            public double timeUtilJobsLoaded = 2500.0;  /* 等待差事列表加载 */
         }
     }
 }
