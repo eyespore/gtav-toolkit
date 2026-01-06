@@ -1,5 +1,7 @@
 package club.pineclone.gtavops.macro.action;
 
+import club.pineclone.gtavops.macro.MacroEvent;
+
 /* todo: 引入动作优先级 */
 /* 优先级互斥定时动作装饰器 */
 @Deprecated
@@ -13,17 +15,17 @@ public class MutexScheduledActionDecorator extends ScheduledAction  {
     }
 
     @Override
-    public void schedule(ActionEvent event) {
+    public void schedule(MacroEvent event) {
         delegate.schedule(event);
     }
 
     @Override
-    public boolean beforeSchedule(ActionEvent event) {
+    public boolean beforeSchedule(MacroEvent event) {
         return delegate.beforeSchedule(event);
     }
 
     @Override
-    public void afterSchedule(ActionEvent event) {
+    public void afterSchedule(MacroEvent event) {
         delegate.afterSchedule(event);
     }
 

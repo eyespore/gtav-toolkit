@@ -1,11 +1,9 @@
 package club.pineclone.test.action;
 
-import club.pineclone.gtavops.macro.action.ActionEvent;
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
 import club.pineclone.gtavops.macro.action.robot.RobotAdapter;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
-import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
-import club.pineclone.gtavops.macro.trigger.TriggerEvent;
 import io.vproxy.vfx.entity.input.Key;
 import javafx.scene.input.MouseButton;
 import junit.framework.TestCase;
@@ -21,7 +19,7 @@ public class MouseButtonTest extends TestCase {
             }
 
             @Override
-            public void schedule(ActionEvent event) {
+            public void schedule(MacroEvent event) {
                 try {
                     robot.simulate(new Key(MouseButton.SECONDARY));
                 } catch (InterruptedException ignored) {

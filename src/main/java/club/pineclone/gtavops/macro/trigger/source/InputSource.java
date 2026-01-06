@@ -2,6 +2,7 @@ package club.pineclone.gtavops.macro.trigger.source;
 
 /* 信号源 */
 
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.MacroLifecycleAware;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
@@ -14,12 +15,12 @@ import lombok.Setter;
  */
 public abstract class InputSource implements MacroLifecycleAware {
 
-    private boolean installed = false;
+    private volatile boolean installed = false;
     @Setter protected InputSourceListener listener;
 
     /* 宏安装 */
     @Override
-    public void onMarcoInstall() {
+    public void onMacroLaunch(MacroEvent event) {
         if (installed) return;
         if (this instanceof NativeKeyListener) {
             GlobalScreen.addNativeKeyListener((NativeKeyListener) this);
@@ -33,7 +34,7 @@ public abstract class InputSource implements MacroLifecycleAware {
 
     /* 宏卸载 */
     @Override
-    public void onMarcoUninstall() {
+    public void onMacroTerminate(MacroEvent event) {
         if (!installed) return;
         if (this instanceof NativeKeyListener) {
             GlobalScreen.removeNativeKeyListener((NativeKeyListener) this);

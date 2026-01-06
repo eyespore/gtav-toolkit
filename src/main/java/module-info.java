@@ -11,6 +11,7 @@ module club.pineclone.gtavops {
     requires vjson;
     requires static lombok;
     requires javafx.graphics;
+    requires org.slf4j;
 
     opens club.pineclone.gtavops;
     opens club.pineclone.gtavops.utils;
@@ -36,6 +37,7 @@ module club.pineclone.gtavops {
     exports club.pineclone.gtavops.macro.action.impl.betterpmenu;
     exports club.pineclone.gtavops.macro.action.impl.bettermmenu;
     exports club.pineclone.gtavops.macro.action.impl.actionext;
-    exports club.pineclone.gtavops.gui;
-    opens club.pineclone.gtavops.gui;
+    exports club.pineclone.gtavops.client;
+    opens club.pineclone.gtavops.client;
+    exports club.pineclone.gtavops.macro.action.impl.swapglitch;
 }

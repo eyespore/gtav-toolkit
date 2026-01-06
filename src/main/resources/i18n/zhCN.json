@@ -181,7 +181,7 @@
       "mousePressInterval" : "鼠标按住时长(ms)"
     }
   },
-  "fontPack" : {
+  "fontPackScene" : {
     "title" : "字体包管理",
     "gamePath" : "游戏家目录",
     "name" : "名称",
@@ -222,23 +222,26 @@
     "illegalFontpackContribute" : "非法字体包组成, 一个字体包应至少包含update.rpf或update2.rpf其中一者",
     "illegalOriginalFontpackContribute" : "非法原始字体包组成, 你可能需要执行'验证游戏文件完整性'来补全原始字体包"
   },
-  "feature" : {
+  "featureScene" : {
     "title" : "功能/特性",
     "header" : "右击某一项功能特性来进行更进一步配置!",
     "gameVersion" : "游戏版本"
   },
-  "intro" : {
+  "introScene" : {
     "title" : "介绍",
     "header" : "由Pineclone开发",
     "versionLabel" : "当前版本：",
     "acknowledgement" : "感谢wkgcass的开源UI组件库！",
     "introNavigate" : "引导页",
     "featureNavigate" : "特性页",
-    "fontpackNavigate" : "字体包"
+    "fontpackNavigate" : "字体包",
+    "configNavigate": "应用配置"
   },
-  "config" : {
-    "title" : "应用配置",
-    "header" : "对GTAV OPS进行配置！"
+  "configScene" : {
+    "title" : "应用设置",
+    "header" : "对GTAV OPS进行配置！",
+    "appearanceSettings": "外观配置",
+    "language": "语言"
   },
   "keyChooserDescription" : "按下 [{0}] 来设置键位",
   "keyChooserForwardMouseButton" : "鼠标前侧键",

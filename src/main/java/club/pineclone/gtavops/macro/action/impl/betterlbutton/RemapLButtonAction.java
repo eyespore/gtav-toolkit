@@ -1,7 +1,7 @@
 package club.pineclone.gtavops.macro.action.impl.betterlbutton;
 
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.action.ActionEvent;
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
 import io.vproxy.vfx.entity.input.Key;
@@ -19,12 +19,12 @@ public class RemapLButtonAction extends Action {
     }
 
     @Override
-    public void activate(ActionEvent event) {
+    public void activate(MacroEvent event) {
         robot.mousePress(leftButton);
     }
 
     @Override
-    public void deactivate(ActionEvent event) {
+    public void deactivate(MacroEvent event) {
         robot.mouseRelease(leftButton);
     }
 }

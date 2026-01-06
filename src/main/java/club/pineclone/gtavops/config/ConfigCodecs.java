@@ -29,7 +29,7 @@ public class ConfigCodecs {
         module.addDeserializer(SessionType.class, new SessionTypeDeserializer());
     }
 
-    /* Key对象序列化 */
+    /* Key 对象序列化 */
     public static class KeySerializer extends JsonSerializer<Key> {
         @Override
         public void serialize(Key key, JsonGenerator generator, SerializerProvider provider) throws IOException {
@@ -37,7 +37,7 @@ public class ConfigCodecs {
         }
     }
 
-    /* Key对象反序列化 */
+    /* Key 对象反序列化 */
     public static class KeyDeserializer extends JsonDeserializer<Key> {
         @Override
         public Key deserialize(JsonParser parser, DeserializationContext context) throws IOException, JacksonException {
@@ -45,7 +45,7 @@ public class ConfigCodecs {
         }
     }
 
-    /* SessionType对象序列化 */
+    /* SessionType 对象序列化 */
     public static class SessionTypeSerializer extends JsonSerializer<SessionType> {
         @Override
         public void serialize(SessionType sessionType, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
@@ -54,7 +54,7 @@ public class ConfigCodecs {
         }
     }
 
-    /* SessionType反序列化 */
+    /* SessionType 反序列化 */
     public static class SessionTypeDeserializer extends JsonDeserializer<SessionType> {
         @Override
         public SessionType deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {

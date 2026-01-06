@@ -1,17 +1,13 @@
 package club.pineclone.gtavops.common;
 
-import club.pineclone.gtavops.config.ConfigHolder;
-import club.pineclone.gtavops.config.Config;
-import club.pineclone.gtavops.i18n.ExtendedI18n;
-import club.pineclone.gtavops.i18n.I18nHolder;
+import club.pineclone.gtavops.config.MacroConfigLoader;
+import club.pineclone.gtavops.config.MacroConfig;
 
+// TODO: 销毁该接口，改用构造器注入
+@Deprecated
 public interface ResourceHolder {
-
-    default ExtendedI18n getI18n() {
-        return I18nHolder.get();
-    }
-
-    default Config getConfig() {
-        return ConfigHolder.get();
+    @Deprecated
+    default MacroConfig getConfig() {
+        return MacroConfigLoader.get();
     }
 }

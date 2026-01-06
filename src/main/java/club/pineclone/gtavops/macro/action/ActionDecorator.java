@@ -1,5 +1,7 @@
 package club.pineclone.gtavops.macro.action;
 
+import club.pineclone.gtavops.macro.MacroEvent;
+
 public class ActionDecorator extends Action {
 
     protected final Action delegate;
@@ -10,12 +12,12 @@ public class ActionDecorator extends Action {
     }
 
     @Override
-    public void activate(ActionEvent event) {
+    public void activate(MacroEvent event) {
         delegate.activate(event);
     }
 
     @Override
-    public void deactivate(ActionEvent event) {
+    public void deactivate(MacroEvent event) {
         delegate.deactivate(event);
     }
 }

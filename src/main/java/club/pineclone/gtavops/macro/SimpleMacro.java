@@ -1,7 +1,6 @@
 package club.pineclone.gtavops.macro;
 
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.action.ActionEvent;
 import club.pineclone.gtavops.macro.trigger.Trigger;
 import club.pineclone.gtavops.macro.trigger.TriggerEvent;
 import club.pineclone.gtavops.macro.trigger.TriggerStatus;
@@ -19,7 +18,7 @@ public class SimpleMacro extends Macro {
         if (status.isAssert()) {
             /* 激活 */
             try {
-                action.doActivate(ActionEvent.of(event));
+                action.doActivate(MacroEvent.of(event, this));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -27,7 +26,7 @@ public class SimpleMacro extends Macro {
         } else if (status.isRevoke()) {
             /* 撤销 */
             try {
-                action.doDeactivate(ActionEvent.of(event));
+                action.doDeactivate(MacroEvent.of(event, this));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

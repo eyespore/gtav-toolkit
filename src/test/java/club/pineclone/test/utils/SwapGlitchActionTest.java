@@ -4,6 +4,8 @@ import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
 import junit.framework.TestCase;
 
+import java.util.function.Supplier;
+
 public class SwapGlitchActionTest extends TestCase {
 
     public void testMacro() throws NativeHookException, InterruptedException {
@@ -21,7 +23,11 @@ public class SwapGlitchActionTest extends TestCase {
 //        Thread.sleep(10000);
 //        executor.uninstall();
 //        GlobalScreen.unregisterNativeHook();
-
     }
 
+    public interface StringSupplier extends Supplier<String> {
+        default String getString() {
+            return "Hello World";
+        }
+    }
 }

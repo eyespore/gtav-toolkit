@@ -1,6 +1,6 @@
 package club.pineclone.gtavops.macro.action.impl;
 
-import club.pineclone.gtavops.macro.action.ActionEvent;
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
@@ -24,7 +24,7 @@ public class RouletteSnakeAction extends ScheduledAction {
     }
 
     @Override
-    public void schedule(ActionEvent event) {
+    public void schedule(MacroEvent event) {
         try {
             robot.simulate(this.snakeKey);
         } catch (InterruptedException ignored) {

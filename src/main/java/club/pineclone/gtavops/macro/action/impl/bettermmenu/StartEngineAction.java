@@ -1,14 +1,8 @@
 package club.pineclone.gtavops.macro.action.impl.bettermmenu;
 
-import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.action.ActionEvent;
-import club.pineclone.gtavops.macro.action.robot.RobotFactory;
-import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.trigger.TriggerStatus;
-import io.vproxy.base.util.Logger;
 import io.vproxy.vfx.entity.input.Key;
-import io.vproxy.vfx.entity.input.KeyCode;
-import io.vproxy.vfx.entity.input.MouseWheelScroll;
 
 /* 快速点火 */
 public class StartEngineAction extends BetterMMenuAction {
@@ -26,7 +20,7 @@ public class StartEngineAction extends BetterMMenuAction {
     }
 
     @Override
-    public void activate(ActionEvent event) {
+    public void activate(MacroEvent event) {
 //        Logger.lowLevelDebug(event.toString());
         try {
             boolean shouldOpenVehicleDoor = false;

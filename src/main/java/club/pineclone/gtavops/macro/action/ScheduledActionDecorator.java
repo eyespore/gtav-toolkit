@@ -1,5 +1,7 @@
 package club.pineclone.gtavops.macro.action;
 
+import club.pineclone.gtavops.macro.MacroEvent;
+
 public class ScheduledActionDecorator extends ScheduledAction {
 
     protected final ScheduledAction delegate;
@@ -10,17 +12,17 @@ public class ScheduledActionDecorator extends ScheduledAction {
     }
 
     @Override
-    public void schedule(ActionEvent event) {
+    public void schedule(MacroEvent event) {
         delegate.schedule(event);
     }
 
     @Override
-    public boolean beforeSchedule(ActionEvent event) {
+    public boolean beforeSchedule(MacroEvent event) {
         return delegate.beforeSchedule(event);
     }
 
     @Override
-    public void afterSchedule(ActionEvent event) {
+    public void afterSchedule(MacroEvent event) {
         delegate.afterSchedule(event);
     }
 }

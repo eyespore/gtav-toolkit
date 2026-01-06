@@ -1,16 +1,15 @@
 package club.pineclone.gtavops.macro.action.impl;
 
+import club.pineclone.gtavops.macro.Macro;
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.action.ActionEvent;
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.action.ActionTaskManager;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
-import io.vproxy.base.util.Logger;
 import io.vproxy.vfx.entity.input.Key;
 import io.vproxy.vfx.entity.input.KeyCode;
 import io.vproxy.vfx.entity.input.MouseWheelScroll;
-import io.vproxy.vpacket.dns.rdata.A;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +48,7 @@ public class DelayClimbAction extends Action {
         }
 
         @Override
-        public void schedule(ActionEvent event) {
+        public void schedule(MacroEvent event) {
             try {
                 /* 进入CameraAction时相机应当处关闭状态，因此首先启用相机 */
                 enterCamera();
@@ -65,10 +64,11 @@ public class DelayClimbAction extends Action {
         }
 
         @Override
-        public void afterDeactivate(ActionEvent event) {
+        public void afterDeactivate(MacroEvent event) {
             /* 检查是否启用了退出时自动寻找掩体 */
-            if (DelayClimbAction.this.hideInCoverOnExit) {
+            if (event.getMacroContext().getExecutionStatus().equals(Macro.MacroExecutionStatus.SUSPENDED)) return;
 
+            if (DelayClimbAction.this.hideInCoverOnExit) {
                 try {
                     DelayClimbAction.this.pressHideInCoverKey();
                 } catch (InterruptedException ignored) {
@@ -121,7 +121,7 @@ public class DelayClimbAction extends Action {
 
     /* 在进入循环之前的逻辑，该方法被用于执行宏的阶段1 */
     @Override
-    public void activate(ActionEvent event) {
+    public void activate(MacroEvent event) {
         /* 检查阶段二是否正在运行 */
         if (stopPhase2IfRunning(event)) return;
 
@@ -148,7 +148,7 @@ public class DelayClimbAction extends Action {
         return false;
     }
 
-    private boolean stopPhase2IfRunning(ActionEvent event) {
+    private boolean stopPhase2IfRunning(MacroEvent event) {
         /* 检查阶段二是否正在运行 */
         if (isPhase2Running.get()) {
             /* 当前循环已经运行，停止循环 */
@@ -158,7 +158,7 @@ public class DelayClimbAction extends Action {
         return false;
     }
 
-    private void startPhase1(ActionEvent event) {
+    private void startPhase1(MacroEvent event) {
         /* 阶段一未运行，提交运行任务 */
         isPhase1Running.set(true);
         future = ActionTaskManager.getSCHEDULER().schedule(() -> {
@@ -192,7 +192,7 @@ public class DelayClimbAction extends Action {
     }
 
     @Override
-    public void deactivate(ActionEvent event) {
+    public void deactivate(MacroEvent event) {
         /* 由于延迟攀Action采用子动作，而不是子宏，子动作并不会被纳入MacroRegistry中得到挂起信号，因此
         *  需要由父动作管理，当挂起时deactivate会被调用，此时由父动作停止子动作 */
         if (stopPhase2IfRunning(event)) return;

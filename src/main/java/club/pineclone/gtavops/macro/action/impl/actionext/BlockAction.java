@@ -1,7 +1,7 @@
 package club.pineclone.gtavops.macro.action.impl.actionext;
 
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.action.ActionEvent;
+import club.pineclone.gtavops.macro.MacroEvent;
 
 /**
  *  该动作用于作为封锁计时器，当激活该Action时，会进入时长为blockDuration的倒计时
@@ -24,12 +24,12 @@ public class BlockAction extends Action {
     }
 
     @Override
-    public void activate(ActionEvent event) {
+    public void activate(MacroEvent event) {
         this.blocked = true;  /* 触发封锁 */
     }
 
     @Override
-    public void deactivate(ActionEvent event) {
+    public void deactivate(MacroEvent event) {
         this.blocked = false;
         blockStartTime = System.currentTimeMillis();
     }

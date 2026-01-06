@@ -12,30 +12,14 @@ public class ExtendedI18n implements InternalI18n {
 
     @JsonIgnore
     private static final Set<String> FAILURE_EMOJIS = Set.of(
-          "😨", "😔", "🤔", "😫", "😥", "🥶"
+            "😨", "😔", "🤔", "😫", "😥", "🥶"
     );
 
-    /* 通用 */
-    public String toggle = "Toggle";
-    public String hold = "Hold";
-    public String click = "Click";
-
-    public String unset = "<unset>";
-    public String confirm = "Confirm";
-    public String cancel = "Cancel";
-    public String unknown = "Unknown";
-    public String enabled = "Enabled";
-    public String disabled = "Disabled";
-
-    public String legacy = "Legacy";
-    public String enhanced = "Enhanced";
-
-    public String keyboard = "keyboard";
-    public String mouseButton = "Mouse button";
-    public String mouseWheel = "Mouse wheel";
-
+    public String text = "English";
+    public String lang = "EN_US";
 
     public InGame inGame = new InGame();  /* 游戏内名词 */
+    public Common common = new Common();  /* 通用 */
 
     public SwapGlitch swapGlitch = new SwapGlitch();  /* 切枪偷速 */
     public RouletteSnake rouletteSnake = new RouletteSnake();  /* 轮盘零食 */
@@ -48,10 +32,10 @@ public class ExtendedI18n implements InternalI18n {
     public BetterPMenu betterPMenu = new BetterPMenu();  /* 更好的 P 菜单 */
     public AutoFire autoFire = new AutoFire();  /* 连发 RPG */
 
-    public FontPack fontPack = new FontPack();  /* 字体包管理 */
-    public Feature feature = new Feature();  /* 功能特性 */
-    public Intro intro = new Intro();  /* 主页 */
-    public Config config = new Config();  /* 应用配置 */
+    public FontPackScene fontPackScene = new FontPackScene();  /* 字体包管理 */
+    public FeatureScene featureScene = new FeatureScene();  /* 功能特性 */
+    public IntroScene introScene = new IntroScene();  /* 主页 */
+    public ConfigScene configScene = new ConfigScene();  /* 应用配置 */
 
     /* UI组件 */
     public String keyChooserDescription = "press [{0}] to apply setting";
@@ -69,10 +53,33 @@ public class ExtendedI18n implements InternalI18n {
     public String stacktraceAlertLabel = "If necessary please feel free copy the stack trace blow and send to developers!";
     public String stacktraceAlertTitle = "Hold On!";
 
+    /* 通用 */
+    @Data
+    public static class Common {
+        public String toggle = "Toggle";
+        public String hold = "Hold";
+        public String click = "Click";
+
+        public String confirm = "Confirm";
+        public String cancel = "Cancel";
+        public String unknown = "Unknown";
+        public String enabled = "Enabled";
+        public String disabled = "Disabled";
+
+        public String legacy = "Legacy";
+        public String enhanced = "Enhanced";
+
+        public String keyboard = "keyboard";
+        public String mouseButton = "Mouse button";
+        public String mouseWheel = "Mouse wheel";
+    }
 
     /* 游戏内名词 */
     @Data
     public static class InGame {
+        public String legacy = "Legacy";  /* 传承版 */
+        public String enhanced = "Enhanced";  /* 增强版 */
+
         public String publicSession = "public session";  /* 公开战局 */
         public String inviteOnlySession = "invite only session";  /* 邀请战局 */
         public String crewSession = "crew session";  /* 帮会战局 */
@@ -82,7 +89,7 @@ public class ExtendedI18n implements InternalI18n {
 
     /* 主页 */
     @Data
-    public static class Intro {
+    public static class IntroScene {
         public String title = "Introduction";
         public String header = "Coded By Pineclone";
         public String versionLabel = "version: ";
@@ -91,19 +98,28 @@ public class ExtendedI18n implements InternalI18n {
         public String introNavigate = "Intro";
         public String featureNavigate = "Feature";
         public String fontpackNavigate = "Fontpack";
+        public String configNavigate = "Config";
     }
 
     /* 功能选项 */
     @Data
-    public static class Feature {
+    @Deprecated
+    public static class FeatureScene {
         public String title = "Enhance/Feature";
         public String header = "Right Click one of feature for configuration!";
         public String gameVersion = "game version";
     }
 
+    /* 应用配置 */
+    @Data
+    public static class ConfigScene {
+        public String title = "App Configuration";
+        public String header = "Configure GTAV OPS!";
+    }
+
     /* 字体包管理 */
     @Data
-    public static class FontPack {
+    public static class FontPackScene {
         public String title = "Font Pack Manager";
         public String gamePath = "Legacy Version";
 
@@ -245,13 +261,6 @@ public class ExtendedI18n implements InternalI18n {
             public String safetyKey = "safety key";
             public String enableSafetyKey = "enable safety key";
         }
-    }
-
-    /* 应用配置 */
-    @Data
-    public static class Config {
-        public String title = "App Configuration";
-        public String header = "Configure GTAV OPS!";
     }
 
     /* 更好的 M 菜单 */

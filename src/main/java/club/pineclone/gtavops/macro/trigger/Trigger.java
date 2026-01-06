@@ -3,9 +3,13 @@ package club.pineclone.gtavops.macro.trigger;
 import club.pineclone.gtavops.macro.MacroLifecycleAware;
 import club.pineclone.gtavops.macro.trigger.policy.ActivationPolicy;
 import club.pineclone.gtavops.macro.trigger.source.InputSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Trigger是"触发器"的抽象，它主要用于描述“如何触发”
@@ -20,19 +24,23 @@ import java.util.List;
  */
 public abstract class Trigger implements MacroLifecycleAware {
 
-    private final List<TriggerListener> listeners = new ArrayList<>();
+    protected final Set<TriggerListener> listeners = new HashSet<>();
+    protected volatile boolean isLaunched = false;  /* 记录当前Trigger是否已经被启动，由于Trigger采用享元模式，应该避免Trigger被重复启动 */
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected void fire(TriggerEvent event) {
         listeners.forEach(l -> l.onTriggerEvent(event));
     }
 
+    /* 覆写这两个方法是危险的，应该避免覆写它们 */
+
     /* 添加监听器 */
-    public void addListener(TriggerListener listener) {
+    public final void addListener(TriggerListener listener) {
         listeners.add(listener);
     }
 
     /* 移除监听器 */
-    public void removeListener(TriggerListener listener) {
+    public final void removeListener(TriggerListener listener) {
         listeners.remove(listener);
     }
 }

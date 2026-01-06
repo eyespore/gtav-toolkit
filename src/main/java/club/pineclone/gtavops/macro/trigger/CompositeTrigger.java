@@ -3,31 +3,21 @@ package club.pineclone.gtavops.macro.trigger;
 import java.util.*;
 
 /* 组合按键触发器 */
-public class CompositeTrigger extends Trigger implements TriggerListener {
 
-    private final List<Trigger> triggers;
+/**
+ * “与”Trigger触发逻辑，组合多个Trigger，仅在每一个Trigger都触发assert时才会触发TriggerEvent COMPOSITE_ON
+ * 仅在每一个Trigger都出发revoke时才会触发TriggerEvent COMPOSITE_OFF
+ */
+public class CompositeTrigger extends DelegateTrigger {
+
     private final Set<Trigger> activeSet = new HashSet<>();
-//    private final Map<Trigger, Long> lastActiveTime = new HashMap<>();
-
     private boolean isActive = false;
-    private static final long TOLERANCE_MS = 100;
 
-    public CompositeTrigger(final List<Trigger> triggers) {
-        this.triggers = triggers;
-        triggers.forEach(t -> {
-            t.addListener(this);
-//            lastActiveTime.put(t, 0L);
-        });
-    }
+//    private final Map<Trigger, Long> lastActiveTime = new HashMap<>();
+//    private static final long TOLERANCE_MS = 100;
 
-    @Override
-    public void onMarcoInstall() {
-        triggers.forEach(Trigger::onMarcoInstall);
-    }
-
-    @Override
-    public void onMarcoUninstall() {
-        triggers.forEach(Trigger::onMarcoUninstall);
+    public CompositeTrigger(final Set<Trigger> triggers) {
+        super(triggers);
     }
 
     @Override

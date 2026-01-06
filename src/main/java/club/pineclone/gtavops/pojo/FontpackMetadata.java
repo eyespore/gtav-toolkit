@@ -29,11 +29,11 @@ public class FontpackMetadata {
 
     public String formatType() {
         ExtendedI18n i18n = I18nHolder.get();
-        ExtendedI18n.FontPack fpI18n = i18n.fontPack;
+        ExtendedI18n.FontPackScene fpI18n = i18n.fontPackScene;
         return switch (type) {
-            case 0 -> i18n.legacy;
-            case 1 -> i18n.enhanced;
-            default -> i18n.unknown;
+            case 0 -> i18n.inGame.legacy;
+            case 1 -> i18n.inGame.enhanced;
+            default -> i18n.common.unknown;
         };
     }
 
@@ -45,7 +45,7 @@ public class FontpackMetadata {
 
     public String formatEnabled() {
         ExtendedI18n i18n = I18nHolder.get();
-        return enabled ? i18n.enabled : i18n.disabled;
+        return enabled ? i18n.common.enabled : i18n.common.disabled;
     }
 
     public String formatSize() {

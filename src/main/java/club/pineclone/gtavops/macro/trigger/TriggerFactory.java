@@ -12,11 +12,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 public class TriggerFactory {
 
     /** 用来存放已创建的 CompositeTrigger，键为 id */
     private static final ConcurrentMap<TriggerIdentity, Trigger> singleTriggerRegistry = new ConcurrentHashMap<>();
+
+    @Deprecated
     private static final ConcurrentMap<TriggerIdentityGroup, Trigger> multipleTriggerRegistry = new ConcurrentHashMap<>();
 
     private TriggerFactory() {}
@@ -27,18 +30,14 @@ public class TriggerFactory {
 
     public static Trigger composite(TriggerIdentity... identities) {
         Set<TriggerIdentity> set = new HashSet<>(Arrays.asList(identities));  /* 去重 */
-        if (set.size() == 1) {
-            /* 简单触发器 */
-            TriggerIdentity identity = set.iterator().next();  // 如果已经存在则直接返回，否则创建并注册
-            return simple(identity);
-        } else {
-            /* 组合触发器(未来可能更多拓展) */
-            TriggerIdentityGroup identityGroup = TriggerIdentityGroup.of(set);
-            return multipleTriggerRegistry.computeIfAbsent(identityGroup, group -> {
-                List<Trigger> triggers = set.stream().map(TriggerFactory::simple).toList();
-                return new CompositeTrigger(triggers);
-            });
-        }
+        if (set.size() == 1) return simple(set.iterator().next());
+        else return new CompositeTrigger(set.stream().map(TriggerFactory::simple).collect(Collectors.toSet()));
+    }
+
+    public static Trigger union(TriggerIdentity... identities) {
+        Set<TriggerIdentity> set = new HashSet<>(Arrays.asList(identities));  /* 去重 */
+        if (set.size() == 1) return simple(set.iterator().next());
+        return new UnionTrigger(set.stream().map(TriggerFactory::simple).collect(Collectors.toSet()));
     }
 
     /* 构建最小的触发器单位 */

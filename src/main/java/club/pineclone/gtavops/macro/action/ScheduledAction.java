@@ -1,7 +1,6 @@
 package club.pineclone.gtavops.macro.action;
 
-import io.vproxy.base.util.LogType;
-import io.vproxy.base.util.Logger;
+import club.pineclone.gtavops.macro.MacroEvent;
 import lombok.Getter;
 
 import java.util.concurrent.ScheduledFuture;
@@ -27,7 +26,7 @@ public abstract class ScheduledAction extends Action implements ScheduleActionLi
     }
 
     @Override
-    public final void activate(ActionEvent event) {
+    public final void activate(MacroEvent event) {
         if (running.compareAndSet(false, true)) {
             scheduledFuture = ActionTaskManager.getSCHEDULER().scheduleAtFixedRate(() -> {
                 boolean flag = beforeSchedule(event);
@@ -40,7 +39,7 @@ public abstract class ScheduledAction extends Action implements ScheduleActionLi
     }
 
     @Override
-    public final void deactivate(ActionEvent event) {
+    public final void deactivate(MacroEvent event) {
         if (running.compareAndSet(true, false)) {
             if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
                 scheduledFuture.cancel(true);

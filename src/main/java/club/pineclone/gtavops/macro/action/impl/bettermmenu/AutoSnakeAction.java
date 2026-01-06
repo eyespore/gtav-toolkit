@@ -1,12 +1,11 @@
 package club.pineclone.gtavops.macro.action.impl.bettermmenu;
 
+import club.pineclone.gtavops.macro.Macro;
 import club.pineclone.gtavops.macro.action.Action;
-import club.pineclone.gtavops.macro.action.ActionEvent;
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
-import io.vproxy.base.util.Logger;
 import io.vproxy.vfx.entity.input.Key;
 
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /* 自动 M 菜单回血 */
@@ -28,7 +27,7 @@ public class AutoSnakeAction extends BetterMMenuAction {
         }
 
         @Override
-        public void schedule(ActionEvent event) {
+        public void schedule(MacroEvent event) {
             try {
                 pressEnter();  /* 点击回车键补零食 */
             } catch (InterruptedException ignored) {
@@ -38,7 +37,7 @@ public class AutoSnakeAction extends BetterMMenuAction {
         }
 
         @Override
-        public void afterDeactivate(ActionEvent event) {
+        public void afterDeactivate(MacroEvent event) {
             /* 检查是否启用了退出时自动寻找掩体 */
             /* 主循环退出，将阶段二运行状态置为false */
 //            Logger.lowLevelDebug("set is phase2running to false");
@@ -68,7 +67,7 @@ public class AutoSnakeAction extends BetterMMenuAction {
 
     /* 在进入循环之前的逻辑，该方法被用于执行宏的阶段1 */
     @Override
-    public void activate(ActionEvent event) {
+    public void activate(MacroEvent event) {
         /* 检查阶段二是否正在运行，若阶段二正在运行，则先停止阶段二，然后执行阶段一 */
 //        Logger.lowLevelDebug("Auto snake activates");
         stopPhase2IfRunning(event);
@@ -78,12 +77,12 @@ public class AutoSnakeAction extends BetterMMenuAction {
     }
 
     @Override
-    public void deactivate(ActionEvent event) {
+    public void deactivate(MacroEvent event) {
         /* 由于延迟攀Action采用子动作，而不是子宏，子动作并不会被纳入MacroRegistry中得到挂起信号，因此
          *  需要由父动作管理，当挂起时doDeactivate会被调用，链式调用deactivate与afterDeactivate，完成后处理 */
         stopPhase2IfRunning(event);
 
-        if (event != null && !keepMMenu) {  /* 在非进程挂起时，检查是否保留M菜单，决定是否将M菜单隐藏 */
+        if (event.getMacroContext().getExecutionStatus().equals(Macro.MacroExecutionStatus.ACTIVE) && !keepMMenu) {  /* 在非进程挂起时，检查是否保留M菜单，决定是否将M菜单隐藏 */
             try {
                 pressMenuKey();  /* 不保留M菜单，将菜单隐藏 */
             } catch (InterruptedException ignored) {
@@ -91,7 +90,7 @@ public class AutoSnakeAction extends BetterMMenuAction {
         }
     }
 
-    private void stopPhase2IfRunning(ActionEvent event) {
+    private void stopPhase2IfRunning(MacroEvent event) {
         if (isLoopRunning.get()) {
             /* 当前循环已经运行，停止循环 */
             /* 此处应当调用 doDeactivate 而不是 deactivate，后者在生命周期不会调用afterDeactivate */
@@ -99,7 +98,7 @@ public class AutoSnakeAction extends BetterMMenuAction {
         }
     }
 
-    private void startPhase1(ActionEvent event) {
+    private void startPhase1(MacroEvent event) {
         /* 当前循环未运行，执行启动逻辑 */
         try {
             pressMenuKey();  /* 启动 M 菜单 */

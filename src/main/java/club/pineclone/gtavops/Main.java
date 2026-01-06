@@ -2,12 +2,11 @@ package club.pineclone.gtavops;
 
 import club.pineclone.gtavops.common.JLibLocator;
 import club.pineclone.gtavops.common.SingletonLock;
-import club.pineclone.gtavops.config.ConfigHolder;
-import club.pineclone.gtavops.gui.FXLifecycleAware;
-import club.pineclone.gtavops.gui.MainFX;
-import club.pineclone.gtavops.gui.feature.FeatureTogglePaneRegistry;
-import club.pineclone.gtavops.gui.forked.ForkedDialog;
-import club.pineclone.gtavops.gui.theme.BaseTheme;
+import club.pineclone.gtavops.config.MacroConfigLoader;
+import club.pineclone.gtavops.client.FXLifecycleAware;
+import club.pineclone.gtavops.client.MainFX;
+import club.pineclone.gtavops.client.forked.ForkedDialog;
+import club.pineclone.gtavops.client.theme.BaseTheme;
 import club.pineclone.gtavops.i18n.ExtendedI18n;
 import club.pineclone.gtavops.i18n.I18nHolder;
 import club.pineclone.gtavops.jni.PlatformFocusMonitor;
@@ -27,7 +26,7 @@ import java.util.logging.Logger;
 public class Main {
     public static void main(String[] args) {
         Theme.setTheme(new BaseTheme());
-        MainFX.setListener(new FXBootstrap());
+        MainFX.addFXListener(new FXBootstrap());
         Application.launch(MainFX.class, args);
     }
 
@@ -46,7 +45,7 @@ public class Main {
             logger.setLevel(Level.OFF);
             logger.setUseParentHandlers(false);
 
-            FeatureTogglePaneRegistry.getInstance().initAll();  /* 启用宏引擎 */
+            MacroRegistry.getInstance().registerNativeHook();  /* 注册 jnativehook 全局钩子 */
         }
 
         /* 主窗口初始化，在此处执行程序的初始化逻辑 */
@@ -61,18 +60,6 @@ public class Main {
                 return;
             }
 
-            /* 获取单例锁 */
-            if (!SingletonLock.lockInstance()) {
-                /* 程序已经在运行 */
-                Exception e = new RuntimeException(I18nHolder.get().duplicatedAppInstanceRunning);
-                ForkedDialog<Integer> dialog = ForkedDialog.stackTraceDialog(e, ForkedDialog.CONFIRM);
-                dialog.showAndWait();
-                System.exit(1);
-                return;
-            }
-
-            Class.forName(JLibLocator.class.getName());  /* 加载本地库 */
-
             try {
                 PathUtils.initAppHome();
             } catch (IOException e) {
@@ -83,33 +70,38 @@ public class Main {
                 return;
             }
 
+            /* 获取单例锁 */
+            if (!SingletonLock.lockInstance()) {
+                /* 程序已经在运行 */
+                // TODO: 将逻辑迁移到MainFX
+                Exception e = new RuntimeException(I18nHolder.get().duplicatedAppInstanceRunning);
+                ForkedDialog<Integer> dialog = ForkedDialog.stackTraceDialog(e, ForkedDialog.CONFIRM);
+                dialog.showAndWait();
+                System.exit(1);
+                return;
+            }
+
+            Class.forName(JLibLocator.class.getName());  /* 加载本地库 */
+
             try {
-                ConfigHolder.load();
+                MacroConfigLoader.load();
             } catch (IOException e) {
                 /* 配置初始化异常 */
                 ExtendedI18n i18n = I18nHolder.get();
                 ForkedDialog<Integer> dialog = ForkedDialog.stackTraceDialog(i18n.configFileLoadFailed, e);
                 Optional<Integer> result = dialog.showAndWait();
-                if (result.filter(i -> i == ForkedDialog.CONFIRM).isPresent()) {
-                    try {  /* 尝试重载配置文件 */
-                        ConfigHolder.overrideConfigToDefault();
-                    } catch (IOException e2) {
-                        ForkedDialog.stackTraceDialog(i18n.configStillLoadFailed, e2, ForkedDialog.CONFIRM).showAndWait();
-                        System.exit(1);  /* 第二次抛出异常则退出程序 */
-                    }
-                } else {  /* 用户取消加载配置文件 */
-                    System.exit(1);
-                }
+                System.exit(1);
             }
         }
 
         /* 主窗口停止运行 */
         @Override
         public void onFXStop() throws Exception {
-            FeatureTogglePaneRegistry.getInstance().stopAll();  /* 停止宏引擎 */
+            MacroRegistry.getInstance().unregisterNativeHook();  /* 注销 jnativehook 全局钩子 */
+
             ActionTaskManager.shutdown();  /* 停止任务调度 */
             PlatformFocusMonitor.shutdown();  /* 停止焦点监听 */
-            ConfigHolder.save();  /* 保存配置 */
+            MacroConfigLoader.save();  /* 保存配置 */
         }
     }
 }

@@ -1,7 +1,7 @@
 package club.pineclone.gtavops.macro.action.impl;
 
 import club.pineclone.gtavops.macro.MacroPriorityContext;
-import club.pineclone.gtavops.macro.action.ActionEvent;
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
@@ -16,13 +16,13 @@ public class MeleeGlitchAction extends ScheduledAction {
     public static final String ACTION_ID = "melee-glitch";
 
     @Override
-    public boolean beforeActivate(ActionEvent event) {
+    public boolean beforeActivate(MacroEvent event) {
         context.blockSwapGlitch.set(true);  /* 动作开始之前，阻塞切枪偷速 */
         return true;
     }
 
     @Override
-    public void afterDeactivate(ActionEvent event) {
+    public void afterDeactivate(MacroEvent event) {
         context.blockSwapGlitch.set(false);  /* 动作完全撤销之后，允许切枪偷速 */
     }
 
@@ -34,7 +34,7 @@ public class MeleeGlitchAction extends ScheduledAction {
     }
 
     @Override
-    public void schedule(ActionEvent event) {
+    public void schedule(MacroEvent event) {
         try {
             robot.simulate(meleeSnakeScrollKey);
         } catch (InterruptedException ignored) {

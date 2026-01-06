@@ -1,6 +1,6 @@
 package club.pineclone.gtavops.macro.action.impl;
 
-import club.pineclone.gtavops.macro.action.ActionEvent;
+import club.pineclone.gtavops.macro.MacroEvent;
 import club.pineclone.gtavops.macro.action.ScheduledAction;
 import club.pineclone.gtavops.macro.action.robot.RobotFactory;
 import club.pineclone.gtavops.macro.action.robot.VCRobotAdapter;
@@ -54,7 +54,7 @@ public class AutoFireAction extends ScheduledAction {
     }
 
     @Override
-    public boolean beforeActivate(ActionEvent event) {
+    public boolean beforeActivate(MacroEvent event) {
         /* 首先获取连发映射目标 */
         Key sourceKey = event.getTriggerEvent().getInputSourceEvent().getKey();
         AutoFireTarget target = sourceToTargetMap.get(sourceKey);
@@ -80,7 +80,7 @@ public class AutoFireAction extends ScheduledAction {
 
     /* 连发 RPG 循环 */
     @Override
-    public void schedule(ActionEvent event) {
+    public void schedule(MacroEvent event) {
         /* 首先获取连发映射目标 */
         Key sourceKey = event.getTriggerEvent().getInputSourceEvent().getKey();
         AutoFireTarget target = sourceToTargetMap.get(sourceKey);

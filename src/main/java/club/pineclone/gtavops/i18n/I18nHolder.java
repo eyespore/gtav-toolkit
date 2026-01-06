@@ -1,5 +1,6 @@
 package club.pineclone.gtavops.i18n;
 
+import club.pineclone.gtavops.utils.JsonConfigUtils;
 import club.pineclone.gtavops.utils.PathUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import io.vproxy.vfx.manager.internal_i18n.InternalI18n;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 public class I18nHolder {
@@ -28,27 +30,18 @@ public class I18nHolder {
     }
 
     private static ExtendedI18n loadI18n() {
-        ExtendedI18n i18n;
-        ExtendedI18n defaultI18n = new ExtendedI18n();  /* 默认本地化 */
+        try {
+            /* 本地化文件存在 */
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);  /* 美观输出 */
+            mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);  /* 忽略不存在的属性 */
 
-        try (InputStream is = I18nHolder.class.getResourceAsStream("/i18n/" + LOCALE + ".json")) {
-            if (is == null) {
-                Logger.error(LogType.SYS_ERROR, "unable to load i18n file");
-                i18n = defaultI18n;
-            } else {
-                /* 本地化文件存在 */
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);  /* 美观输出 */
-                mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);  /* 忽略不存在的属性 */
+            Path i18nConfigPath = Path.of(I18nHolder.class.getResource("/i18n/" + LOCALE + ".json").toURI());
+            return JsonConfigUtils.load(i18nConfigPath, ExtendedI18n::new, mapper);
 
-                i18n = mapper.readerForUpdating(defaultI18n).readValue(is, ExtendedI18n.class);
-                Logger.error(LogType.ACCESS, "successfully load i18n file");
-            }
-        } catch (IOException e) {
-            i18n = defaultI18n;
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
         }
-
-        return i18n;
     }
 
     /* 这个方法用于导出本地化pojo到json，从而创建更多的本地化配置 */
