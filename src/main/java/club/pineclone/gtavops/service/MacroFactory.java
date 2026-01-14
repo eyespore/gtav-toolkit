@@ -251,8 +251,8 @@ public class MacroFactory {
     /**
      * 创建宏实例
      */
-    public Macro createMacro(MacroCreationDTO dto) {
-        return types.get(dto.type()).create(dto.config());
+    public Macro createMacro(MacroEntryDTO dto) {
+        return types.get(dto.getType()).create(dto.getConfig());
     }
 
     /**

@@ -63,8 +63,10 @@ public class AppContext {
 
         this.macroConfigDao = new JsonMacroConfigDAO(
                 appConfig.getJsonMacroDataStoreSettings().getMacroConfigPath(),
-                macroConfigMapper,
-                macroEntryDao);
+                macroEntryDao,
+                macroEntryMapper,
+                macroConfigMapper
+        );
 
         /* 底层资源生命周期注册 */
         registerLifecycleObj(macroEntryDao);

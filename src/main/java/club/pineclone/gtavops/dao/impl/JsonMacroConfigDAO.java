@@ -24,16 +24,21 @@ import java.util.UUID;
 public class JsonMacroConfigDAO extends JsonStoreDAO<MacroConfig> implements MacroConfigDAO {
 
     private static final String ERR_INSERT_WITH_NON_NULL_ID = "Cannot insert macro config with non-null id: ";
-    private final MacroConfigMapper macroConfigMapper;  /* 属性映射创建 */
+
+    private final MacroConfigMapper macroConfigMapper;  /* MacroConfig 属性映射创建 */
+    private final MacroEntryMapper macroEntryMapper;  /* MacroEntry 属性映射创建 */
+
     private final MacroEntryDAO macroEntryDAO;  /* 控制级联删除/更新行为 */
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public JsonMacroConfigDAO(Path dataStorePath,
-                              MacroConfigMapper macroConfigMapper,
-                              MacroEntryDAO macroEntryDAO) {
+                              MacroEntryDAO macroEntryDAO,
+                              MacroEntryMapper macroEntryMapper,
+                              MacroConfigMapper macroConfigMapper) {
         super(dataStorePath);
         this.macroConfigMapper = macroConfigMapper;
+        this.macroEntryMapper = macroEntryMapper;
 
         if (!(macroEntryDAO instanceof JsonMacroEntryDAO)) {  /* 仅支持使用 JsonMacroEntryDao，其他实现容易引发业务异常 */
             throw new IllegalArgumentException(
@@ -159,15 +164,14 @@ public class JsonMacroConfigDAO extends JsonStoreDAO<MacroConfig> implements Mac
             List<MacroEntry> entries = macroEntryDAO.selectByConfigId(oldId);
             if (!entries.isEmpty()) {
                 List<MacroEntry> updatedEntries = new ArrayList<>(entries.size());
-                MacroEntryMapper mapper = ((JsonMacroEntryDAO) macroEntryDAO).getMacroEntryMapper();
 
                 for (MacroEntry entry : entries) {
-                    MacroEntry copy = mapper.copy(entry);  /* 拷贝 */
+                    MacroEntry copy = macroEntryMapper.copy(entry);  /* 拷贝 */
                     copy.setConfigId(config.getId());
                     copy.setLastModifiedAt(Instant.now());
                     updatedEntries.add(copy);
                 }
-                macroEntryDAO.updateBatch(updatedEntries);  /* 批量更新 */
+                int result = macroEntryDAO.updateBatch(updatedEntries);/* 批量更新 */
             }
         }
 

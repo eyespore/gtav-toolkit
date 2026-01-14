@@ -37,8 +37,8 @@ public class JsonMacroConfigDAOTest {
 
     private final MacroConfigDAO macroConfigDao = new JsonMacroConfigDAO(
             appConfig.getJsonMacroDataStoreSettings().getMacroConfigPath(),  /* configs.json 路径 */
-            macroConfigMapper,
-            macroEntryDao);
+            macroEntryDao, macroEntryMapper, macroConfigMapper
+    );
 
     @Before
     public void beforeTest() throws Exception {

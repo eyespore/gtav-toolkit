@@ -4,7 +4,6 @@ import club.pineclone.gtavops.dao.JsonStoreDAO;
 import club.pineclone.gtavops.dao.MacroEntryDAO;
 import club.pineclone.gtavops.domain.entity.MacroEntry;
 import club.pineclone.gtavops.domain.mapper.MacroEntryMapper;
-import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 public class JsonMacroEntryDAO extends JsonStoreDAO<MacroEntry> implements MacroEntryDAO {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    @Getter private final MacroEntryMapper macroEntryMapper;
+    private final MacroEntryMapper macroEntryMapper;
 
     public JsonMacroEntryDAO(Path dataStorePath,
                              MacroEntryMapper macroEntryMapper) {
