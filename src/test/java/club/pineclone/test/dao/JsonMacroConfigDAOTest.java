@@ -1,14 +1,14 @@
 package club.pineclone.test.dao;
 
-import club.pineclone.gtavops.common.PathUtils;
-import club.pineclone.gtavops.config.AppConfig;
-import club.pineclone.gtavops.dao.MacroConfigDAO;
-import club.pineclone.gtavops.dao.MacroEntryDAO;
-import club.pineclone.gtavops.dao.impl.JsonMacroConfigDAO;
-import club.pineclone.gtavops.dao.impl.JsonMacroEntryDAO;
-import club.pineclone.gtavops.domain.entity.MacroConfig;
-import club.pineclone.gtavops.domain.mapper.MacroConfigMapper;
-import club.pineclone.gtavops.domain.mapper.MacroEntryMapper;
+import club.pineclone.toolkit.common.PathUtils;
+import club.pineclone.toolkit.config.AppConfig;
+import club.pineclone.toolkit.dao.MacroConfigDAO;
+import club.pineclone.toolkit.dao.MacroEntryDAO;
+import club.pineclone.toolkit.dao.impl.JsonMacroConfigDAO;
+import club.pineclone.toolkit.dao.impl.JsonMacroEntryDAO;
+import club.pineclone.toolkit.domain.entity.MacroConfig;
+import club.pineclone.toolkit.domain.mapper.MacroConfigMapper;
+import club.pineclone.toolkit.domain.mapper.MacroEntryMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Before;
 import org.junit.Test;

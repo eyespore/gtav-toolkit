@@ -1,7 +1,7 @@
 package club.pineclone.test.domain;
 
-import club.pineclone.gtavops.domain.entity.MacroConfig;
-import club.pineclone.gtavops.domain.mapper.MacroConfigMapper;
+import club.pineclone.toolkit.domain.entity.MacroConfig;
+import club.pineclone.toolkit.domain.mapper.MacroConfigMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;

@@ -8,7 +8,7 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
     <typeAliases>
-        <package name="club.pineclone.gtavops.domain.entity"/>
+        <package name="club.pineclone.toolkit.domain.entity"/>
     </typeAliases>
     <environments default="development">
         <environment id="development">

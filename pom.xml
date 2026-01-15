@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>club.pineclone</groupId>
-    <artifactId>gtav-ops-fxui</artifactId>
+    <artifactId>gtav-toolkit</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -25,37 +25,14 @@
     </repositories>
 
     <dependencies>
+        <!-- Source: https://mvnrepository.com/artifact/io.vproxy/vjson -->
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-media</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-web</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl</artifactId>
-            <version>17.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+            <groupId>io.vproxy</groupId>
+            <artifactId>vjson</artifactId>
+            <version>1.5.5</version>
+            <scope>compile</scope>
+        </dependency>  <!-- 键码表 TODO: 替换到独立键码表，彻底移除io.vproxy依赖 -->
+
         <dependency>
             <groupId>com.github.kwhat</groupId>
             <artifactId>jnativehook</artifactId>
@@ -73,18 +50,6 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.vproxy</groupId>
-            <artifactId>vfx</artifactId>
-            <version>1.4.0</version>
         </dependency>
 
         <dependency>
@@ -153,6 +118,14 @@
             <version>3.42.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -188,33 +161,11 @@
                             <version>1.5.5.Final</version>
                         </path>
                     </annotationProcessorPaths>
-<!--                    <compilerArgs>-->
-<!--                        <arg>-h</arg>-->
-<!--                        <arg>${project.build.directory}/jni</arg>-->
-<!--                    </compilerArgs>-->
+                    <compilerArgs>
+                        <arg>-h</arg>
+                        <arg>${project.build.directory}/jni</arg>
+                    </compilerArgs>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <executions>
-                    <execution>
-                        <!-- todo: 将构建信息配置到环境 -->
-                        <!-- Default configuration for running with: mvn clean javafx:run -->
-                        <id>default-cli</id>
-                        <configuration>
-                            <mainClass>club.pineclone.gtavops.client.MainFX</mainClass>
-                            <launcher>app</launcher>
-                            <jlinkZipName>app</jlinkZipName>
-                            <jlinkImageName>app</jlinkImageName>
-                            <noManPages>true</noManPages>
-                            <stripDebug>true</stripDebug>
-                            <noHeaderFiles>true</noHeaderFiles>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
