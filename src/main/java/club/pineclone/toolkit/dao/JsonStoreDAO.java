@@ -1,12 +1,12 @@
 package club.pineclone.toolkit.dao;
 
-import club.pineclone.toolkit.AppLifecycleAware;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ import java.util.List;
  * 基于 JSON 实现的简单数据库存储
  * @param <T>
  */
-public abstract class JsonStoreDAO<T> implements AppLifecycleAware {
+public abstract class JsonStoreDAO<T> implements InitializingBean {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -42,7 +42,7 @@ public abstract class JsonStoreDAO<T> implements AppLifecycleAware {
      * 初始化数据库存储路径
      */
     @Override
-    public void onAppInit() throws Exception {
+    public void afterPropertiesSet() throws Exception {
         log.debug("Initializing JSON datastore at path: {}", dataStorePath);
         if (Files.notExists(dataStorePath.getParent())) Files.createDirectories(dataStorePath.getParent());
         if (Files.notExists(dataStorePath)) {

@@ -1,6 +1,7 @@
 package club.pineclone.toolkit.core.macro.action;
 
 import club.pineclone.toolkit.AppContext;
+import club.pineclone.toolkit.core.macro.MacroContext;
 import club.pineclone.toolkit.core.macro.MacroEvent;
 import lombok.Getter;
 
@@ -29,7 +30,7 @@ public abstract class ScheduledAction extends Action implements ScheduleActionLi
     @Override
     public final void activate(MacroEvent event) {
         if (running.compareAndSet(false, true)) {
-            scheduledFuture = AppContext.getInstance().getMacroTaskScheduler().scheduleAtFixedRate(() -> {
+            scheduledFuture = MacroContext.getInstance().getScheduler().scheduleAtFixedRate(() -> {
                 boolean flag = beforeSchedule(event);
                 if (flag) {
                     schedule(event);

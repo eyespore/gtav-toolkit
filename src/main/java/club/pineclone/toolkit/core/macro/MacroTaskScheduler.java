@@ -1,6 +1,5 @@
 package club.pineclone.toolkit.core.macro;
 
-import club.pineclone.toolkit.AppLifecycleAware;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +10,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 宏任务调度
  */
-public class MacroTaskScheduler implements AppLifecycleAware {
+public class MacroTaskScheduler {
 
     private final ScheduledExecutorService scheduler;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public MacroTaskScheduler() {
+    protected MacroTaskScheduler() {
         log.info("Loading macro task scheduler for handling macro multiple-threads task");
         this.scheduler = Executors.newScheduledThreadPool(
                 Runtime.getRuntime().availableProcessors(),
@@ -35,12 +34,7 @@ public class MacroTaskScheduler implements AppLifecycleAware {
         return this.scheduler.schedule(command, delay, unit);
     }
 
-    @Override
-    public void onAppStop() {
-        this.shutdown();
-    }
-
-    private void shutdown() {
+    protected void shutdown() {
         this.scheduler.shutdownNow();
     }
 

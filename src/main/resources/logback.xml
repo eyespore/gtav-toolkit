@@ -7,11 +7,6 @@
         </encoder>
     </appender>
 
-    <!-- Client 模块 -->
-    <logger name="club.pineclone.toolkit.client" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
     <!-- 默认输出 -->
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />

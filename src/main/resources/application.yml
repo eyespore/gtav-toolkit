@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:./data/gtav-ops.db
+    driver-class-name: org.sqlite.JDBC
+  main:
+    log-startup-info: false
+debug: false

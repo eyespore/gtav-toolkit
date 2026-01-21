@@ -1,6 +1,7 @@
 package club.pineclone.toolkit.core.macro.trigger.policy;
 
 import club.pineclone.toolkit.AppContext;
+import club.pineclone.toolkit.core.macro.MacroContext;
 import club.pineclone.toolkit.core.macro.trigger.TriggerStatus;
 import club.pineclone.toolkit.core.macro.trigger.source.InputSourceEvent;
 
@@ -39,7 +40,7 @@ public class DoubleClickPolicy implements ActivationPolicy {
                     } else {
                         // 第一次点击，延迟判定为 CLICK
                         lastPressedTime = now;
-                        future = AppContext.getInstance().getMacroTaskScheduler().schedule(() -> {
+                        future = MacroContext.getInstance().getScheduler().schedule(() -> {
                             callback.accept(Optional.of(TriggerStatus.CLICK));
                             synchronized (lock) {
                                 future = null;

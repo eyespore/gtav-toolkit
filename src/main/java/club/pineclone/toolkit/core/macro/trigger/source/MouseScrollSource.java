@@ -1,6 +1,6 @@
 package club.pineclone.toolkit.core.macro.trigger.source;
 
-import club.pineclone.toolkit.common.KeyUtils;
+import club.pineclone.toolkit.core.macro.utils.KeyUtils;
 import club.pineclone.toolkit.core.macro.input.Key;
 import com.github.kwhat.jnativehook.mouse.NativeMouseWheelEvent;
 import com.github.kwhat.jnativehook.mouse.NativeMouseWheelListener;

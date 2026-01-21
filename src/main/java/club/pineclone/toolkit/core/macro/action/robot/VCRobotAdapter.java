@@ -1,6 +1,6 @@
 package club.pineclone.toolkit.core.macro.action.robot;
 
-import club.pineclone.toolkit.common.KeyUtils;
+import club.pineclone.toolkit.core.macro.utils.KeyUtils;
 import club.pineclone.toolkit.core.macro.input.Key;
 import lombok.Getter;
 

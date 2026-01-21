@@ -1,21 +1,24 @@
 package club.pineclone.toolkit.config;
 
+import club.pineclone.toolkit.common.PathUtils;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 
 /**
- * 后端应用级别配置
+ * 项目内嵌配置
  */
 @Getter
+@Component
 public class AppConfig {
 
     private final Path coreHomePath;
     private final MacroSettings macroSettings;
     private final JsonMacroDataStoreSettings jsonMacroDataStoreSettings;
 
-    public AppConfig(Path appHomePath) {
-        this.coreHomePath = appHomePath.resolve("core");
+    public AppConfig() {
+        this.coreHomePath = PathUtils.getAppHomePath().resolve("core");
 
         this.macroSettings = new MacroSettings(coreHomePath);
         this.jsonMacroDataStoreSettings = new JsonMacroDataStoreSettings(macroSettings.getHomePath());

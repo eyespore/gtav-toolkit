@@ -1,30 +1,14 @@
 package club.pineclone.toolkit.core.macro.input;
 
-import vjson.JSON;
-import vjson.JSONObject;
-import vjson.deserializer.rule.BoolRule;
-import vjson.deserializer.rule.ObjectRule;
-import vjson.deserializer.rule.Rule;
-import vjson.deserializer.rule.StringRule;
-import vjson.util.ObjectBuilder;
-
 import java.util.*;
 
-public class Key implements JSONObject {
+public class Key {
 
     public final MouseButton button;
     public final MouseWheelScroll scroll;
     public final KeyCode key;
     public final boolean isLeftKey;
     public final String raw;
-
-    public static final Rule<Key> rule = ObjectRule.builder(KeyBuilder::new, KeyBuilder::build, builder -> builder
-            .put("button", (o, it) -> o.button = MouseButton.valueOf(it), StringRule.get())
-            .put("scroll", (o, it) -> o.scroll = it, MouseWheelScroll.rule)
-            .put("key", (o, it) -> o.key = KeyCode.valueOf(it), StringRule.get())
-            .put("isLeftKey", (o, it) -> o.isLeftKey = it, BoolRule.get())
-            .put("raw", (o, it) -> o.raw = it, StringRule.get())
-    );
 
     private static class KeyBuilder {
         MouseButton button;
@@ -233,23 +217,24 @@ public class Key implements JSONObject {
         return result;
     }
 
-    @Override
-    public JSON.Object toJson() {
-        var ob = new ObjectBuilder();
-        if (button != null) {
-            ob.put("button", button.name());
-        }
-        if (scroll != null) {
-            ob.putInst("scroll", scroll.toJson());
-        }
-        if (key != null) {
-            ob.put("key", key.name());
-            ob.put("isLeftKey", isLeftKey);
-        }
-        if (button == null && key == null && raw != null) {
-            ob.put("raw", raw);
-        }
-        return ob.build();
-    }
+
+    // TODO: KEY序列化
+//    public JSON.Object toJson() {
+//        var ob = new ObjectBuilder();
+//        if (button != null) {
+//            ob.put("button", button.name());
+//        }
+//        if (scroll != null) {
+//            ob.putInst("scroll", scroll.toJson());
+//        }
+//        if (key != null) {
+//            ob.put("key", key.name());
+//            ob.put("isLeftKey", isLeftKey);
+//        }
+//        if (button == null && key == null && raw != null) {
+//            ob.put("raw", raw);
+//        }
+//        return ob.build();
+//    }
 
 }

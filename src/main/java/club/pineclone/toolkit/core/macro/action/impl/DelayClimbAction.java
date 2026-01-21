@@ -2,6 +2,7 @@ package club.pineclone.toolkit.core.macro.action.impl;
 
 import club.pineclone.toolkit.AppContext;
 import club.pineclone.toolkit.core.macro.Macro;
+import club.pineclone.toolkit.core.macro.MacroContext;
 import club.pineclone.toolkit.core.macro.action.Action;
 import club.pineclone.toolkit.core.macro.MacroEvent;
 import club.pineclone.toolkit.core.macro.action.ScheduledAction;
@@ -161,7 +162,7 @@ public class DelayClimbAction extends Action {
     private void startPhase1(MacroEvent event) {
         /* 阶段一未运行，提交运行任务 */
         isPhase1Running.set(true);
-        future = AppContext.getInstance().getMacroTaskScheduler().schedule(() -> {
+        future = MacroContext.getInstance().getScheduler().schedule(() -> {
             try {
                 /* 当前循环未运行，执行启动逻辑 */
                 /* 进入掩体并打开相机 */
