@@ -2,6 +2,8 @@ package club.pineclone.toolkit.core.macro;
 
 import club.pineclone.toolkit.common.TriggerMode;
 import club.pineclone.toolkit.core.macro.action.impl.*;
+import club.pineclone.toolkit.core.macro.definition.MacroDefinition;
+import club.pineclone.toolkit.core.macro.definition.MacroParams;
 import club.pineclone.toolkit.core.macro.input.Key;
 import club.pineclone.toolkit.domain.dto.macro.*;
 import club.pineclone.toolkit.core.macro.action.Action;
@@ -22,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -29,6 +32,37 @@ public class MacroFactory {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final Map<String, MacroCreationUnit<?>> types = new HashMap<>();
+
+    private final Map<String, MacroDefinition> registry = new HashMap<>();
+
+    /* 注册宏定义 */
+    private void register(MacroDefinition definition) {
+        if (registry.containsKey(definition.getType())) {
+            throw new IllegalArgumentException("Macro already registered: " + definition.getType());
+        }
+        registry.put(definition.getType(), definition);
+    }
+
+    // 使用默认参数创建宏实例
+    public Macro create(String macroType) {
+        return create(macroType, null);
+    }
+
+    public Macro create(String macroType, MacroParams params) {
+        MacroDefinition definition = registry.get(macroType);
+        if (definition == null) {
+            throw new IllegalArgumentException("Unknown macro: " + macroType);
+        }
+
+        MacroParams effectiveParams = definition.getDefaultParams();  /* 获取默认参数 */
+        if (params != null) {  /* 使用用户参数覆盖默认参数 */
+            for (String key : params.keySet()) {
+                effectiveParams.put(key, params.get(key));
+            }
+        }
+
+        return definition.createMacroInstance(effectiveParams);
+    }
 
     public MacroFactory() {
 
@@ -175,7 +209,7 @@ public class MacroFactory {
                         new RemapLButtonAction()));
 
         /* 切枪自动确认宏 */
-        register("SWITCH_AUTO_CONFIRM", SWITCH_AUTO_CONFIRM.class, dto -> {
+        register("SWITCH_AUTO_CONFIRM", SwitchAutoConfirmDTO.class, dto -> {
             // TODO: 对Map判空处理，避免NPE
             Action action = new QuickSwapAction(dto.keyMapping(), dto.blockKey(), dto.blockDuration().parseLong());
 

@@ -12,7 +12,7 @@ import java.util.Map;
  * @param blockKey 屏蔽键
  * @param blockDuration 屏蔽键生效时长
  */
-public record SWITCH_AUTO_CONFIRM(
+public record SwitchAutoConfirmDTO(
         Map<Key, Key> keyMapping,
         Boolean enableBlockKey,
         Key blockKey,

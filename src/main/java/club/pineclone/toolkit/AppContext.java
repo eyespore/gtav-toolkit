@@ -116,6 +116,7 @@ public class AppContext {
     }
 
     public static void main(String[] args) {
+//        log.debug("Working directory: {}", System.getProperty("user.dir"));
         SpringApplication.run(AppContext.class, args);
     }
 }

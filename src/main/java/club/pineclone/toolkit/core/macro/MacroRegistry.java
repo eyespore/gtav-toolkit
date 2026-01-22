@@ -51,7 +51,6 @@ public class MacroRegistry implements WindowTitleListener
     /* GTA OPS通过监听当前用户焦点窗口判断用户是否在游戏内，当用户切出游戏时会将所有的宏挂起 */
     @Override
     public void accept(String s) {
-        log.debug(s);
         if (s.equals(GTAV_WINDOW_TITLE)) {  /* 用户切回游戏，恢复所有的宏 */
             globalSuspended = false;
             registry.values().forEach(Macro::resume);
